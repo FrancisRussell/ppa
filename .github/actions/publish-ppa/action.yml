@@ -29,15 +29,18 @@ runs:
       run: |
         git lfs install
         REPO_URL="https://x-access-token:${{ inputs.github_token }}@github.com/${{ github.repository }}.git"
-        if ! git clone --depth 1 "$REPO_URL" --branch gh-pages gh-pages-work; then
+        if git clone "$REPO_URL" --branch gh-pages gh-pages-work; then
+          echo "GHPAGES_EXISTS=true" >> "$GITHUB_ENV"
+        else
           git init gh-pages-work
           cd gh-pages-work
           git remote add origin "$REPO_URL"
           git checkout --orphan gh-pages
           printf 'pool/**/*.deb filter=lfs diff=lfs merge=lfs -text\n' > .gitattributes
+          echo "GHPAGES_EXISTS=false" >> "$GITHUB_ENV"
         fi
 
-    - name: Copy static files and .deb into gh-pages
+    - name: Update gh-pages content
       shell: sh
       run: |
         touch gh-pages-work/.nojekyll
@@ -63,8 +66,13 @@ runs:
         mkdir -p versions
         echo "${{ inputs.version }}" > "versions/${{ inputs.package }}.txt"
         git add -A
-        if git diff --cached --quiet; then
-          echo "No changes to commit"
+        if [ "$GHPAGES_EXISTS" = "true" ]; then
+          git commit --amend -m "${{ inputs.package }}: package ${{ inputs.version }}"
+          git push --force-with-lease origin gh-pages
+          # Prune must run after push — before push the amended commit is only
+          # referenced locally, making the previous commit's objects appear
+          # unreferenced from the remote's perspective.
+          git lfs prune --remote
         else
           git commit -m "${{ inputs.package }}: package ${{ inputs.version }}"
           git push origin gh-pages
