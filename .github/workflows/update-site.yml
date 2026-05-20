@@ -1,0 +1,56 @@
+name: Update site
+
+on:
+  push:
+    branches: [main]
+    paths: [README.md]
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install python3-markdown
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-markdown
+
+      - name: Compile README.md to index.html
+        run: |
+          BODY=$(python3 -m markdown -x extra README.md)
+          cat > index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+          </head>
+          <body>
+          EOF
+          echo "$BODY" >> index.html
+          echo "</body></html>" >> index.html
+
+      - name: Push index.html to gh-pages
+        run: |
+          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if ! git clone "$REPO_URL" --branch gh-pages gh-pages-work; then
+            echo "gh-pages does not exist yet; skipping"
+            exit 0
+          fi
+          cp index.html gh-pages-work/index.html
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/gh-pages-work"
+          cd gh-pages-work
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update index.html from README.md"
+            git push origin gh-pages
+          fi
