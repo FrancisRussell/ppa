@@ -4,9 +4,39 @@ on:
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even if version unchanged
+        type: boolean
+        default: false
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      latest: ${{ steps.version.outputs.latest }}
+      new: ${{ steps.version.outputs.new }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check upstream version
+        id: version
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/lldap/lldap/releases/latest \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['tag_name'])")
+          CURRENT=$(git fetch origin gh-pages 2>/dev/null \
+            && git show FETCH_HEAD:versions/lldap.txt 2>/dev/null \
+            || echo "none")
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+          if [ "$LATEST" != "$CURRENT" ] || [ "${{ inputs.force }}" = "true" ]; then
+            echo "new=true" >> $GITHUB_OUTPUT
+          else
+            echo "new=false" >> $GITHUB_OUTPUT
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.new == 'true'
     runs-on: ubuntu-latest
     container: debian:trixie
     permissions:
@@ -18,55 +48,35 @@ jobs:
       - name: Install bootstrap deps
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl python3
+          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl
 
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      - name: Check upstream version
-        id: version
-        run: |
-          LATEST=$(curl -s https://api.github.com/repos/lldap/lldap/releases/latest \
-            | python3 -c "import json,sys; print(json.load(sys.stdin)['tag_name'])")
-          CURRENT=$(cat versions/lldap.txt 2>/dev/null || echo "none")
-          echo "latest=$LATEST" >> $GITHUB_OUTPUT
-          echo "current=$CURRENT" >> $GITHUB_OUTPUT
-          if [ "$LATEST" != "$CURRENT" ]; then
-            echo "new=true" >> $GITHUB_OUTPUT
-          else
-            echo "new=false" >> $GITHUB_OUTPUT
-          fi
+      - uses: actions/checkout@v6
 
       - name: Install build deps
-        if: steps.version.outputs.new == 'true'
         run: |
           apt-get install -y --no-install-recommends wget build-essential pkg-config libssl-dev \
             dpkg-dev apt-utils gnupg sccache
 
       - name: Restore cargo cache
-        if: steps.version.outputs.new == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: lldap-cargo-${{ steps.version.outputs.latest }}
+          key: lldap-cargo-${{ needs.check.outputs.latest }}
           restore-keys: |
             lldap-cargo-
 
       - name: Restore sccache cache
-        if: steps.version.outputs.new == 'true'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ steps.version.outputs.latest }}-${{ github.run_id }}
+          key: lldap-sccache-${{ needs.check.outputs.latest }}-${{ github.run_id }}
           restore-keys: |
-            lldap-sccache-${{ steps.version.outputs.latest }}-
+            lldap-sccache-${{ needs.check.outputs.latest }}-
             lldap-sccache-
 
       - name: Mark sccache entries for pruning
-        if: steps.version.outputs.new == 'true'
         run: |
           SCCACHE_PRUNE_TS=$(date +%s)
           echo "SCCACHE_PRUNE_TS=$SCCACHE_PRUNE_TS" >> $GITHUB_ENV
@@ -76,18 +86,15 @@ jobs:
           find "$SCCACHE_DIR" -type f -exec touch -m -d "@$SCCACHE_PRUNE_TS" {} +
 
       - name: Install rustup
-        if: steps.version.outputs.new == 'true'
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
 
       - name: Clone LLDAP source
-        if: steps.version.outputs.new == 'true'
         run: |
-          git clone --branch ${{ steps.version.outputs.latest }} --depth 1 \
+          git clone --branch ${{ needs.check.outputs.latest }} --depth 1 \
             https://github.com/lldap/lldap src/lldap
 
       - name: Install Rust toolchain + wasm target
-        if: steps.version.outputs.new == 'true'
         run: |
           . $HOME/.cargo/env
           cd src/lldap
@@ -95,13 +102,11 @@ jobs:
           rustup target add wasm32-unknown-unknown
 
       - name: Install wasm-pack
-        if: steps.version.outputs.new == 'true'
         run: |
           . $HOME/.cargo/env
           cargo install --locked wasm-pack
 
       - name: Build LLDAP
-        if: steps.version.outputs.new == 'true'
         run: |
           . $HOME/.cargo/env
           cd src/lldap
@@ -114,11 +119,9 @@ jobs:
             --package lldap_set_password
 
       - name: sccache stats
-        if: steps.version.outputs.new == 'true'
         run: sccache --show-stats
 
       - name: Prune sccache and check for changes
-        if: steps.version.outputs.new == 'true'
         run: |
           touch -m -d "@$SCCACHE_PRUNE_TS" /tmp/sccache_prune_ref
           PRUNED=$(find "$SCCACHE_DIR" -type f ! -anewer /tmp/sccache_prune_ref | wc -l)
@@ -131,38 +134,26 @@ jobs:
           fi
 
       - name: Save sccache cache
-        if: steps.version.outputs.new == 'true' && env.SCCACHE_CHANGED == 'true'
-        uses: actions/cache/save@v4
+        if: env.SCCACHE_CHANGED == 'true'
+        uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ steps.version.outputs.latest }}-${{ github.run_id }}
+          key: lldap-sccache-${{ needs.check.outputs.latest }}-${{ github.run_id }}
 
       - name: Package .deb
-        if: steps.version.outputs.new == 'true'
         run: |
-          ./packages/lldap/build.sh ${{ steps.version.outputs.latest }} src/lldap
+          mkdir -p /tmp/lldap-pkg
+          ./packages/lldap/build.sh \
+            ${{ needs.check.outputs.latest }} \
+            src/lldap \
+            /tmp/lldap-pkg
 
-      - name: Update APT repo
-        if: steps.version.outputs.new == 'true'
-        env:
-          APT_SIGNING_KEY: ${{ secrets.APT_SIGNING_KEY }}
-        run: |
-          echo "${{ steps.version.outputs.latest }}" > versions/lldap.txt
-          ./scripts/update-repo.sh
-
-      - name: Commit and push
-        if: steps.version.outputs.new == 'true'
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin \
-            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git add docs/ versions/lldap.txt
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "lldap: package ${{ steps.version.outputs.latest }}"
-            git pull --rebase
-            git push
-          fi
+      - name: Publish to PPA
+        uses: ./.github/actions/publish-ppa
+        with:
+          version: ${{ needs.check.outputs.latest }}
+          package: lldap
+          deb_dir: /tmp/lldap-pkg
+          pool_subdir: l/lldap
+          apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,70 @@
+name: Publish to PPA
+description: Places a built .deb into gh-pages, regenerates APT metadata, and commits.
+
+inputs:
+  version:
+    description: Package version (e.g. v0.6.3)
+    required: true
+  package:
+    description: Package name (e.g. lldap)
+    required: true
+  deb_dir:
+    description: Directory containing the built .deb file
+    required: true
+  pool_subdir:
+    description: Pool subdirectory for this package (e.g. l/lldap)
+    required: true
+  apt_signing_key:
+    description: Armored GPG private key for signing APT repo metadata
+    required: true
+  github_token:
+    description: GitHub token for pushing to gh-pages and main
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout gh-pages
+      shell: sh
+      run: |
+        git lfs install
+        REPO_URL="https://x-access-token:${{ inputs.github_token }}@github.com/${{ github.repository }}.git"
+        if ! git clone --depth 1 "$REPO_URL" --branch gh-pages gh-pages-work; then
+          git init gh-pages-work
+          cd gh-pages-work
+          git remote add origin "$REPO_URL"
+          git checkout --orphan gh-pages
+          printf 'pool/**/*.deb filter=lfs diff=lfs merge=lfs -text\n' > .gitattributes
+        fi
+
+    - name: Copy KEY.asc and .deb into gh-pages
+      shell: sh
+      run: |
+        cp "$GITHUB_WORKSPACE/KEY.asc" gh-pages-work/KEY.asc
+        POOL_DIR="gh-pages-work/pool/main/${{ inputs.pool_subdir }}"
+        mkdir -p "$POOL_DIR"
+        cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
+
+    - name: Update APT repo
+      shell: sh
+      env:
+        APT_SIGNING_KEY: ${{ inputs.apt_signing_key }}
+      run: |
+        "$GITHUB_WORKSPACE/scripts/update-repo.sh" gh-pages-work
+
+    - name: Commit and push gh-pages
+      shell: sh
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE/gh-pages-work"
+        cd gh-pages-work
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        mkdir -p versions
+        echo "${{ inputs.version }}" > "versions/${{ inputs.package }}.txt"
+        git add -A
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "${{ inputs.package }}: package ${{ inputs.version }}"
+          git push origin gh-pages
+        fi

@@ -3,6 +3,7 @@ set -e
 
 VERSION=$1
 SRC_DIR=$2
+POOL_DIR=$3
 VERSION_NO_V="${VERSION#v}~ppa1"
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 PKG_DIR=$(mktemp -d)
@@ -33,6 +34,5 @@ install -m 755 "$SCRIPT_DIR/DEBIAN/postinst" "$PKG_DIR/DEBIAN/postinst"
 install -m 755 "$SCRIPT_DIR/DEBIAN/prerm"    "$PKG_DIR/DEBIAN/prerm"
 install -m 644 "$SCRIPT_DIR/DEBIAN/conffiles" "$PKG_DIR/DEBIAN/conffiles"
 
-DEST_DIR="docs/pool/main/l/lldap"
-mkdir -p "$DEST_DIR"
-dpkg-deb --build --root-owner-group "$PKG_DIR" "$DEST_DIR/lldap_${VERSION_NO_V}_amd64.deb"
+mkdir -p "$POOL_DIR"
+dpkg-deb --build --root-owner-group "$PKG_DIR" "$POOL_DIR/lldap_${VERSION_NO_V}_amd64.deb"
