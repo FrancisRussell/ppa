@@ -27,11 +27,11 @@ jobs:
           CURRENT=$(git fetch origin gh-pages 2>/dev/null \
             && git show FETCH_HEAD:versions/lldap.txt 2>/dev/null \
             || echo "none")
-          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
           if [ "$LATEST" != "$CURRENT" ] || [ "${{ inputs.force }}" = "true" ]; then
-            echo "new=true" >> $GITHUB_OUTPUT
+            echo "new=true" >> "$GITHUB_OUTPUT"
           else
-            echo "new=false" >> $GITHUB_OUTPUT
+            echo "new=false" >> "$GITHUB_OUTPUT"
           fi
 
   build:
@@ -79,10 +79,10 @@ jobs:
       - name: Mark sccache entries for pruning
         run: |
           SCCACHE_PRUNE_TS=$(date +%s)
-          echo "SCCACHE_PRUNE_TS=$SCCACHE_PRUNE_TS" >> $GITHUB_ENV
+          echo "SCCACHE_PRUNE_TS=$SCCACHE_PRUNE_TS" >> "$GITHUB_ENV"
           mkdir -p "$SCCACHE_DIR"
           SCCACHE_COUNT=$(find "$SCCACHE_DIR" -type f | wc -l)
-          echo "SCCACHE_COUNT_BEFORE=$SCCACHE_COUNT" >> $GITHUB_ENV
+          echo "SCCACHE_COUNT_BEFORE=$SCCACHE_COUNT" >> "$GITHUB_ENV"
           find "$SCCACHE_DIR" -type f -exec touch -m -d "@$SCCACHE_PRUNE_TS" {} +
 
       - name: Install rustup
@@ -96,23 +96,23 @@ jobs:
 
       - name: Install Rust toolchain + wasm target
         run: |
-          . $HOME/.cargo/env
+          . "$HOME/.cargo/env"
           cd src/lldap
           rustup show
           rustup target add wasm32-unknown-unknown
 
       - name: Install wasm-pack
         run: |
-          . $HOME/.cargo/env
+          . "$HOME/.cargo/env"
           cargo install --locked wasm-pack
 
       - name: Build LLDAP
         run: |
-          . $HOME/.cargo/env
+          . "$HOME/.cargo/env"
           cd src/lldap
           ./app/build.sh
-          for f in $(cat app/static/libraries.txt); do wget -P app/static "$f"; done
-          for f in $(cat app/static/fonts/fonts.txt); do wget -P app/static/fonts "$f"; done
+          while IFS= read -r f; do wget -P app/static "$f"; done < app/static/libraries.txt
+          while IFS= read -r f; do wget -P app/static/fonts "$f"; done < app/static/fonts/fonts.txt
           cargo build --release \
             --package lldap \
             --package lldap_migration_tool \
@@ -128,9 +128,9 @@ jobs:
           find "$SCCACHE_DIR" -type f ! -anewer /tmp/sccache_prune_ref -delete
           SCCACHE_COUNT_AFTER=$(find "$SCCACHE_DIR" -type f 2>/dev/null | wc -l)
           if [ "$SCCACHE_COUNT_AFTER" != "$SCCACHE_COUNT_BEFORE" ] || [ "$PRUNED" -gt 0 ]; then
-            echo "SCCACHE_CHANGED=true" >> $GITHUB_ENV
+            echo "SCCACHE_CHANGED=true" >> "$GITHUB_ENV"
           else
-            echo "SCCACHE_CHANGED=false" >> $GITHUB_ENV
+            echo "SCCACHE_CHANGED=false" >> "$GITHUB_ENV"
           fi
 
       - name: Save sccache cache
