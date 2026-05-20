@@ -14,6 +14,12 @@ inputs:
   pool_subdir:
     description: Pool subdirectory for this package (e.g. l/lldap)
     required: true
+  codename:
+    description: Distribution codename (e.g. trixie, noble)
+    required: true
+  arch:
+    description: Package architecture (e.g. amd64)
+    required: true
   apt_signing_key:
     description: Armored GPG private key for signing APT repo metadata
     required: true
@@ -45,7 +51,7 @@ runs:
       run: |
         touch gh-pages-work/.nojekyll
         cp "$GITHUB_WORKSPACE/KEY.asc" gh-pages-work/KEY.asc
-        POOL_DIR="gh-pages-work/pool/main/${{ inputs.pool_subdir }}"
+        POOL_DIR="gh-pages-work/pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
         mkdir -p "$POOL_DIR"
         cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
 
@@ -63,8 +69,8 @@ runs:
         cd gh-pages-work
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        mkdir -p versions
-        echo "${{ inputs.version }}" > "versions/${{ inputs.package }}.txt"
+        mkdir -p "versions/${{ inputs.codename }}/${{ inputs.arch }}"
+        echo "${{ inputs.version }}" > "versions/${{ inputs.codename }}/${{ inputs.arch }}/${{ inputs.package }}.txt"
         git add -A
         if [ "$GHPAGES_EXISTS" = "true" ]; then
           git commit --amend -m "${{ inputs.package }}: package ${{ inputs.version }}"

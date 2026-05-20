@@ -1,20 +1,38 @@
 #!/bin/sh
 set -e
 
-REPO_ROOT=$1
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+REPO_ROOT=$(readlink -f "$1")
 
 echo "$APT_SIGNING_KEY" | gpg --import
 
 cd "$REPO_ROOT"
 
-mkdir -p dists/trixie/main/binary-amd64
+conf=$(mktemp)
+trap 'rm -f "$conf"' EXIT
 
-dpkg-scanpackages --multiversion pool/main \
-  > dists/trixie/main/binary-amd64/Packages
-gzip -kf dists/trixie/main/binary-amd64/Packages
+for codename_dir in pool/*/; do
+  [ -d "$codename_dir" ] || continue
+  codename=$(basename "$codename_dir")
+  [ -d "pool/$codename/main" ] || continue
 
-cd dists/trixie
-apt-ftparchive -c "$SCRIPT_DIR/../aptftp.conf" release . > Release
-gpg --batch --yes --clearsign -o InRelease Release
-gpg --batch --yes -abs -o Release.gpg Release
+  mkdir -p "dists/$codename/main/binary-amd64"
+
+  dpkg-scanpackages --multiversion "pool/$codename/main" \
+    > "dists/$codename/main/binary-amd64/Packages"
+  gzip -kf "dists/$codename/main/binary-amd64/Packages"
+
+  cat > "$conf" <<EOF
+APT::FTPArchive::Release {
+  Origin "$GITHUB_REPOSITORY_OWNER";
+  Label "$GITHUB_REPOSITORY";
+  Suite "$codename";
+  Codename "$codename";
+  Architectures "amd64";
+  Components "main";
+};
+EOF
+
+  apt-ftparchive -c "$conf" release "dists/$codename" > "dists/$codename/Release"
+  gpg --batch --yes --clearsign -o "dists/$codename/InRelease" "dists/$codename/Release"
+  gpg --batch --yes -abs -o "dists/$codename/Release.gpg" "dists/$codename/Release"
+done
