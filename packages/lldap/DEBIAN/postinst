@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+case "$1" in
+  configure)
+    if ! getent passwd lldap > /dev/null; then
+      adduser --system --group --home /var/lib/lldap --no-create-home \
+              --shell /usr/sbin/nologin lldap
+    fi
+    install -d -o lldap -g lldap -m 750 /var/lib/lldap
+    systemctl daemon-reload
+    systemctl enable lldap
+    if systemctl is-active --quiet lldap; then
+      systemctl restart lldap
+    fi
+    ;;
+esac

@@ -1,0 +1,15 @@
+[Unit]
+Description=LLDAP lightweight LDAP server
+After=network.target
+
+[Service]
+User=lldap
+Group=lldap
+ExecStart=/usr/bin/lldap run --config-file /etc/lldap/lldap_config.toml
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/lldap
+
+[Install]
+WantedBy=multi-user.target

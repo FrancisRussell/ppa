@@ -1,0 +1,11 @@
+ldap_host = "127.0.0.1"
+ldap_port = 3890
+http_host = "127.0.0.1"
+http_port = 17170
+http_url = "https://ldap.example.com"
+ldap_base_dn = "dc=example,dc=com"
+database_url = "sqlite:///var/lib/lldap/users.db?mode=rwc"
+assets_path = "/usr/share/lldap/app"
+
+[smtp_options]
+enable_password_reset = false
