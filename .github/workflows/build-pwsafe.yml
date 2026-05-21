@@ -9,11 +9,20 @@ on:
         description: Rebuild even if version unchanged
         type: boolean
         default: false
+
   push:
     branches: [main]
     paths:
       - 'packages/pwsafe/**'
       - 'build-targets.yaml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/pwsafe/**'
+      - 'build-targets.yaml'
+      - '.github/actions/publish-ppa/**'
+      - '.github/actions/build-matrix/**'
+      - 'scripts/update-repo.sh'
 
 jobs:
   check:
@@ -52,6 +61,8 @@ jobs:
           # even if the upstream version is already published.
           # push to build-targets.yaml alone leaves force=false; the matrix
           # action handles new targets naturally (no version file yet).
+          # pull_request: always force=true so the build runs even if the
+          # current version is already published.
           FORCE=false
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             FORCE="$DISPATCH_FORCE"
@@ -61,6 +72,8 @@ jobs:
             if echo "$CHANGED" | grep -q '^packages/'; then
               FORCE=true
             fi
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            FORCE=true
           fi
           echo "force=$FORCE" >> "$GITHUB_OUTPUT"
 
@@ -126,3 +139,4 @@ jobs:
           arch: ${{ matrix.arch }}
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: ${{ github.ref != 'refs/heads/main' }}

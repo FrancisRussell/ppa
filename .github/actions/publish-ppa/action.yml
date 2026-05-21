@@ -26,6 +26,9 @@ inputs:
   github_token:
     description: GitHub token for pushing to gh-pages and main
     required: true
+  dry_run:
+    description: Stage APT repo but skip committing and pushing to gh-pages
+    default: 'false'
 
 runs:
   using: composite
@@ -78,6 +81,11 @@ runs:
         }
 
         stage
+
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          echo "Dry run: skipping gh-pages commit and push"
+          exit 0
+        fi
 
         # Retry up to 3 times: if --force-with-lease fails a concurrent publish
         # job has pushed since we cloned. Fetch, reset to the new remote state,
