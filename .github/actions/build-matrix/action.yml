@@ -1,0 +1,52 @@
+name: Build matrix
+description: >
+  Generates a JSON matrix of distribution targets that need building for a
+  package, by comparing the requested version against what is recorded on
+  gh-pages.
+
+inputs:
+  package:
+    description: Package name (e.g. lldap)
+    required: true
+  version:
+    description: Upstream version to build (e.g. v0.6.3)
+    required: true
+  force:
+    description: Rebuild even if version unchanged
+    default: 'false'
+  targets:
+    description: Path to YAML file listing build targets
+    default: .github/build-targets.yaml
+
+outputs:
+  matrix:
+    description: JSON array of targets needing a build, empty array if none
+    value: ${{ steps.generate.outputs.matrix }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate matrix
+      id: generate
+      shell: bash
+      env:
+        FORCE: ${{ inputs.force }}
+      run: |
+        git fetch origin gh-pages 2>/dev/null || true
+        MATRIX='[]'
+        while IFS= read -r target; do
+          codename=$(echo "$target" | jq -r '.codename')
+          arch=$(echo "$target" | jq -r '.arch')
+          container=$(echo "$target" | jq -r '.container')
+          CURRENT=$(git show FETCH_HEAD:"versions/$codename/$arch/${{ inputs.package }}.txt" \
+            2>/dev/null || echo none)
+          if [ "${{ inputs.version }}" != "$CURRENT" ] || [ "$FORCE" = "true" ]; then
+            MATRIX=$(echo "$MATRIX" | jq -c \
+              --arg codename "$codename" \
+              --arg arch "$arch" \
+              --arg container "$container" \
+              --arg version "${{ inputs.version }}" \
+              '. + [{"codename": $codename, "arch": $arch, "container": $container, "version": $version}]')
+          fi
+        done < <(yq -o=json '.' "${{ inputs.targets }}" | jq -c '.[]')
+        echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"

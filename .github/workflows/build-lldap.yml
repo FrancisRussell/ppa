@@ -14,35 +14,31 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.version.outputs.matrix }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check upstream versions
+      - name: Get latest LLDAP version
         id: version
         env:
-          FORCE: ${{ inputs.force }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LATEST=$(curl -s https://api.github.com/repos/lldap/lldap/releases/latest \
+          VERSION=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/lldap/lldap/releases/latest \
             | jq -r '.tag_name')
-          git fetch origin gh-pages 2>/dev/null || true
-          MATRIX='[]'
-          for target in 'trixie|amd64|debian:trixie' 'noble|amd64|ubuntu:noble'; do
-            codename=$(echo "$target" | cut -d'|' -f1)
-            arch=$(echo "$target" | cut -d'|' -f2)
-            container=$(echo "$target" | cut -d'|' -f3)
-            CURRENT=$(git show FETCH_HEAD:"versions/$codename/$arch/lldap.txt" 2>/dev/null \
-              || echo none)
-            if [ "$LATEST" != "$CURRENT" ] || [ "$FORCE" = "true" ]; then
-              MATRIX=$(echo "$MATRIX" | jq -c \
-                --arg codename "$codename" \
-                --arg arch "$arch" \
-                --arg container "$container" \
-                --arg latest "$LATEST" \
-                '. + [{"codename": $codename, "arch": $arch, "container": $container, "latest": $latest}]')
-            fi
-          done
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "Failed to fetch latest LLDAP version" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate build matrix
+        id: matrix
+        uses: ./.github/actions/build-matrix
+        with:
+          package: lldap
+          version: ${{ steps.version.outputs.version }}
+          force: ${{ inputs.force || false }}
 
   build:
     needs: check
@@ -50,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
     strategy:
-      max-parallel: 1
+      max-parallel: 1  # each job amends the single gh-pages commit; concurrent pushes would race
       matrix:
         include: ${{ fromJson(needs.check.outputs.matrix) }}
     permissions:
@@ -77,7 +73,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: lldap-cargo-${{ matrix.latest }}
+          key: lldap-cargo-${{ matrix.version }}
           restore-keys: |
             lldap-cargo-
 
@@ -85,9 +81,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.latest }}-${{ github.run_id }}
+          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-${{ github.run_id }}
           restore-keys: |
-            lldap-sccache-${{ matrix.codename }}-${{ matrix.latest }}-
+            lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-
             lldap-sccache-${{ matrix.codename }}-
 
       - name: Mark sccache entries for pruning
@@ -105,7 +101,7 @@ jobs:
 
       - name: Clone LLDAP source
         run: |
-          git clone --branch ${{ matrix.latest }} --depth 1 \
+          git clone --branch ${{ matrix.version }} --depth 1 \
             https://github.com/lldap/lldap src/lldap
 
       - name: Install Rust toolchain + wasm target
@@ -152,20 +148,20 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.latest }}-${{ github.run_id }}
+          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-${{ github.run_id }}
 
       - name: Package .deb
         run: |
           mkdir -p /tmp/lldap-pkg
           ./packages/lldap/build.sh \
-            ${{ matrix.latest }} \
+            ${{ matrix.version }} \
             src/lldap \
             /tmp/lldap-pkg
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
         with:
-          version: ${{ matrix.latest }}
+          version: ${{ matrix.version }}
           package: lldap
           deb_dir: /tmp/lldap-pkg
           pool_subdir: l/lldap
