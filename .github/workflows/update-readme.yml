@@ -3,10 +3,14 @@ name: Update readme
 on:
   push:
     branches: [main]
-    paths: [README.md]
+    paths:
+      - README.md
+      - .github/workflows/update-readme.yml
   pull_request:
     branches: [main]
-    paths: [README.md]
+    paths:
+      - README.md
+      - .github/workflows/update-readme.yml
   workflow_dispatch:
 
 jobs:
@@ -23,23 +27,25 @@ jobs:
       - name: Install python3-markdown
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends python3-markdown
+          sudo apt-get install -y --no-install-recommends python3-markdown python3-pygments
 
       - name: Compile README.md to index.html
         run: |
-          BODY=$(python3 -m markdown -x extra README.md)
-          cat > index.html <<'EOF'
+          BODY=$(python3 -m markdown -x extra -x codehilite README.md)
+          HIGHLIGHT_CSS=$(pygmentize -S default -f html -a .codehilite)
+          cat > index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+            <style>$HIGHLIGHT_CSS</style>
           </head>
           <body>
+          $BODY
+          </body></html>
           EOF
-          echo "$BODY" >> index.html
-          echo "</body></html>" >> index.html
 
       - name: Push index.html to gh-pages
         run: |
