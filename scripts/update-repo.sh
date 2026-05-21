@@ -1,7 +1,8 @@
 #!/bin/sh
 set -e
 
-REPO_ROOT=$(readlink -f "$1")
+REPO_ROOT=$(readlink -f "${1?repo root required}")
+ARCH=${2?arch required}
 
 echo "$APT_SIGNING_KEY" | gpg --import
 
@@ -15,11 +16,11 @@ for codename_dir in pool/*/; do
   codename=$(basename "$codename_dir")
   [ -d "pool/$codename/main" ] || continue
 
-  mkdir -p "dists/$codename/main/binary-amd64"
+  mkdir -p "dists/$codename/main/binary-$ARCH"
 
   dpkg-scanpackages --multiversion "pool/$codename/main" \
-    > "dists/$codename/main/binary-amd64/Packages"
-  gzip -kf "dists/$codename/main/binary-amd64/Packages"
+    > "dists/$codename/main/binary-$ARCH/Packages"
+  gzip -kf "dists/$codename/main/binary-$ARCH/Packages"
 
   cat > "$conf" <<EOF
 APT::FTPArchive::Release {
@@ -27,7 +28,7 @@ APT::FTPArchive::Release {
   Label "$GITHUB_REPOSITORY";
   Suite "$codename";
   Codename "$codename";
-  Architectures "amd64";
+  Architectures "$ARCH";
   Components "main";
 };
 EOF

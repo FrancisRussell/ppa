@@ -74,7 +74,7 @@ runs:
           cp "$GITHUB_WORKSPACE/KEY.asc" KEY.asc
           mkdir -p "$POOL_DIR"
           cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
-          "$GITHUB_WORKSPACE/scripts/update-repo.sh" .
+          "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
           mkdir -p "$(dirname "$VERSION_FILE")"
           echo "${{ inputs.version }}" > "$VERSION_FILE"
           git add -A
