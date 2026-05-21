@@ -197,7 +197,8 @@ jobs:
           ./packages/lldap/build.sh \
             ${{ matrix.version }} \
             src/lldap \
-            /tmp/lldap-pkg
+            /tmp/lldap-pkg \
+            ${{ matrix.arch }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
