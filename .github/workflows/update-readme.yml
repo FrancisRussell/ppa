@@ -1,4 +1,4 @@
-name: Update site
+name: Update readme
 
 on:
   push:
@@ -12,8 +12,11 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    environment: github-pages
     permissions:
       contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v6
 
@@ -59,3 +62,7 @@ jobs:
             git commit -m "Update index.html from README.md"
             git push origin gh-pages
           fi
+
+      - name: Deploy site
+        if: github.ref == 'refs/heads/main'
+        uses: ./.github/actions/deploy-site

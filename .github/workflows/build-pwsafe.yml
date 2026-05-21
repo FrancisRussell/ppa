@@ -140,3 +140,15 @@ jobs:
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: github-pages
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/deploy-site
