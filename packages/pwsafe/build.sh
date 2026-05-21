@@ -17,11 +17,13 @@ cp "$SCRIPT_DIR/debian/changelog" "$SRC_DIR/debian/changelog"
 
 cd "$SRC_DIR"
 
+COMMIT=$(git rev-parse HEAD)
+
 # Prepend a new entry for this build
 DEBEMAIL="francis+ppa@unchartedbackwaters.co.uk" DEBFULLNAME="Francis Russell" \
   dch --newversion "$VERSION_PKG" \
       --distribution "$CODENAME" \
-      "Automated build from nsd20463/pwsafe master."
+      "Automated build from nsd20463/pwsafe commit $COMMIT."
 
 dpkg-buildpackage -b --no-sign
 
