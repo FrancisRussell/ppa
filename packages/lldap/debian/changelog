@@ -1,0 +1,5 @@
+lldap (0~ppa0) UNRELEASED; urgency=medium
+
+  * Initial packaging.
+
+ -- Francis Russell <francis+ppa@unchartedbackwaters.co.uk>  Thu, 21 May 2026 00:00:00 +0000

@@ -106,7 +106,7 @@ jobs:
       - name: Install build deps
         run: |
           apt-get install -y --no-install-recommends wget build-essential pkg-config libssl-dev \
-            dpkg-dev sccache
+            dpkg-dev debhelper devscripts libdistro-info-perl sccache
 
       - name: Restore cargo cache
         uses: actions/cache@v5
@@ -198,7 +198,7 @@ jobs:
             ${{ matrix.version }} \
             src/lldap \
             /tmp/lldap-pkg \
-            ${{ matrix.arch }}
+            ${{ matrix.codename }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa

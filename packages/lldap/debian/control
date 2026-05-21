@@ -1,0 +1,13 @@
+Source: lldap
+Section: net
+Priority: optional
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+
+Package: lldap
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: lightweight LDAP server for authentication
+ LLDAP provides a simple LDAP interface backed by SQLite,
+ with a web UI for user management.

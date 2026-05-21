@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -d debian/lldap/usr/bin
+	install -d debian/lldap/usr/share/lldap/app/pkg
+	install -d debian/lldap/usr/share/lldap/app/static
+	install -d debian/lldap/etc/lldap
+	install -d debian/lldap/lib/systemd/system
+
+	install -m 755 target/release/lldap                debian/lldap/usr/bin/lldap
+	install -m 755 target/release/lldap_migration_tool debian/lldap/usr/bin/lldap_migration_tool
+	install -m 755 target/release/lldap_set_password   debian/lldap/usr/bin/lldap_set_password
+
+	install -m 644 app/index.html                      debian/lldap/usr/share/lldap/app/index.html
+	cp -r app/pkg/.    debian/lldap/usr/share/lldap/app/pkg/
+	cp -r app/static/. debian/lldap/usr/share/lldap/app/static/
+
+	install -m 640 debian/lldap_config.toml.default    debian/lldap/etc/lldap/lldap_config.toml
+	install -m 644 debian/lldap.service                debian/lldap/lib/systemd/system/lldap.service
