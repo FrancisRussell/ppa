@@ -2,15 +2,15 @@
 
 Personal APT repository for Debian and Ubuntu (amd64).
 
-Supported distributions:
+## Supported distributions (subject to change)
 
-- Debian Trixie
-- Ubuntu Noble (24.04 LTS)
+- Debian Trixie.
+- Ubuntu Noble (24.04 LTS).
 
-## Packages
+## Packages (subject to change)
 
-- **lldap** — Lightweight LDAP server with a web UI
-- **pwsafe** — Command-line password safe compatible with PasswordSafe databases
+- **lldap** — Lightweight LDAP server with a web UI.
+- **pwsafe** — Command-line password safe compatible with PasswordSafe databases.
 
 ## Adding this repository
 
