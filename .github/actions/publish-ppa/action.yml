@@ -46,40 +46,56 @@ runs:
           echo "GHPAGES_EXISTS=false" >> "$GITHUB_ENV"
         fi
 
-    - name: Update gh-pages content
-      shell: sh
-      run: |
-        touch gh-pages-work/.nojekyll
-        cp "$GITHUB_WORKSPACE/KEY.asc" gh-pages-work/KEY.asc
-        POOL_DIR="gh-pages-work/pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
-        mkdir -p "$POOL_DIR"
-        cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
-
-    - name: Update APT repo
-      shell: sh
+    - name: Commit and push gh-pages
+      shell: bash
       env:
         APT_SIGNING_KEY: ${{ inputs.apt_signing_key }}
-      run: |
-        "$GITHUB_WORKSPACE/scripts/update-repo.sh" gh-pages-work
-
-    - name: Commit and push gh-pages
-      shell: sh
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE/gh-pages-work"
         cd gh-pages-work
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        mkdir -p "versions/${{ inputs.codename }}/${{ inputs.arch }}"
-        echo "${{ inputs.version }}" > "versions/${{ inputs.codename }}/${{ inputs.arch }}/${{ inputs.package }}.txt"
-        git add -A
-        if [ "$GHPAGES_EXISTS" = "true" ]; then
-          git commit --amend -m "${{ inputs.package }}: package ${{ inputs.version }}"
-          git push --force-with-lease origin gh-pages
-          # Prune must run after push — before push the amended commit is only
-          # referenced locally, making the previous commit's objects appear
-          # unreferenced from the remote's perspective.
-          git lfs prune --remote
-        else
-          git commit -m "${{ inputs.package }}: package ${{ inputs.version }}"
-          git push origin gh-pages
-        fi
+
+        POOL_DIR="pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
+        VERSION_FILE="versions/${{ inputs.codename }}/${{ inputs.arch }}/${{ inputs.package }}.txt"
+        COMMIT_MSG="${{ inputs.package }}: package ${{ inputs.version }}"
+
+        stage() {
+          touch .nojekyll
+          cp "$GITHUB_WORKSPACE/KEY.asc" KEY.asc
+          mkdir -p "$POOL_DIR"
+          cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
+          "$GITHUB_WORKSPACE/scripts/update-repo.sh" .
+          mkdir -p "$(dirname "$VERSION_FILE")"
+          echo "${{ inputs.version }}" > "$VERSION_FILE"
+          git add -A
+        }
+
+        stage
+
+        # Retry up to 3 times: if --force-with-lease fails a concurrent publish
+        # job has pushed since we cloned. Fetch, reset to the new remote state,
+        # and re-stage so the next amend includes both jobs' packages and
+        # fully regenerated APT metadata before retrying.
+        for attempt in 1 2 3; do
+          if [ "$GHPAGES_EXISTS" = "true" ]; then
+            git commit --amend -m "$COMMIT_MSG"
+            if git push --force-with-lease origin gh-pages; then
+              break
+            elif [ "$attempt" -lt 3 ]; then
+              # A concurrent publish job pushed while we were building; fetch the
+              # new remote state, reset on top of it, and re-stage so that the
+              # next amend includes both jobs' packages and regenerated metadata.
+              git fetch origin gh-pages
+              git reset --hard origin/gh-pages
+              stage
+            else
+              echo "Failed to push to gh-pages after 3 attempts" >&2
+              exit 1
+            fi
+          else
+            git commit -m "$COMMIT_MSG"
+            git push origin gh-pages
+            break
+          fi
+        done

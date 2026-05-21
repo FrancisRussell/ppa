@@ -46,7 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
     strategy:
-      max-parallel: 1  # each job amends the single gh-pages commit; concurrent pushes would race
       matrix:
         include: ${{ fromJson(needs.check.outputs.matrix) }}
     permissions:
