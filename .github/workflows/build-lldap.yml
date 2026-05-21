@@ -93,7 +93,7 @@ jobs:
       - name: Install build deps
         run: |
           apt-get install -y --no-install-recommends wget build-essential pkg-config libssl-dev \
-            dpkg-dev apt-utils gnupg sccache
+            dpkg-dev sccache
 
       - name: Restore cargo cache
         uses: actions/cache@v5

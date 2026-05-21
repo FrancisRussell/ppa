@@ -10,6 +10,7 @@ Supported distributions:
 ## Packages
 
 - **lldap** — Lightweight LDAP server with a web UI
+- **pwsafe** — Command-line password safe compatible with PasswordSafe databases
 
 ## Adding this repository
 

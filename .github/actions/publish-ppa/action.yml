@@ -30,6 +30,12 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Install dependencies
+      shell: sh
+      run: |
+        apt-get update
+        apt-get install -y --no-install-recommends apt-utils gnupg
+
     - name: Checkout gh-pages
       shell: sh
       run: |
