@@ -41,7 +41,7 @@ jobs:
           COMMIT=$(cat packages/pwsafe/commit)
           RESPONSE=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
             https://api.github.com/repos/nsd20463/pwsafe/commits/"$COMMIT")
-          DATE=$(echo "$RESPONSE" | jq -r '.commit.author.date' | cut -c1-10 | tr -d -)
+          DATE=$(echo "$RESPONSE" | jq -r '.commit.committer.date' | cut -c1-10 | tr -d -)
           if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
             echo "Failed to fetch commit date for $COMMIT" >&2
             exit 1
