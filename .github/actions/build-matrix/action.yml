@@ -16,7 +16,7 @@ inputs:
     default: 'false'
   targets:
     description: Path to YAML file listing build targets
-    default: .github/build-targets.yaml
+    default: build-targets.yaml
 
 outputs:
   matrix:
