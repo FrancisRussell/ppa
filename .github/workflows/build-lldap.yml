@@ -49,27 +49,13 @@ jobs:
       - name: Determine force flag
         id: flags
         env:
-          COMMITS_JSON: ${{ toJson(github.event.commits) }}
           EVENT_NAME: ${{ github.event_name }}
           DISPATCH_FORCE: ${{ inputs.force || 'false' }}
         run: |
-          # force=true when: (a) workflow_dispatch with force input set, or
-          # (b) push that touched packages/ — packaging change requires rebuild
-          # even if the upstream version is already published.
-          # push to build-targets.yaml alone leaves force=false; the matrix
-          # action handles new targets naturally (no version file yet).
-          # pull_request: always force=true so the build runs even if the
-          # current version is already published.
           FORCE=false
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             FORCE="$DISPATCH_FORCE"
-          elif [ "$EVENT_NAME" = "push" ]; then
-            CHANGED=$(echo "$COMMITS_JSON" | \
-              jq -r '.[].modified[], .[].added[], .[].removed[]' 2>/dev/null || echo "")
-            if echo "$CHANGED" | grep -q '^packages/'; then
-              FORCE=true
-            fi
-          elif [ "$EVENT_NAME" = "pull_request" ]; then
+          elif [ "$EVENT_NAME" = "push" ] || [ "$EVENT_NAME" = "pull_request" ]; then
             FORCE=true
           fi
           echo "force=$FORCE" >> "$GITHUB_OUTPUT"
