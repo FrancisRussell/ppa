@@ -32,18 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Get latest LLDAP version
+      - name: Resolve lldap source
         id: version
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
-            https://api.github.com/repos/lldap/lldap/releases/latest \
-            | jq -r '.tag_name')
-          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "Failed to fetch latest LLDAP version" >&2
-            exit 1
-          fi
+          SOURCE=$(scripts/resolve-source.sh lldap)
+          VERSION=$(echo "$SOURCE" | jq -r '.ref')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Determine force flag

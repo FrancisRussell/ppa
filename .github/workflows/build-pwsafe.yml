@@ -33,13 +33,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Get pinned pwsafe commit
+      - name: Resolve pwsafe source
         id: version
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMIT=$(cat packages/pwsafe/recipe/commit)
-          RESPONSE=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+          SOURCE=$(scripts/resolve-source.sh pwsafe)
+          COMMIT=$(echo "$SOURCE" | jq -r '.commit')
+          RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/nsd20463/pwsafe/commits/"$COMMIT")
           DATE=$(echo "$RESPONSE" | jq -r '.commit.committer.date' | cut -c1-10 | tr -d -)
           if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
