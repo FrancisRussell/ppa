@@ -16,7 +16,7 @@ override_dh_auto_install:
 	install -d debian/lldap/usr/share/lldap/app/pkg
 	install -d debian/lldap/usr/share/lldap/app/static
 	install -d debian/lldap/etc/lldap
-	install -d debian/lldap/lib/systemd/system
+	install -d debian/lldap/usr/lib/systemd/system
 
 	install -m 755 target/release/lldap                debian/lldap/usr/bin/lldap
 	install -m 755 target/release/lldap_migration_tool debian/lldap/usr/bin/lldap_migration_tool
@@ -27,4 +27,4 @@ override_dh_auto_install:
 	cp -r app/static/. debian/lldap/usr/share/lldap/app/static/
 
 	install -m 640 debian/lldap_config.toml.default    debian/lldap/etc/lldap/lldap_config.toml
-	install -m 644 debian/lldap.service                debian/lldap/lib/systemd/system/lldap.service
+	install -m 644 debian/lldap.service                debian/lldap/usr/lib/systemd/system/lldap.service
