@@ -7,10 +7,11 @@ case "$1" in
               --shell /usr/sbin/nologin lldap
     fi
     install -d -o lldap -g lldap -m 750 /var/lib/lldap
-    systemctl daemon-reload
-    systemctl enable lldap
-    if systemctl is-active --quiet lldap; then
-      systemctl restart lldap
+    if [ -d /run/systemd/system ]; then
+      systemctl daemon-reload
+      if [ -n "$2" ] && systemctl is-active --quiet lldap; then
+        systemctl restart lldap
+      fi
     fi
     ;;
 esac
