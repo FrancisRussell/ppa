@@ -75,7 +75,7 @@ runs:
           mkdir -p "$POOL_DIR"
           UPSTREAM_VERSION="${{ inputs.version }}"
           UPSTREAM_VERSION="${UPSTREAM_VERSION#v}"
-          find "$POOL_DIR" -name "${{ inputs.package }}_${UPSTREAM_VERSION}~ppa*_${{ inputs.arch }}.deb" -delete
+          find "$POOL_DIR" -name "*_${UPSTREAM_VERSION}~ppa*_${{ inputs.arch }}.deb" -delete
           cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
           "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
           mkdir -p "$(dirname "$VERSION_FILE")"

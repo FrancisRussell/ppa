@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      repo: ${{ steps.version.outputs.repo }}
     steps:
       - uses: actions/checkout@v6
 
@@ -39,7 +40,9 @@ jobs:
         run: |
           SOURCE=$(scripts/resolve-source.sh lldap)
           VERSION=$(echo "$SOURCE" | jq -r '.ref')
+          REPO=$(echo "$SOURCE" | jq -r '.repo')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
 
       - name: Determine force flag
         id: flags
@@ -124,7 +127,13 @@ jobs:
       - name: Clone LLDAP source
         run: |
           git clone --branch ${{ matrix.version }} --depth 1 \
-            https://github.com/lldap/lldap src/lldap
+            ${{ needs.check.outputs.repo }} src/lldap
+
+      - name: Get lldap version
+        id: version
+        run: |
+          VERSION=$(packages/lldap/recipe/get-version.sh src/lldap)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Install Rust toolchain + wasm target
         run: |
@@ -176,7 +185,7 @@ jobs:
         run: |
           mkdir -p /tmp/lldap-pkg
           ./packages/lldap/recipe/build.sh \
-            ${{ matrix.version }} \
+            ${{ steps.version.outputs.version }} \
             src/lldap \
             /tmp/lldap-pkg \
             ${{ matrix.codename }}
@@ -184,7 +193,7 @@ jobs:
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
         with:
-          version: ${{ matrix.version }}
+          version: ${{ steps.version.outputs.version }}
           package: lldap
           deb_dir: /tmp/lldap-pkg
           pool_subdir: l/lldap

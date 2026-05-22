@@ -30,6 +30,7 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
       commit: ${{ steps.version.outputs.commit }}
+      repo: ${{ steps.version.outputs.repo }}
     steps:
       - uses: actions/checkout@v6
 
@@ -40,6 +41,7 @@ jobs:
         run: |
           SOURCE=$(scripts/resolve-source.sh pwsafe)
           COMMIT=$(echo "$SOURCE" | jq -r '.commit')
+          REPO=$(echo "$SOURCE" | jq -r '.repo')
           RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/nsd20463/pwsafe/commits/"$COMMIT")
           DATE=$(echo "$RESPONSE" | jq -r '.commit.committer.date' | cut -c1-10 | tr -d -)
@@ -48,6 +50,7 @@ jobs:
             exit 1
           fi
           echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
           echo "version=0.2.2~beta+git${DATE}" >> "$GITHUB_OUTPUT"
 
       - name: Determine force flag
@@ -103,14 +106,20 @@ jobs:
 
       - name: Clone pwsafe source
         run: |
-          git clone https://github.com/nsd20463/pwsafe src/pwsafe
+          git clone ${{ needs.check.outputs.repo }} src/pwsafe
           git -C src/pwsafe checkout ${{ needs.check.outputs.commit }}
+
+      - name: Get pwsafe version
+        id: version
+        run: |
+          VERSION=$(packages/pwsafe/recipe/get-version.sh src/pwsafe)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Package .deb
         run: |
           mkdir -p /tmp/pwsafe-pkg
           ./packages/pwsafe/recipe/build.sh \
-            ${{ matrix.version }} \
+            ${{ steps.version.outputs.version }} \
             src/pwsafe \
             /tmp/pwsafe-pkg \
             ${{ matrix.codename }}
@@ -118,7 +127,7 @@ jobs:
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
         with:
-          version: ${{ matrix.version }}
+          version: ${{ steps.version.outputs.version }}
           package: pwsafe
           deb_dir: /tmp/pwsafe-pkg
           pool_subdir: p/pwsafe
