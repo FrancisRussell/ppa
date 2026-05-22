@@ -10,10 +10,10 @@ VERSION_PKG="${VERSION}~ppa$(date -u +%Y%m%d%H%M)"
 
 # Install our debian/ into the source tree
 mkdir -p "$SRC_DIR/debian"
-cp "$SCRIPT_DIR/debian/control"   "$SRC_DIR/debian/control"
-cp "$SCRIPT_DIR/debian/rules"     "$SRC_DIR/debian/rules"
-cp "$SCRIPT_DIR/debian/copyright" "$SRC_DIR/debian/copyright"
-cp "$SCRIPT_DIR/debian/changelog" "$SRC_DIR/debian/changelog"
+cp "$SCRIPT_DIR/files/debian/control"   "$SRC_DIR/debian/control"
+cp "$SCRIPT_DIR/files/debian/rules"     "$SRC_DIR/debian/rules"
+cp "$SCRIPT_DIR/files/debian/copyright" "$SRC_DIR/debian/copyright"
+cp "$SCRIPT_DIR/files/debian/changelog" "$SRC_DIR/debian/changelog"
 
 cd "$SRC_DIR"
 

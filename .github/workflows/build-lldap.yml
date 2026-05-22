@@ -180,7 +180,7 @@ jobs:
       - name: Package .deb
         run: |
           mkdir -p /tmp/lldap-pkg
-          ./packages/lldap/build.sh \
+          ./packages/lldap/recipe/build.sh \
             ${{ matrix.version }} \
             src/lldap \
             /tmp/lldap-pkg \

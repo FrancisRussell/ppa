@@ -38,7 +38,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMIT=$(cat packages/pwsafe/commit)
+          COMMIT=$(cat packages/pwsafe/recipe/commit)
           RESPONSE=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
             https://api.github.com/repos/nsd20463/pwsafe/commits/"$COMMIT")
           DATE=$(echo "$RESPONSE" | jq -r '.commit.committer.date' | cut -c1-10 | tr -d -)
@@ -98,7 +98,7 @@ jobs:
         run: |
           mk-build-deps --install --remove \
             --tool 'apt-get -y --no-install-recommends' \
-            packages/pwsafe/debian/control
+            packages/pwsafe/recipe/files/debian/control
 
       - name: Clone pwsafe source
         run: |
@@ -108,7 +108,7 @@ jobs:
       - name: Package .deb
         run: |
           mkdir -p /tmp/pwsafe-pkg
-          ./packages/pwsafe/build.sh \
+          ./packages/pwsafe/recipe/build.sh \
             ${{ matrix.version }} \
             src/pwsafe \
             /tmp/pwsafe-pkg \

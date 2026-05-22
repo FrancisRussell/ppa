@@ -8,7 +8,7 @@ CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 VERSION_NO_V="${VERSION#v}~ppa$(date -u +%Y%m%d%H%M)"
 
-cp -r "$SCRIPT_DIR/debian" "$SRC_DIR/debian"
+cp -r "$SCRIPT_DIR/files/debian" "$SRC_DIR/debian"
 
 cd "$SRC_DIR"
 
