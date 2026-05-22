@@ -6,7 +6,7 @@ SRC_DIR=$(readlink -f "${2?source directory required}")
 POOL_DIR=$(readlink -f "${3?pool directory required}")
 CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-VERSION_PKG="${VERSION}~ppa1"
+VERSION_PKG="${VERSION}~ppa$(date -u +%Y%m%d%H%M)"
 
 # Install our debian/ into the source tree
 mkdir -p "$SRC_DIR/debian"

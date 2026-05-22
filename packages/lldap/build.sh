@@ -6,7 +6,7 @@ SRC_DIR=$(readlink -f "${2?source directory required}")
 POOL_DIR=$(readlink -f "${3?pool directory required}")
 CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-VERSION_NO_V="${VERSION#v}~ppa1"
+VERSION_NO_V="${VERSION#v}~ppa$(date -u +%Y%m%d%H%M)"
 
 cp -r "$SCRIPT_DIR/debian" "$SRC_DIR/debian"
 
