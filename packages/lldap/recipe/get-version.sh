@@ -1,0 +1,1 @@
+../../../scripts/get-version-tag.sh
