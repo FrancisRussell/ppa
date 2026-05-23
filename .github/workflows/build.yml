@@ -39,9 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           FORCE_FLAG=""
-          if [ "${{ inputs.force }}" = "true" ] || \
-             [ "${{ github.event_name }}" = "push" ] || \
-             [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ inputs.force }}" = "true" ]; then
             FORCE_FLAG="--force"
           fi
           MATRIX=$(scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
