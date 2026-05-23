@@ -76,7 +76,7 @@ def main():
         "repo": source["repo"],
     }
 
-    print(json.dumps({"build_key": build_key, "metadata": metadata}))
+    print(json.dumps({"key": build_key, "meta": metadata}))
 
 
 if __name__ == "__main__":

@@ -26,14 +26,14 @@ inputs:
   github_token:
     description: GitHub token for pushing to gh-pages and main
     required: true
-  build_hash:
+  inputs_key_hash:
     description: BLAKE2b hash of the build inputs JSON
     required: true
-  build_inputs_json:
+  inputs_key:
     description: Canonical build inputs JSON (the build key)
     required: true
-  ref:
-    description: Source ref (tag or commit) for metadata
+  inputs_meta:
+    description: Build inputs metadata JSON (ref, repo — not part of the build key)
     required: true
   dry_run:
     description: Stage APT repo but skip committing and pushing to gh-pages
@@ -68,8 +68,9 @@ runs:
       shell: bash
       env:
         APT_SIGNING_KEY: ${{ inputs.apt_signing_key }}
-        BUILD_HASH: ${{ inputs.build_hash }}
-        BUILD_INPUTS_JSON: ${{ inputs.build_inputs_json }}
+        INPUTS_KEY_HASH: ${{ inputs.inputs_key_hash }}
+        INPUTS_KEY: ${{ inputs.inputs_key }}
+        INPUTS_META: ${{ inputs.inputs_meta }}
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE/gh-pages-work"
         cd gh-pages-work
@@ -77,7 +78,7 @@ runs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         POOL_DIR="pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
-        BUILD_RECORD="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}/${BUILD_HASH}.json"
+        BUILD_RECORD="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}/${INPUTS_KEY_HASH}.json"
         COMMIT_MSG="${{ inputs.package }}: package ${{ inputs.version }}"
         RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
@@ -92,9 +93,9 @@ runs:
           if [ -d "$BUILD_DIR" ]; then
             for record in "$BUILD_DIR"/*.json; do
               [ -f "$record" ] || continue
-              RECORD_VERSION=$(jq -r '.version' "$record")
+              RECORD_VERSION=$(jq -r '.output.meta.upstream_version' "$record")
               if [ "$RECORD_VERSION" = "${{ inputs.version }}" ]; then
-                jq -r '.files[]' "$record" | while IFS= read -r f; do
+                jq -r '.output.files[]' "$record" | while IFS= read -r f; do
                   rm -f "$POOL_DIR/$f"
                 done
                 rm -f "$record"
@@ -108,14 +109,17 @@ runs:
           FILES=$(find "${{ inputs.deb_dir }}" -maxdepth 1 \
             \( -name "*.deb" -o -name "*.dsc" -o -name "*.tar.*" \) \
             -printf '%f\n' | sort | jq -Rsc 'split("\n")[:-1]')
+          PACKAGE_VERSION=$(dpkg-deb -f \
+            "$(find "${{ inputs.deb_dir }}" -maxdepth 1 -name "*.deb" | head -1)" Version)
           jq -n \
-            --argjson build_key "$BUILD_INPUTS_JSON" \
+            --argjson key "$INPUTS_KEY" \
+            --argjson meta "$INPUTS_META" \
             --arg built_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --argjson files "$FILES" \
-            --arg ref "${{ inputs.ref }}" \
             --arg run_url "$RUN_URL" \
-            --arg version "${{ inputs.version }}" \
-            '{build_key: $build_key, built_at: $built_at, files: $files, ref: $ref, run_url: $run_url, version: $version}' \
+            --arg upstream_version "${{ inputs.version }}" \
+            --arg package_version "$PACKAGE_VERSION" \
+            '{inputs: {key: $key, meta: $meta}, output: {files: $files, meta: {built_at: $built_at, run_url: $run_url, upstream_version: $upstream_version, package_version: $package_version}}}' \
             > "$BUILD_RECORD"
 
           git add -A

@@ -34,6 +34,11 @@ jobs:
         with:
           lfs: false
 
+      - name: Install matrix dependencies
+        run: |
+          python3 -m venv /opt/matrix-venv
+          /opt/matrix-venv/bin/pip install rfc8785 pyyaml
+
       - name: Generate build matrix
         id: matrix
         env:
@@ -43,8 +48,9 @@ jobs:
           if [ "${{ inputs.force }}" = "true" ]; then
             FORCE_FLAG="--force"
           fi
-          MATRIX=$(scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          MATRIX=$(/opt/matrix-venv/bin/python scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
+          echo "$MATRIX"
+          echo "matrix=$(echo "$MATRIX" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin)))')" >> "$GITHUB_OUTPUT"
           GHPAGES_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
           echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 
@@ -101,7 +107,7 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git/db
-          key: ${{ matrix.package }}-cargo-${{ matrix.build_hash }}
+          key: ${{ matrix.package }}-cargo-${{ matrix.inputs_key_hash }}
           restore-keys: |
             ${{ matrix.package }}-cargo-
 
@@ -110,9 +116,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
-          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
+          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-${{ github.run_id }}
           restore-keys: |
-            ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-
+            ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-
             ${{ matrix.package }}-sccache-${{ matrix.codename }}-
 
       - name: Mark sccache entries for pruning
@@ -143,8 +149,8 @@ jobs:
 
       - name: Clone source
         run: |
-          REPO='${{ matrix.repo }}'
-          COMMIT=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.commit')
+          REPO=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.repo')
+          COMMIT=$(echo '${{ toJSON(matrix.inputs_key) }}' | jq -r '.commit')
           git clone "$REPO" src/${{ matrix.package }}
           git -C src/${{ matrix.package }} checkout "$COMMIT"
 
@@ -185,7 +191,7 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
-          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
+          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-${{ github.run_id }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
@@ -198,9 +204,9 @@ jobs:
           arch: ${{ matrix.arch }}
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          build_hash: ${{ matrix.build_hash }}
-          build_inputs_json: ${{ matrix.build_inputs_json }}
-          ref: ${{ matrix.ref }}
+          inputs_key_hash: ${{ matrix.inputs_key_hash }}
+          inputs_key: ${{ toJSON(matrix.inputs_key) }}
+          inputs_meta: ${{ toJSON(matrix.inputs_meta) }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
   deploy:

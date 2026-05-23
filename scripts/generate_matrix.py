@@ -17,6 +17,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import rfc8785
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -34,8 +35,7 @@ def compute_build_inputs(package: str, arch: str, codename: str, container: str)
 
 
 def build_hash(build_key: dict) -> str:
-    canonical = json.dumps(build_key, sort_keys=True, separators=(",", ":"))
-    return hashlib.blake2b(canonical.encode(), digest_size=32).hexdigest()
+    return hashlib.blake2b(rfc8785.dumps(build_key), digest_size=32).hexdigest()
 
 
 def hash_exists_in_ghpages(hash_str: str, codename: str, package: str, arch: str) -> bool:
@@ -63,16 +63,13 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
         container = target["container"]
 
         result = compute_build_inputs(package, arch, codename, container)
-        build_key = result["build_key"]
-        metadata = result["metadata"]
+        build_key = result["key"]
+        metadata = result["meta"]
         ref = metadata["ref"]
-        repo = metadata["repo"]
         hash_str = build_hash(build_key)
 
         if not force and hash_exists_in_ghpages(hash_str, codename, package, arch):
             continue
-
-        build_inputs_json = json.dumps(build_key, sort_keys=True, separators=(",", ":"))
 
         entries.append(
             {
@@ -82,10 +79,9 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
                 "codename": codename,
                 "arch": arch,
                 "container": container,
-                "ref": ref,
-                "repo": repo,
-                "build_hash": hash_str,
-                "build_inputs_json": build_inputs_json,
+                "inputs_key_hash": hash_str,
+                "inputs_key": build_key,
+                "inputs_meta": metadata,
             }
         )
 
@@ -111,7 +107,7 @@ def main():
     for package in packages:
         matrix.extend(build_matrix_for_package(package, force, default_targets))
 
-    print(json.dumps(matrix))
+    print(json.dumps(matrix, indent=2))
 
 
 if __name__ == "__main__":
