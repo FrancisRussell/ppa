@@ -28,7 +28,7 @@ mk-build-deps --install --remove \
 COMMIT=$(git rev-parse HEAD)
 
 # Prepend a new entry for this build
-dch --newversion "$VERSION_PKG" \
+dch --newversion "$VERSION_PKG" --force-bad-version \
       --distribution "$CODENAME" \
       "Automated build from FrancisRussell/encspot commit $COMMIT."
 
