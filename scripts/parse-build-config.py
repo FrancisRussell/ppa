@@ -12,49 +12,49 @@ def main():
     pkg = sys.argv[1]
 
     try:
-        with open(f'packages/{pkg}/caching.yml') as f:
+        with open(f"packages/{pkg}/caching.yml") as f:
             caching = yaml.safe_load(f) or {}
     except FileNotFoundError:
         caching = {}
 
     try:
-        with open(f'packages/{pkg}/recipe/build-deps.yml') as f:
+        with open(f"packages/{pkg}/recipe/build-deps.yml") as f:
             deps = yaml.safe_load(f) or {}
     except FileNotFoundError:
         deps = {}
 
-    rust = deps.get('rust', {})
-    use_sccache = caching.get('sccache', False)
-    use_cargo = caching.get('cargo', False)
+    rust = deps.get("rust", {})
+    use_sccache = caching.get("sccache", False)
+    use_cargo = caching.get("cargo", False)
 
     outputs = {
-        'use_sccache': str(use_sccache).lower(),
-        'use_cargo': str(use_cargo).lower(),
-        'apt_deps': ' '.join(deps.get('apt', [])),
-        'has_rust': 'true' if rust else 'false',
-        'rust_toolchain': rust.get('toolchain', 'stable'),
-        'rust_targets': ' '.join(rust.get('targets', [])),
-        'rust_components': ' '.join(rust.get('components', [])),
-        'cargo_tools': ' '.join(rust.get('cargo_tools', [])),
+        "use_sccache": str(use_sccache).lower(),
+        "use_cargo": str(use_cargo).lower(),
+        "apt_deps": " ".join(deps.get("apt", [])),
+        "has_rust": "true" if rust else "false",
+        "rust_toolchain": rust.get("toolchain", "stable"),
+        "rust_targets": " ".join(rust.get("targets", [])),
+        "rust_components": " ".join(rust.get("components", [])),
+        "cargo_tools": " ".join(rust.get("cargo_tools", [])),
     }
 
-    output_file = os.environ.get('GITHUB_OUTPUT')
+    output_file = os.environ.get("GITHUB_OUTPUT")
     if output_file:
-        with open(output_file, 'a') as f:
+        with open(output_file, "a") as f:
             for k, v in outputs.items():
-                f.write(f'{k}={v}\n')
+                f.write(f"{k}={v}\n")
     else:
         for k, v in outputs.items():
-            print(f'{k}={v}')
+            print(f"{k}={v}")
 
-    env_file = os.environ.get('GITHUB_ENV')
+    env_file = os.environ.get("GITHUB_ENV")
     if env_file and use_sccache:
-        with open(env_file, 'a') as f:
-            f.write('RUSTC_WRAPPER=sccache\n')
-            f.write('SCCACHE_DIR=/github/home/.cache/sccache\n')
-            f.write('CMAKE_C_COMPILER_LAUNCHER=sccache\n')
-            f.write('CMAKE_CXX_COMPILER_LAUNCHER=sccache\n')
+        with open(env_file, "a") as f:
+            f.write("RUSTC_WRAPPER=sccache\n")
+            f.write("SCCACHE_DIR=/github/home/.cache/sccache\n")
+            f.write("CMAKE_C_COMPILER_LAUNCHER=sccache\n")
+            f.write("CMAKE_CXX_COMPILER_LAUNCHER=sccache\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -16,12 +16,21 @@ Requires GITHUB_TOKEN in the environment for latest_release packages.
 import hashlib
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO_ROOT / 'scripts'))
-from resolve_source import resolve as resolve_source
+
+
+def resolve_source(package: str) -> dict:
+    result = subprocess.run(
+        [str(REPO_ROOT / "scripts" / "resolve_source.py"), package],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(result.stdout)
 
 
 def compute_recipe_files(recipe_dir: Path) -> dict:
@@ -36,7 +45,7 @@ def compute_recipe_files(recipe_dir: Path) -> dict:
     for filepath in file_paths:
         relpath = str(filepath.relative_to(recipe_dir))
         h = hashlib.blake2b(digest_size=32)
-        with open(filepath, 'rb') as f:
+        with open(filepath, "rb") as f:
             h.update(f.read())
         result[relpath] = h.hexdigest()
     return result
@@ -44,26 +53,34 @@ def compute_recipe_files(recipe_dir: Path) -> dict:
 
 def main():
     if len(sys.argv) != 5:
-        print(f'Usage: {sys.argv[0]} <package> <arch> <codename> <container>', file=sys.stderr)
+        print(
+            f"Usage: {sys.argv[0]} <package> <arch> <codename> <container>",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    package, arch, codename, container = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+    package, arch, codename, container = (
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4],
+    )
 
     source = resolve_source(package)
-    recipe_dir = REPO_ROOT / 'packages' / package / 'recipe'
+    recipe_dir = REPO_ROOT / "packages" / package / "recipe"
 
     inputs = {
-        'arch': arch,
-        'codename': codename,
-        'commit': source['commit'],
-        'container': container,
-        'package': package,
-        'recipe_files': compute_recipe_files(recipe_dir),
-        'repo': source['repo'],
+        "arch": arch,
+        "codename": codename,
+        "commit": source["commit"],
+        "container": container,
+        "package": package,
+        "recipe_files": compute_recipe_files(recipe_dir),
+        "repo": source["repo"],
     }
 
-    print(json.dumps(inputs, sort_keys=True, separators=(',', ':')))
+    print(json.dumps(inputs, sort_keys=True, separators=(",", ":")))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
