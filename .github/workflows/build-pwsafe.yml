@@ -12,68 +12,34 @@ on:
 
   push:
     branches: [main]
-    paths:
-      - 'packages/pwsafe/**'
-      - 'build-targets.yaml'
   pull_request:
     branches: [main]
-    paths:
-      - 'packages/pwsafe/**'
-      - 'build-targets.yaml'
-      - '.github/actions/publish-ppa/**'
-      - '.github/actions/build-matrix/**'
-      - 'scripts/update-repo.sh'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
-      commit: ${{ steps.version.outputs.commit }}
-      repo: ${{ steps.version.outputs.repo }}
     steps:
       - uses: actions/checkout@v6
 
-      - name: Resolve pwsafe source
-        id: version
+      - name: Generate build matrix
+        id: matrix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SOURCE=$(scripts/resolve_source.py pwsafe)
-          COMMIT=$(echo "$SOURCE" | jq -r '.commit')
-          REPO=$(echo "$SOURCE" | jq -r '.repo')
-          RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/nsd20463/pwsafe/commits/"$COMMIT")
-          DATE=$(echo "$RESPONSE" | jq -r '.commit.committer.date' | cut -c1-10 | tr -d -)
-          if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
-            echo "Failed to fetch commit date for $COMMIT" >&2
-            exit 1
+          FORCE_FLAG=""
+          if [ "${{ inputs.force }}" = "true" ] || \
+             [ "${{ github.event_name }}" = "push" ] || \
+             [ "${{ github.event_name }}" = "pull_request" ]; then
+            FORCE_FLAG="--force"
           fi
-          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
-          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
-          echo "version=0.2.2~beta+git${DATE}" >> "$GITHUB_OUTPUT"
-
-      - name: Determine force flag
-        id: flags
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          DISPATCH_FORCE: ${{ inputs.force || 'false' }}
-        run: |
-          FORCE=false
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            FORCE="$DISPATCH_FORCE"
-          elif [ "$EVENT_NAME" = "push" ] || [ "$EVENT_NAME" = "pull_request" ]; then
-            FORCE=true
-          fi
-          echo "force=$FORCE" >> "$GITHUB_OUTPUT"
-
-      - name: Generate build matrix
-        id: matrix
-        uses: ./.github/actions/build-matrix
-        with:
-          package: pwsafe
-          version: ${{ steps.version.outputs.version }}
-          force: ${{ steps.flags.outputs.force }}
+          MATRIX=$(scripts/generate_matrix.py pwsafe $FORCE_FLAG)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
   build:
     needs: check
@@ -89,7 +55,7 @@ jobs:
       - name: Install bootstrap deps
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl
+          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl jq
 
       - uses: actions/checkout@v6
 
@@ -106,8 +72,10 @@ jobs:
 
       - name: Clone pwsafe source
         run: |
-          git clone ${{ needs.check.outputs.repo }} src/pwsafe
-          git -C src/pwsafe checkout ${{ needs.check.outputs.commit }}
+          REPO=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.repo')
+          COMMIT=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.commit')
+          git clone "$REPO" src/pwsafe
+          git -C src/pwsafe checkout "$COMMIT"
 
       - name: Get pwsafe version
         id: version
@@ -135,6 +103,9 @@ jobs:
           arch: ${{ matrix.arch }}
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          build_hash: ${{ matrix.build_hash }}
+          build_inputs_json: ${{ matrix.build_inputs_json }}
+          ref: ${{ matrix.ref }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
   deploy:

@@ -3,7 +3,7 @@ description: Places a built .deb into gh-pages, regenerates APT metadata, and co
 
 inputs:
   version:
-    description: Package version (e.g. v0.6.3)
+    description: Package version (e.g. 0.6.3)
     required: true
   package:
     description: Package name (e.g. lldap)
@@ -26,6 +26,15 @@ inputs:
   github_token:
     description: GitHub token for pushing to gh-pages and main
     required: true
+  build_hash:
+    description: BLAKE2b hash of the build inputs JSON
+    required: true
+  build_inputs_json:
+    description: Canonical build inputs JSON (the build key)
+    required: true
+  ref:
+    description: Source ref (tag or commit) for metadata
+    required: true
   dry_run:
     description: Stage APT repo but skip committing and pushing to gh-pages
     default: 'false'
@@ -37,7 +46,7 @@ runs:
       shell: sh
       run: |
         apt-get update
-        apt-get install -y --no-install-recommends apt-utils gnupg
+        apt-get install -y --no-install-recommends apt-utils gnupg jq
 
     - name: Checkout gh-pages
       shell: sh
@@ -59,6 +68,8 @@ runs:
       shell: bash
       env:
         APT_SIGNING_KEY: ${{ inputs.apt_signing_key }}
+        BUILD_HASH: ${{ inputs.build_hash }}
+        BUILD_INPUTS_JSON: ${{ inputs.build_inputs_json }}
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE/gh-pages-work"
         cd gh-pages-work
@@ -67,19 +78,38 @@ runs:
 
         POOL_DIR="pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
         VERSION_FILE="versions/${{ inputs.codename }}/${{ inputs.arch }}/${{ inputs.package }}.txt"
+        BUILD_RECORD="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}/${BUILD_HASH}.json"
         COMMIT_MSG="${{ inputs.package }}: package ${{ inputs.version }}"
+        RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
         stage() {
           touch .nojekyll
           cp "$GITHUB_WORKSPACE/KEY.asc" KEY.asc
+
           mkdir -p "$POOL_DIR"
           UPSTREAM_VERSION="${{ inputs.version }}"
           UPSTREAM_VERSION="${UPSTREAM_VERSION#v}"
           find "$POOL_DIR" -name "*_${UPSTREAM_VERSION}~ppa*_${{ inputs.arch }}.deb" -delete
           cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
           "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
+
           mkdir -p "$(dirname "$VERSION_FILE")"
           echo "${{ inputs.version }}" > "$VERSION_FILE"
+
+          mkdir -p "$(dirname "$BUILD_RECORD")"
+          FILES=$(find "${{ inputs.deb_dir }}" -maxdepth 1 \
+            \( -name "*.deb" -o -name "*.dsc" -o -name "*.tar.*" \) \
+            -printf '%f\n' | sort | jq -Rsc 'split("\n")[:-1]')
+          jq -n \
+            --argjson build_key "$BUILD_INPUTS_JSON" \
+            --arg built_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --argjson files "$FILES" \
+            --arg ref "${{ inputs.ref }}" \
+            --arg run_url "$RUN_URL" \
+            --arg version "${{ inputs.version }}" \
+            '{build_key: $build_key, built_at: $built_at, files: $files, ref: $ref, run_url: $run_url, version: $version}' \
+            > "$BUILD_RECORD"
+
           git add -A
         }
 
@@ -100,9 +130,6 @@ runs:
             if git push --force-with-lease origin gh-pages; then
               break
             elif [ "$attempt" -lt 3 ]; then
-              # A concurrent publish job pushed while we were building; fetch the
-              # new remote state, reset on top of it, and re-stage so that the
-              # next amend includes both jobs' packages and regenerated metadata.
               git fetch origin gh-pages
               git reset --hard origin/gh-pages
               stage

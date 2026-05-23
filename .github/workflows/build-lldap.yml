@@ -12,59 +12,34 @@ on:
 
   push:
     branches: [main]
-    paths:
-      - 'packages/lldap/**'
-      - 'build-targets.yaml'
   pull_request:
     branches: [main]
-    paths:
-      - 'packages/lldap/**'
-      - 'build-targets.yaml'
-      - '.github/actions/publish-ppa/**'
-      - '.github/actions/build-matrix/**'
-      - 'scripts/update-repo.sh'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
-      repo: ${{ steps.version.outputs.repo }}
     steps:
       - uses: actions/checkout@v6
 
-      - name: Resolve lldap source
-        id: version
+      - name: Generate build matrix
+        id: matrix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SOURCE=$(scripts/resolve_source.py lldap)
-          VERSION=$(echo "$SOURCE" | jq -r '.ref')
-          REPO=$(echo "$SOURCE" | jq -r '.repo')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
-
-      - name: Determine force flag
-        id: flags
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          DISPATCH_FORCE: ${{ inputs.force || 'false' }}
-        run: |
-          FORCE=false
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            FORCE="$DISPATCH_FORCE"
-          elif [ "$EVENT_NAME" = "push" ] || [ "$EVENT_NAME" = "pull_request" ]; then
-            FORCE=true
+          FORCE_FLAG=""
+          if [ "${{ inputs.force }}" = "true" ] || \
+             [ "${{ github.event_name }}" = "push" ] || \
+             [ "${{ github.event_name }}" = "pull_request" ]; then
+            FORCE_FLAG="--force"
           fi
-          echo "force=$FORCE" >> "$GITHUB_OUTPUT"
-
-      - name: Generate build matrix
-        id: matrix
-        uses: ./.github/actions/build-matrix
-        with:
-          package: lldap
-          version: ${{ steps.version.outputs.version }}
-          force: ${{ steps.flags.outputs.force }}
+          MATRIX=$(scripts/generate_matrix.py lldap $FORCE_FLAG)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
   build:
     needs: check
@@ -83,7 +58,7 @@ jobs:
       - name: Install bootstrap deps
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl
+          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl jq
 
       - uses: actions/checkout@v6
 
@@ -98,7 +73,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: lldap-cargo-${{ matrix.version }}
+          key: lldap-cargo-${{ matrix.build_hash }}
           restore-keys: |
             lldap-cargo-
 
@@ -106,9 +81,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-${{ github.run_id }}
+          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
           restore-keys: |
-            lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-
+            lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-
             lldap-sccache-${{ matrix.codename }}-
 
       - name: Mark sccache entries for pruning
@@ -126,8 +101,10 @@ jobs:
 
       - name: Clone LLDAP source
         run: |
-          git clone --branch ${{ matrix.version }} --depth 1 \
-            ${{ needs.check.outputs.repo }} src/lldap
+          REPO=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.repo')
+          COMMIT=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.commit')
+          git clone "$REPO" src/lldap
+          git -C src/lldap checkout "$COMMIT"
 
       - name: Get lldap version
         id: version
@@ -179,7 +156,7 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.version }}-${{ github.run_id }}
+          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
 
       - name: Package .deb
         run: |
@@ -201,6 +178,9 @@ jobs:
           arch: ${{ matrix.arch }}
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          build_hash: ${{ matrix.build_hash }}
+          build_inputs_json: ${{ matrix.build_inputs_json }}
+          ref: ${{ matrix.ref }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
   deploy:
