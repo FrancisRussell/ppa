@@ -5,8 +5,9 @@ Computes build inputs for a package build.
 Usage: compute-build-inputs.py <package> <arch> <codename> <container>
 
 Outputs JSON with two fields:
-  - build_key: canonical inputs that determine whether a rebuild is needed
-  - metadata: additional data (e.g. ref) that is not part of the build key
+  - key: deterministic inputs that identify the build (hashed to produce
+    inputs_key_hash): arch, codename, commit, container, package, recipe_files
+  - meta: supplementary source info not part of the key: ref, repo
 
 Requires GITHUB_TOKEN in the environment for latest_release packages.
 """

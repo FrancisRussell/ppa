@@ -1,4 +1,4 @@
-# Francis Russell's PPA
+# [Francis Russell's PPA](https://francisrussell.github.io/ppa)
 
 Personal APT repository for Debian and Ubuntu (amd64).
 

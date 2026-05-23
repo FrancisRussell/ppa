@@ -4,9 +4,10 @@ Generates the build matrix for a package.
 
 Usage: generate_matrix.py [<package>] [--force]
 
-Outputs JSON array of matrix entries. Each entry contains codename, arch,
-container, repo, build_hash, and build_inputs_json. Skips targets whose
-build hash already exists in gh-pages unless --force is given.
+Outputs a pretty-printed JSON array of matrix entries. Each entry contains
+codename, arch, container, inputs_key, inputs_meta, and inputs_key_hash.
+Skips targets whose inputs_key_hash already exists in gh-pages unless
+--force is given.
 
 Requires GITHUB_TOKEN in the environment for latest_release packages.
 """
@@ -34,7 +35,7 @@ def compute_build_inputs(package: str, arch: str, codename: str, container: str)
     return json.loads(result.stdout)
 
 
-def build_hash(build_key: dict) -> str:
+def inputs_key_hash(build_key: dict) -> str:
     return hashlib.blake2b(rfc8785.dumps(build_key), digest_size=32).hexdigest()
 
 
@@ -66,7 +67,7 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
         build_key = result["key"]
         metadata = result["meta"]
         ref = metadata["ref"]
-        hash_str = build_hash(build_key)
+        hash_str = inputs_key_hash(build_key)
 
         if not force and hash_exists_in_ghpages(hash_str, codename, package, arch):
             continue
