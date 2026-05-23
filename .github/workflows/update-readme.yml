@@ -61,8 +61,8 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Update index.html from README.md"
-            git push origin gh-pages
+            git commit --amend -m "Update index.html from README.md"
+            git push --force-with-lease origin gh-pages
           fi
 
   deploy:
