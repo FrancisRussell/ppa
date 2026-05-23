@@ -45,7 +45,7 @@ jobs:
           fi
           MATRIX=$(scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-          GHPAGES_SHA=$(git rev-parse origin/gh-pages 2>/dev/null || echo "none")
+          GHPAGES_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
           echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 
   build:
@@ -211,8 +211,8 @@ jobs:
         id: changed
         run: |
           git fetch origin gh-pages 2>/dev/null || true
-          CURRENT_SHA=$(git rev-parse origin/gh-pages 2>/dev/null || echo "none")
-          if [ "$CURRENT_SHA" = "${{ needs.check.outputs.ghpages_sha }}" ]; then
+          CURRENT_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
+          if [ -z "$CURRENT_SHA" ] || [ "$CURRENT_SHA" = "${{ needs.check.outputs.ghpages_sha }}" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
