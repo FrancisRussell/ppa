@@ -77,7 +77,6 @@ runs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         POOL_DIR="pool/${{ inputs.codename }}/main/${{ inputs.pool_subdir }}"
-        VERSION_FILE="versions/${{ inputs.codename }}/${{ inputs.arch }}/${{ inputs.package }}.txt"
         BUILD_RECORD="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}/${BUILD_HASH}.json"
         COMMIT_MSG="${{ inputs.package }}: package ${{ inputs.version }}"
         RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -104,9 +103,6 @@ runs:
           fi
           cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
           "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
-
-          mkdir -p "$(dirname "$VERSION_FILE")"
-          echo "${{ inputs.version }}" > "$VERSION_FILE"
 
           mkdir -p "$(dirname "$BUILD_RECORD")"
           FILES=$(find "${{ inputs.deb_dir }}" -maxdepth 1 \
