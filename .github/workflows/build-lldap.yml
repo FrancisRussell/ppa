@@ -52,33 +52,46 @@ jobs:
         include: ${{ fromJson(needs.check.outputs.matrix) }}
     permissions:
       contents: write
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_DIR: /github/home/.cache/sccache
     steps:
       - name: Install bootstrap deps
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl jq
+          apt-get install -y --no-install-recommends \
+            git git-lfs ca-certificates curl jq python3 python3-yaml
 
       - uses: actions/checkout@v6
 
-      - name: Install build deps
+      - name: Parse build config
+        id: config
+        run: scripts/parse-build-config.py lldap
+
+      - name: Install packaging tools
         run: |
-          apt-get install -y --no-install-recommends wget build-essential pkg-config libssl-dev \
-            dpkg-dev debhelper devscripts libdistro-info-perl sccache
+          apt-get install -y --no-install-recommends \
+            dpkg-dev debhelper devscripts libdistro-info-perl
+
+      - name: Install apt build deps
+        if: steps.config.outputs.apt_deps != ''
+        run: apt-get install -y --no-install-recommends ${{ steps.config.outputs.apt_deps }}
+
+      - name: Install sccache
+        if: steps.config.outputs.use_sccache == 'true'
+        run: apt-get install -y --no-install-recommends sccache
 
       - name: Restore cargo cache
+        if: steps.config.outputs.use_cargo == 'true'
         uses: actions/cache@v5
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
           key: lldap-cargo-${{ matrix.build_hash }}
           restore-keys: |
             lldap-cargo-
 
       - name: Restore sccache cache
+        if: steps.config.outputs.use_sccache == 'true'
         uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
@@ -88,6 +101,7 @@ jobs:
             lldap-sccache-${{ matrix.codename }}-
 
       - name: Mark sccache entries for pruning
+        if: steps.config.outputs.use_sccache == 'true'
         run: |
           SCCACHE_PRUNE_TS=$(date +%s)
           echo "SCCACHE_PRUNE_TS=$SCCACHE_PRUNE_TS" >> "$GITHUB_ENV"
@@ -97,8 +111,20 @@ jobs:
           find "$SCCACHE_DIR" -type f -exec touch -m -d "@$SCCACHE_PRUNE_TS" {} +
 
       - name: Install rustup
+        if: steps.config.outputs.has_rust == 'true'
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          ARGS="-y --default-toolchain ${{ steps.config.outputs.rust_toolchain }}"
+          for t in ${{ steps.config.outputs.rust_targets }};     do ARGS="$ARGS --target $t";    done
+          for c in ${{ steps.config.outputs.rust_components }};  do ARGS="$ARGS --component $c"; done
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $ARGS
+
+      - name: Install Rust cargo tools
+        if: steps.config.outputs.cargo_tools != ''
+        run: |
+          . "$HOME/.cargo/env"
+          for tool in ${{ steps.config.outputs.cargo_tools }}; do
+            cargo install --locked "$tool"
+          done
 
       - name: Clone LLDAP source
         run: |
@@ -113,34 +139,21 @@ jobs:
           VERSION=$(packages/lldap/recipe/get-version.sh src/lldap)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Install Rust toolchain + wasm target
+      - name: Package .deb
         run: |
-          . "$HOME/.cargo/env"
-          cd src/lldap
-          rustup show
-          rustup target add wasm32-unknown-unknown
-
-      - name: Install wasm-pack
-        run: |
-          . "$HOME/.cargo/env"
-          cargo install --locked wasm-pack
-
-      - name: Build LLDAP
-        run: |
-          . "$HOME/.cargo/env"
-          cd src/lldap
-          ./app/build.sh
-          while IFS= read -r f; do wget -P app/static "$f"; done < app/static/libraries.txt
-          while IFS= read -r f; do wget -P app/static/fonts "$f"; done < app/static/fonts/fonts.txt
-          cargo build --release \
-            --package lldap \
-            --package lldap_migration_tool \
-            --package lldap_set_password
+          mkdir -p /tmp/lldap-pkg
+          ./packages/lldap/recipe/build.sh \
+            ${{ steps.version.outputs.version }} \
+            src/lldap \
+            /tmp/lldap-pkg \
+            ${{ matrix.codename }}
 
       - name: sccache stats
+        if: steps.config.outputs.use_sccache == 'true'
         run: sccache --show-stats
 
       - name: Prune sccache and check for changes
+        if: steps.config.outputs.use_sccache == 'true'
         run: |
           touch -m -d "@$SCCACHE_PRUNE_TS" /tmp/sccache_prune_ref
           PRUNED=$(find "$SCCACHE_DIR" -type f ! -anewer /tmp/sccache_prune_ref | wc -l)
@@ -153,20 +166,11 @@ jobs:
           fi
 
       - name: Save sccache cache
-        if: env.SCCACHE_CHANGED == 'true'
+        if: steps.config.outputs.use_sccache == 'true' && env.SCCACHE_CHANGED == 'true'
         uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
           key: lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
-
-      - name: Package .deb
-        run: |
-          mkdir -p /tmp/lldap-pkg
-          ./packages/lldap/recipe/build.sh \
-            ${{ steps.version.outputs.version }} \
-            src/lldap \
-            /tmp/lldap-pkg \
-            ${{ matrix.codename }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa

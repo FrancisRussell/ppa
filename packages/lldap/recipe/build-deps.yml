@@ -1,0 +1,12 @@
+apt:
+  - build-essential
+  - wget
+  - pkg-config
+  - libssl-dev
+
+rust:
+  toolchain: stable
+  targets:
+    - wasm32-unknown-unknown
+  cargo_tools:
+    - wasm-pack

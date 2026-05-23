@@ -56,20 +56,75 @@ jobs:
       - name: Install bootstrap deps
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends git git-lfs ca-certificates curl jq
+          apt-get install -y --no-install-recommends \
+            git git-lfs ca-certificates curl jq python3 python3-yaml
 
       - uses: actions/checkout@v6
+
+      - name: Parse build config
+        id: config
+        run: scripts/parse-build-config.py pwsafe
 
       - name: Install packaging tools
         run: |
           apt-get install -y --no-install-recommends \
-            dpkg-dev debhelper devscripts libdistro-info-perl equivs
+            dpkg-dev debhelper devscripts libdistro-info-perl
 
-      - name: Install pwsafe build deps
+      - name: Install apt build deps
+        if: steps.config.outputs.apt_deps != ''
+        run: apt-get install -y --no-install-recommends ${{ steps.config.outputs.apt_deps }}
+
+      - name: Install sccache
+        if: steps.config.outputs.use_sccache == 'true'
+        run: apt-get install -y --no-install-recommends sccache
+
+      - name: Restore cargo cache
+        if: steps.config.outputs.use_cargo == 'true'
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: pwsafe-cargo-${{ matrix.build_hash }}
+          restore-keys: |
+            pwsafe-cargo-
+
+      - name: Restore sccache cache
+        if: steps.config.outputs.use_sccache == 'true'
+        uses: actions/cache/restore@v5
+        with:
+          path: /github/home/.cache/sccache
+          key: pwsafe-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
+          restore-keys: |
+            pwsafe-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-
+            pwsafe-sccache-${{ matrix.codename }}-
+
+      - name: Mark sccache entries for pruning
+        if: steps.config.outputs.use_sccache == 'true'
         run: |
-          mk-build-deps --install --remove \
-            --tool 'apt-get -y --no-install-recommends' \
-            packages/pwsafe/recipe/files/debian/control
+          SCCACHE_PRUNE_TS=$(date +%s)
+          echo "SCCACHE_PRUNE_TS=$SCCACHE_PRUNE_TS" >> "$GITHUB_ENV"
+          mkdir -p "$SCCACHE_DIR"
+          SCCACHE_COUNT=$(find "$SCCACHE_DIR" -type f | wc -l)
+          echo "SCCACHE_COUNT_BEFORE=$SCCACHE_COUNT" >> "$GITHUB_ENV"
+          find "$SCCACHE_DIR" -type f -exec touch -m -d "@$SCCACHE_PRUNE_TS" {} +
+
+      - name: Install rustup
+        if: steps.config.outputs.has_rust == 'true'
+        run: |
+          ARGS="-y --default-toolchain ${{ steps.config.outputs.rust_toolchain }}"
+          for t in ${{ steps.config.outputs.rust_targets }};     do ARGS="$ARGS --target $t";    done
+          for c in ${{ steps.config.outputs.rust_components }};  do ARGS="$ARGS --component $c"; done
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $ARGS
+
+      - name: Install Rust cargo tools
+        if: steps.config.outputs.cargo_tools != ''
+        run: |
+          . "$HOME/.cargo/env"
+          for tool in ${{ steps.config.outputs.cargo_tools }}; do
+            cargo install --locked "$tool"
+          done
 
       - name: Clone pwsafe source
         run: |
@@ -92,6 +147,30 @@ jobs:
             src/pwsafe \
             /tmp/pwsafe-pkg \
             ${{ matrix.codename }}
+
+      - name: sccache stats
+        if: steps.config.outputs.use_sccache == 'true'
+        run: sccache --show-stats
+
+      - name: Prune sccache and check for changes
+        if: steps.config.outputs.use_sccache == 'true'
+        run: |
+          touch -m -d "@$SCCACHE_PRUNE_TS" /tmp/sccache_prune_ref
+          PRUNED=$(find "$SCCACHE_DIR" -type f ! -anewer /tmp/sccache_prune_ref | wc -l)
+          find "$SCCACHE_DIR" -type f ! -anewer /tmp/sccache_prune_ref -delete
+          SCCACHE_COUNT_AFTER=$(find "$SCCACHE_DIR" -type f 2>/dev/null | wc -l)
+          if [ "$SCCACHE_COUNT_AFTER" != "$SCCACHE_COUNT_BEFORE" ] || [ "$PRUNED" -gt 0 ]; then
+            echo "SCCACHE_CHANGED=true" >> "$GITHUB_ENV"
+          else
+            echo "SCCACHE_CHANGED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Save sccache cache
+        if: steps.config.outputs.use_sccache == 'true' && env.SCCACHE_CHANGED == 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: /github/home/.cache/sccache
+          key: pwsafe-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa

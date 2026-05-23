@@ -21,6 +21,10 @@ cp "$SCRIPT_DIR/files/debian/changelog" "$SRC_DIR/debian/changelog"
 
 cd "$SRC_DIR"
 
+mk-build-deps --install --remove \
+  --tool 'apt-get -y --no-install-recommends' \
+  "$SCRIPT_DIR/files/debian/control"
+
 COMMIT=$(git rev-parse HEAD)
 
 # Prepend a new entry for this build
