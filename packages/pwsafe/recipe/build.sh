@@ -7,8 +7,9 @@ POOL_DIR=$(readlink -f "${3?pool directory required}")
 CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 REPO_ROOT=$(readlink -f "$SCRIPT_DIR/../../..")
-VERSION_PKG="${VERSION}-ppa$(date -u +%Y%m%d%H%M)"
-UPSTREAM_VERSION="$VERSION"
+# Replace - with ~ since - delimits the Debian revision in version strings.
+UPSTREAM_VERSION=$(echo "$VERSION" | sed 's/-/~/g')
+VERSION_PKG="${UPSTREAM_VERSION}-ppa$(date -u +%Y%m%d%H%M)"
 
 . "$REPO_ROOT/scripts/build-env.sh"
 export DEBEMAIL DEBFULLNAME
