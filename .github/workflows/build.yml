@@ -62,12 +62,19 @@ jobs:
       contents: write
     steps:
       - name: Install bootstrap deps
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
             git git-lfs ca-certificates curl jq python3 python3-yaml
+          # The checkout action's credential helper binary is not accessible
+          # from inside the container, so embed the token in the URL directly.
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Parse build config
         id: config
