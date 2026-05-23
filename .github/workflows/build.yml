@@ -159,6 +159,11 @@ jobs:
         id: version
         run: |
           VERSION=$(packages/${{ matrix.package }}/recipe/get-version.sh src/${{ matrix.package }})
+          VERSION="${VERSION#v}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+(\.[0-9]+)*(-[0-9A-Za-z.]+)?(\+[0-9A-Za-z.]+)?$'; then
+            echo "Invalid Debian upstream version: $VERSION" >&2
+            exit 1
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Package .deb

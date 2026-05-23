@@ -9,4 +9,4 @@ if [ -z "$DATE" ]; then
   exit 1
 fi
 
-echo "0.2.2~beta+git${DATE}"
+echo "0.2.2-beta+git${DATE}"
