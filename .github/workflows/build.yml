@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      ghpages_sha: ${{ steps.matrix.outputs.ghpages_sha }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -44,6 +45,8 @@ jobs:
           fi
           MATRIX=$(scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          GHPAGES_SHA=$(git rev-parse origin/gh-pages 2>/dev/null || echo "none")
+          echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 
   build:
     needs: check
@@ -194,7 +197,7 @@ jobs:
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
   deploy:
-    needs: build
+    needs: [check, build]
     if: github.ref == 'refs/heads/main' && (needs.build.result == 'success' || needs.build.result == 'failure')
     runs-on: ubuntu-latest
     environment: github-pages
@@ -203,4 +206,17 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
+
+      - name: Check if any build published to gh-pages
+        id: changed
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          CURRENT_SHA=$(git rev-parse origin/gh-pages 2>/dev/null || echo "none")
+          if [ "$CURRENT_SHA" = "${{ needs.check.outputs.ghpages_sha }}" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: ./.github/actions/deploy-site
+        if: steps.changed.outputs.changed == 'true'
