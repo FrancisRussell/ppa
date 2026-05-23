@@ -17,10 +17,15 @@ for codename_dir in pool/*/; do
   [ -d "pool/$codename/main" ] || continue
 
   mkdir -p "dists/$codename/main/binary-$ARCH"
+  mkdir -p "dists/$codename/main/source"
 
   dpkg-scanpackages --multiversion "pool/$codename/main" \
     > "dists/$codename/main/binary-$ARCH/Packages"
   gzip -kf "dists/$codename/main/binary-$ARCH/Packages"
+
+  dpkg-scansources "pool/$codename/main" \
+    > "dists/$codename/main/source/Sources"
+  gzip -kf "dists/$codename/main/source/Sources"
 
   cat > "$conf" <<EOF
 APT::FTPArchive::Release {
