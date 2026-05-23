@@ -170,7 +170,6 @@ scripts/
 ```yaml
 repo: https://github.com/lldap/lldap
 track: latest_release           # or: pin: <commit-hash>
-version_template: "{tag}"       # for pinned commits: e.g. "0.2.2~beta+git{date}"
 
 targets:                        # optional override of build-targets.yaml
   - codename: trixie

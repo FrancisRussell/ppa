@@ -9,6 +9,7 @@ Personal APT repository for Debian and Ubuntu (amd64).
 
 ## Packages (subject to change)
 
+- **encspot** — Console tool for detecting the encoder used to produce an MP3 file.
 - **lldap** — Lightweight LDAP server with a web UI.
 - **pwsafe** — Command-line password safe compatible with PasswordSafe databases.
 

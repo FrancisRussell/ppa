@@ -1,0 +1,15 @@
+Source: encspot
+Section: sound
+Priority: optional
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Build-Depends: debhelper-compat (= 13), cmake
+Standards-Version: 4.6.2
+Homepage: https://github.com/FrancisRussell/encspot
+
+Package: encspot
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: console tool for detecting the encoder used to produce an MP3 file
+ Attempts to identify which encoder was used to create an MP3 file and
+ displays other technical attributes such as bitrate, mode, frequency,
+ frame count, and reservoir usage.
