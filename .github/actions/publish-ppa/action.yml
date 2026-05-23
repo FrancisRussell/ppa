@@ -46,7 +46,7 @@ runs:
       shell: sh
       run: |
         apt-get update
-        apt-get install -y --no-install-recommends apt-utils gnupg jq
+        apt-get install -y --no-install-recommends apt-utils dpkg-dev gnupg jq
 
     - name: Checkout gh-pages
       shell: sh
@@ -102,7 +102,9 @@ runs:
               fi
             done
           fi
-          cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
+          find "${{ inputs.deb_dir }}" -maxdepth 1 \
+            \( -name "*.deb" -o -name "*.dsc" -o -name "*.tar.*" \) \
+            -exec cp {} "$POOL_DIR/" \;
           "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
 
           mkdir -p "$(dirname "$BUILD_RECORD")"
