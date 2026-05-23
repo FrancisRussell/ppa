@@ -8,8 +8,7 @@ CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 REPO_ROOT=$(readlink -f "$SCRIPT_DIR/../../..")
 # Replace - with ~ since - delimits the Debian revision in version strings.
-VERSION_NO_V=$(echo "${VERSION#v}" | sed 's/-/~/g')
-VERSION_NO_V="${VERSION_NO_V}~ppa$(date -u +%Y%m%d%H%M)"
+VERSION_PKG="$(echo "$VERSION" | sed 's/-/~/g')-ppa$(date -u +%Y%m%d%H%M)"
 
 . "$REPO_ROOT/scripts/build-env.sh"
 export DEBEMAIL DEBFULLNAME
@@ -27,7 +26,7 @@ cargo build --release \
 
 cp -r "$SCRIPT_DIR/files/debian" "$SRC_DIR/debian"
 
-dch --newversion "$VERSION_NO_V" \
+dch --newversion "$VERSION_PKG" \
       --distribution "$CODENAME" \
       "Automated build of lldap $VERSION."
 

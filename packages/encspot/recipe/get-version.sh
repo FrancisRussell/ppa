@@ -9,4 +9,4 @@ if [ -z "$DATE" ]; then
   exit 1
 fi
 
-echo "1:2.01+git${DATE}"
+echo "2.01+git${DATE}"
