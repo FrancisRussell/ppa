@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          SOURCE=$(scripts/resolve-source.sh lldap)
+          SOURCE=$(scripts/resolve_source.py lldap)
           VERSION=$(echo "$SOURCE" | jq -r '.ref')
           REPO=$(echo "$SOURCE" | jq -r '.repo')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"

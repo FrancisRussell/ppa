@@ -1,2 +1,4 @@
 .claude/
 /tags
+__pycache__/
+*.pyc
