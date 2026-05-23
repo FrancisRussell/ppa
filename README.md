@@ -10,7 +10,7 @@ Personal APT repository for Debian and Ubuntu (amd64).
 ## Packages (subject to change)
 
 - **encspot** — Console tool for detecting the encoder used to produce an MP3 file.
-- **lldap** — Lightweight LDAP server with a web UI.
+- **lldap** — Lightweight LDAP server with a web UI. (Binary only — source packages not available.)
 - **pwsafe** — Command-line password safe compatible with PasswordSafe databases.
 
 ## Adding this repository
@@ -28,7 +28,7 @@ Add the repository:
 ```sh
 CODENAME=$(lsb_release -cs)
 sudo tee /etc/apt/sources.list.d/francis-russell-ppa.sources > /dev/null <<EOF
-Types: deb
+Types: deb deb-src
 URIs: https://francisrussell.github.io/ppa
 Suites: $CODENAME
 Components: main
