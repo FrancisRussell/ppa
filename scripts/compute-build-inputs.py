@@ -24,24 +24,22 @@ sys.path.insert(0, str(REPO_ROOT / 'scripts'))
 from resolve_source import resolve as resolve_source
 
 
-def compute_recipe_hash(recipe_dir: Path) -> str:
+def compute_recipe_files(recipe_dir: Path) -> dict:
     file_paths = []
     for root, dirs, filenames in os.walk(recipe_dir, followlinks=True):
         dirs.sort()
-        for filename in filenames:
+        for filename in sorted(filenames):
             file_paths.append(Path(root) / filename)
     file_paths.sort()
 
-    outer = hashlib.blake2b(digest_size=32)
+    result = {}
     for filepath in file_paths:
         relpath = str(filepath.relative_to(recipe_dir))
-        file_hasher = hashlib.blake2b(digest_size=32)
+        h = hashlib.blake2b(digest_size=32)
         with open(filepath, 'rb') as f:
-            file_hasher.update(f.read())
-        outer.update(relpath.encode())
-        outer.update(b'\0')
-        outer.update(file_hasher.digest())
-    return outer.hexdigest()
+            h.update(f.read())
+        result[relpath] = h.hexdigest()
+    return result
 
 
 def main():
@@ -53,7 +51,6 @@ def main():
 
     source = resolve_source(package)
     recipe_dir = REPO_ROOT / 'packages' / package / 'recipe'
-    recipe_hash = compute_recipe_hash(recipe_dir)
 
     inputs = {
         'arch': arch,
@@ -61,7 +58,7 @@ def main():
         'commit': source['commit'],
         'container': container,
         'package': package,
-        'recipe_hash': recipe_hash,
+        'recipe_files': compute_recipe_files(recipe_dir),
         'repo': source['repo'],
     }
 
