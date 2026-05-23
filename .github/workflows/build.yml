@@ -50,7 +50,7 @@ jobs:
           fi
           MATRIX=$(/opt/matrix-venv/bin/python scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
           echo "$MATRIX"
-          echo "matrix=$(echo "$MATRIX" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin)))')" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(echo "$MATRIX" | jq -c .)" >> "$GITHUB_OUTPUT"
           GHPAGES_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
           echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 

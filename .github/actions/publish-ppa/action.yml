@@ -111,6 +111,10 @@ runs:
             -printf '%f\n' | sort | jq -Rsc 'split("\n")[:-1]')
           PACKAGE_VERSION=$(dpkg-deb -f \
             "$(find "${{ inputs.deb_dir }}" -maxdepth 1 -name "*.deb" | head -1)" Version)
+          JQ_EXPR='{inputs: {key: $key, meta: $meta},
+            output: {files: $files, meta: {built_at: $built_at,
+            run_url: $run_url, upstream_version: $upstream_version,
+            package_version: $package_version}}}'
           jq -n \
             --argjson key "$INPUTS_KEY" \
             --argjson meta "$INPUTS_META" \
@@ -119,7 +123,7 @@ runs:
             --arg run_url "$RUN_URL" \
             --arg upstream_version "${{ inputs.version }}" \
             --arg package_version "$PACKAGE_VERSION" \
-            '{inputs: {key: $key, meta: $meta}, output: {files: $files, meta: {built_at: $built_at, run_url: $run_url, upstream_version: $upstream_version, package_version: $package_version}}}' \
+            "$JQ_EXPR" \
             > "$BUILD_RECORD"
 
           git add -A
