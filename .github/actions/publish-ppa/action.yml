@@ -87,9 +87,21 @@ runs:
           cp "$GITHUB_WORKSPACE/KEY.asc" KEY.asc
 
           mkdir -p "$POOL_DIR"
-          UPSTREAM_VERSION="${{ inputs.version }}"
-          UPSTREAM_VERSION="${UPSTREAM_VERSION#v}"
-          find "$POOL_DIR" -name "*_${UPSTREAM_VERSION}~ppa*_${{ inputs.arch }}.deb" -delete
+          # Remove debs from previous builds of the same upstream version
+          # (i.e. old ppa timestamps). Builds of other upstream versions are kept.
+          BUILD_DIR="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}"
+          if [ -d "$BUILD_DIR" ]; then
+            for record in "$BUILD_DIR"/*.json; do
+              [ -f "$record" ] || continue
+              RECORD_VERSION=$(jq -r '.version' "$record")
+              if [ "$RECORD_VERSION" = "${{ inputs.version }}" ]; then
+                jq -r '.files[]' "$record" | while IFS= read -r f; do
+                  rm -f "$POOL_DIR/$f"
+                done
+                rm -f "$record"
+              fi
+            done
+          fi
           cp "${{ inputs.deb_dir }}"/*.deb "$POOL_DIR/"
           "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
 
