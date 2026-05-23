@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """
-Computes canonical build inputs JSON for a package build.
+Computes build inputs for a package build.
 
 Usage: compute-build-inputs.py <package> <arch> <codename> <container>
 
-Outputs canonical JSON (sorted keys, compact) combining:
-  - package name, arch, codename, container image
-  - resolved source commit hash (via resolve_source)
-  - recipe directory content hash (BLAKE2b, follows symlinks)
+Outputs JSON with two fields:
+  - build_key: canonical inputs that determine whether a rebuild is needed
+  - metadata: additional data (e.g. ref) that is not part of the build key
 
-The BLAKE2b hash of this JSON is the build identifier.
 Requires GITHUB_TOKEN in the environment for latest_release packages.
 """
 
@@ -59,27 +57,26 @@ def main():
         )
         sys.exit(1)
 
-    package, arch, codename, container = (
-        sys.argv[1],
-        sys.argv[2],
-        sys.argv[3],
-        sys.argv[4],
-    )
+    package, arch, codename, container = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
     source = resolve_source(package)
     recipe_dir = REPO_ROOT / "packages" / package / "recipe"
 
-    inputs = {
+    build_key = {
         "arch": arch,
         "codename": codename,
         "commit": source["commit"],
         "container": container,
         "package": package,
         "recipe_files": compute_recipe_files(recipe_dir),
+    }
+
+    metadata = {
+        "ref": source["ref"],
         "repo": source["repo"],
     }
 
-    print(json.dumps(inputs, sort_keys=True, separators=(",", ":")))
+    print(json.dumps({"build_key": build_key, "metadata": metadata}))
 
 
 if __name__ == "__main__":
