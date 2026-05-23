@@ -128,26 +128,32 @@ runs:
           exit 0
         fi
 
-        # Retry up to 3 times: if --force-with-lease fails a concurrent publish
-        # job has pushed since we cloned. Fetch, reset to the new remote state,
-        # and re-stage so the next amend includes both jobs' packages and
-        # fully regenerated APT metadata before retrying.
+        # Retry up to 3 times: if a push fails a concurrent publish job has
+        # pushed since we cloned. Fetch, reset to the new remote state, and
+        # re-stage so the next amend includes both jobs' packages and fully
+        # regenerated APT metadata before retrying. The GHPAGES_EXISTS=false
+        # path also needs retries in case a concurrent job created gh-pages
+        # between our clone and push.
         for attempt in 1 2 3; do
           if [ "$GHPAGES_EXISTS" = "true" ]; then
             git commit --amend -m "$COMMIT_MSG"
             if git push --force-with-lease origin gh-pages; then
               break
-            elif [ "$attempt" -lt 3 ]; then
-              git fetch origin gh-pages
-              git reset --hard origin/gh-pages
-              stage
-            else
-              echo "Failed to push to gh-pages after 3 attempts" >&2
-              exit 1
             fi
           else
             git commit -m "$COMMIT_MSG"
-            git push origin gh-pages
-            break
+            if git push origin gh-pages; then
+              break
+            fi
+            GHPAGES_EXISTS=true
+          fi
+
+          if [ "$attempt" -lt 3 ]; then
+            git fetch origin gh-pages
+            git reset --hard origin/gh-pages
+            stage
+          else
+            echo "Failed to push to gh-pages after 3 attempts" >&2
+            exit 1
           fi
         done
