@@ -6,7 +6,11 @@ SRC_DIR=$(readlink -f "${2?source directory required}")
 POOL_DIR=$(readlink -f "${3?pool directory required}")
 CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+REPO_ROOT=$(readlink -f "$SCRIPT_DIR/../../..")
 VERSION_PKG="${VERSION}~ppa$(date -u +%Y%m%d%H%M)"
+
+. "$REPO_ROOT/scripts/build-env.sh"
+export DEBEMAIL DEBFULLNAME
 
 # Install our debian/ into the source tree
 mkdir -p "$SRC_DIR/debian"
@@ -20,8 +24,7 @@ cd "$SRC_DIR"
 COMMIT=$(git rev-parse HEAD)
 
 # Prepend a new entry for this build
-DEBEMAIL="francis+ppa@unchartedbackwaters.co.uk" DEBFULLNAME="Francis Russell" \
-  dch --newversion "$VERSION_PKG" \
+dch --newversion "$VERSION_PKG" \
       --distribution "$CODENAME" \
       "Automated build from nsd20463/pwsafe commit $COMMIT."
 
