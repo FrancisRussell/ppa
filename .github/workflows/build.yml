@@ -1,4 +1,4 @@
-name: Build LLDAP
+name: Build packages
 
 on:
   schedule:
@@ -26,6 +26,8 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          lfs: false
 
       - name: Generate build matrix
         id: matrix
@@ -38,7 +40,7 @@ jobs:
              [ "${{ github.event_name }}" = "pull_request" ]; then
             FORCE_FLAG="--force"
           fi
-          MATRIX=$(scripts/generate_matrix.py lldap $FORCE_FLAG)
+          MATRIX=$(scripts/generate_matrix.py $FORCE_FLAG)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
   build:
@@ -63,7 +65,7 @@ jobs:
 
       - name: Parse build config
         id: config
-        run: scripts/parse-build-config.py lldap
+        run: scripts/parse-build-config.py ${{ matrix.package }}
 
       - name: Install packaging tools
         run: |
@@ -86,19 +88,19 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git/db
-          key: lldap-cargo-${{ matrix.build_hash }}
+          key: ${{ matrix.package }}-cargo-${{ matrix.build_hash }}
           restore-keys: |
-            lldap-cargo-
+            ${{ matrix.package }}-cargo-
 
       - name: Restore sccache cache
         if: steps.config.outputs.use_sccache == 'true'
         uses: actions/cache/restore@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
+          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
           restore-keys: |
-            lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-
-            lldap-sccache-${{ matrix.codename }}-
+            ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-
+            ${{ matrix.package }}-sccache-${{ matrix.codename }}-
 
       - name: Mark sccache entries for pruning
         if: steps.config.outputs.use_sccache == 'true'
@@ -126,26 +128,26 @@ jobs:
             cargo install --locked "$tool"
           done
 
-      - name: Clone LLDAP source
+      - name: Clone source
         run: |
           REPO=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.repo')
           COMMIT=$(echo '${{ matrix.build_inputs_json }}' | jq -r '.commit')
-          git clone "$REPO" src/lldap
-          git -C src/lldap checkout "$COMMIT"
+          git clone "$REPO" src/${{ matrix.package }}
+          git -C src/${{ matrix.package }} checkout "$COMMIT"
 
-      - name: Get lldap version
+      - name: Get version
         id: version
         run: |
-          VERSION=$(packages/lldap/recipe/get-version.sh src/lldap)
+          VERSION=$(packages/${{ matrix.package }}/recipe/get-version.sh src/${{ matrix.package }})
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Package .deb
         run: |
-          mkdir -p /tmp/lldap-pkg
-          ./packages/lldap/recipe/build.sh \
+          mkdir -p /tmp/pkg
+          ./packages/${{ matrix.package }}/recipe/build.sh \
             ${{ steps.version.outputs.version }} \
-            src/lldap \
-            /tmp/lldap-pkg \
+            src/${{ matrix.package }} \
+            /tmp/pkg \
             ${{ matrix.codename }}
 
       - name: sccache stats
@@ -170,15 +172,15 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: /github/home/.cache/sccache
-          key: lldap-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
+          key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.build_hash }}-${{ github.run_id }}
 
       - name: Publish to PPA
         uses: ./.github/actions/publish-ppa
         with:
           version: ${{ steps.version.outputs.version }}
-          package: lldap
-          deb_dir: /tmp/lldap-pkg
-          pool_subdir: l/lldap
+          package: ${{ matrix.package }}
+          deb_dir: /tmp/pkg
+          pool_subdir: ${{ matrix.pool_subdir }}
           codename: ${{ matrix.codename }}
           arch: ${{ matrix.arch }}
           apt_signing_key: ${{ secrets.APT_SIGNING_KEY }}

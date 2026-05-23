@@ -44,36 +44,26 @@ def hash_exists_in_ghpages(hash_str: str, codename: str, package: str, arch: str
     return result.returncode == 0
 
 
-def main():
-    force = '--force' in sys.argv
-    args = [a for a in sys.argv[1:] if not a.startswith('--')]
-    if len(args) != 1:
-        print(f'Usage: {sys.argv[0]} <package> [--force]', file=sys.stderr)
-        sys.exit(1)
+def all_packages() -> list[str]:
+    packages_dir = REPO_ROOT / 'packages'
+    return sorted(
+        d.name for d in packages_dir.iterdir()
+        if d.is_dir() and (d / 'source.yml').exists()
+    )
 
-    package = args[0]
 
-    targets_file = REPO_ROOT / 'build-targets.yaml'
-    with open(targets_file) as f:
-        targets = yaml.safe_load(f)
-
+def build_matrix_for_package(package: str, force: bool, default_targets: list) -> list:
     source_yml = REPO_ROOT / 'packages' / package / 'source.yml'
     with open(source_yml) as f:
         source_config = yaml.safe_load(f)
 
-    if 'targets' in source_config:
-        targets = source_config['targets']
-
-    subprocess.run(
-        ['git', 'fetch', 'origin', 'gh-pages'],
-        capture_output=True
-    )
+    targets = source_config.get('targets', default_targets)
 
     sys.path.insert(0, str(REPO_ROOT / 'scripts'))
     from resolve_source import resolve
     source = resolve(package)
 
-    matrix = []
+    entries = []
     for target in targets:
         codename = target['codename']
         arch = target['arch']
@@ -85,8 +75,10 @@ def main():
         if not force and hash_exists_in_ghpages(hash_str, codename, package, arch):
             continue
 
-        matrix.append({
+        entries.append({
             'name': f'{package}:{source["ref"][:8] if len(source["ref"]) == 40 else source["ref"]} ({container}, {arch})',
+            'package': package,
+            'pool_subdir': f'{package[0]}/{package}',
             'codename': codename,
             'arch': arch,
             'container': container,
@@ -94,6 +86,31 @@ def main():
             'build_hash': hash_str,
             'build_inputs_json': inputs_json,
         })
+
+    return entries
+
+
+def main():
+    force = '--force' in sys.argv
+    args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    if len(args) > 1:
+        print(f'Usage: {sys.argv[0]} [<package>] [--force]', file=sys.stderr)
+        sys.exit(1)
+
+    packages = args if args else all_packages()
+
+    targets_file = REPO_ROOT / 'build-targets.yaml'
+    with open(targets_file) as f:
+        default_targets = yaml.safe_load(f)
+
+    subprocess.run(
+        ['git', 'fetch', 'origin', 'gh-pages'],
+        capture_output=True
+    )
+
+    matrix = []
+    for package in packages:
+        matrix.extend(build_matrix_for_package(package, force, default_targets))
 
     print(json.dumps(matrix))
 
