@@ -86,12 +86,13 @@ def main():
             continue
 
         matrix.append({
-            'arch': arch,
-            'build_hash': hash_str,
-            'build_inputs_json': inputs_json,
+            'name': f'{package}:{source["ref"][:8] if len(source["ref"]) == 40 else source["ref"]} ({container}, {arch})',
             'codename': codename,
+            'arch': arch,
             'container': container,
             'ref': source['ref'],
+            'build_hash': hash_str,
+            'build_inputs_json': inputs_json,
         })
 
     print(json.dumps(matrix))

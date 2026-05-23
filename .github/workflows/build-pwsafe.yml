@@ -44,6 +44,7 @@ jobs:
   build:
     needs: check
     if: needs.check.outputs.matrix != '[]'
+    name: Build ${{ matrix.name }}
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
     strategy:
