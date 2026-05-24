@@ -1,0 +1,31 @@
+Description: Rate-limit gui_update() calls during filesystem scanning to ~60fps
+ gui_update() pumps the entire GTK main loop synchronously. Calling it on
+ every file during scanning throttles the scan to only ~750 stat calls/sec.
+ Rate-limit to 16ms intervals (~60fps) to keep the UI responsive without
+ sacrificing scan performance.
+Author: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+--- a/src/scanfs.c
++++ b/src/scanfs.c
+@@ -48,6 +48,7 @@
+ static int node_counts[NUM_NODE_TYPES];
+ static int64 size_counts[NUM_NODE_TYPES];
+ static int stat_count = 0;
++static gint64 last_gui_update = 0;
+
+
+ /* Official stat function. Returns 0 on success, -1 on error */
+@@ -171,8 +172,12 @@
+
+ 		free( dir_entries[i] ); /* !xfree */
+
+-		/* Keep the user interface responsive */
+-		gui_update( );
++		/* Keep the user interface responsive, rate-limited to ~60fps */
++		gint64 now = g_get_monotonic_time( );
++		if (now - last_gui_update >= 16000) {
++			gui_update( );
++			last_gui_update = now;
++		}
+ 	}
+
+ 	free( dir_entries ); /* !xfree */

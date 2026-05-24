@@ -1,5 +1,7 @@
 fsv (3.0-0) UNRELEASED; urgency=low
 
   * Initial packaging.
+  * Rate-limit gui_update() during filesystem scanning to ~60fps to avoid
+    throttling stat calls to ~750/sec.
 
  -- Francis Russell <francis+ppa@unchartedbackwaters.co.uk>  Sun, 24 May 2026 00:00:00 +0000
