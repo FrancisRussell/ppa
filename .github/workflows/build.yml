@@ -90,7 +90,7 @@ jobs:
       - name: Install packaging tools
         run: |
           apt-get install -y --no-install-recommends \
-            dpkg-dev debhelper devscripts libdistro-info-perl
+            dpkg-dev debhelper devscripts equivs libdistro-info-perl
 
       - name: Install apt build deps
         if: steps.config.outputs.apt_deps != ''
