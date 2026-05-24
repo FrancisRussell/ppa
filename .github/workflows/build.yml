@@ -24,7 +24,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  generate-matrix:
+    name: Generate build matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -55,8 +56,8 @@ jobs:
           echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: check
-    if: needs.check.outputs.matrix != '[]'
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.matrix != '[]'
     name: Build ${{ matrix.name }}
     runs-on: ubuntu-latest
     container: ${{ matrix.container }}
@@ -64,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.check.outputs.matrix) }}
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     permissions:
       contents: write
     steps:
@@ -215,8 +216,20 @@ jobs:
           inputs_meta: ${{ toJSON(matrix.inputs_meta) }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
-  deploy:
-    needs: [check, build]
+  all-builds-passed:
+    name: All builds passed
+    needs: [generate-matrix, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all builds passed
+        run: |
+          [ "${{ needs.generate-matrix.result }}" = "success" ] && \
+          [ "${{ needs.build.result }}" != "failure" ]
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: [generate-matrix, build]
     if: github.ref == 'refs/heads/main' && (needs.build.result == 'success' || needs.build.result == 'failure')
     runs-on: ubuntu-latest
     environment: github-pages
@@ -231,7 +244,7 @@ jobs:
         run: |
           git fetch origin gh-pages 2>/dev/null || true
           CURRENT_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
-          if [ -z "$CURRENT_SHA" ] || [ "$CURRENT_SHA" = "${{ needs.check.outputs.ghpages_sha }}" ]; then
+          if [ -z "$CURRENT_SHA" ] || [ "$CURRENT_SHA" = "${{ needs.generate-matrix.outputs.ghpages_sha }}" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
