@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+include /usr/share/dpkg/architecture.mk
+
+%:
+	dh $@ --buildsystem=meson
+
+override_dh_auto_install:
+	install -Dm755 obj-$(DEB_HOST_GNU_TYPE)/src/fsv \
+	  $(CURDIR)/debian/fsv/usr/bin/fsv
