@@ -3,5 +3,7 @@ fsv (3.0-0) UNRELEASED; urgency=low
   * Initial packaging.
   * Rate-limit gui_update() during filesystem scanning to ~60fps to avoid
     throttling stat calls to ~750/sec.
+  * Fix O(n²) GList building in MapV layout engine (g_list_append walks the
+    full list on every call); switch to prepend + reverse.
 
  -- Francis Russell <francis+ppa@unchartedbackwaters.co.uk>  Sun, 24 May 2026 00:00:00 +0000

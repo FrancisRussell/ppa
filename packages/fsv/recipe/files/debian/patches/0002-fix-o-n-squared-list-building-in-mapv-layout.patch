@@ -1,0 +1,40 @@
+Description: Fix O(n²) list building in MapV layout engine
+ mapv_init_recursive built block_list and row_list using g_list_append,
+ which calls g_list_last on every call (O(n) per append, O(n²) overall).
+ For directories with thousands of entries this dominates the post-scan
+ CPU spike visible in perf as 98% time in g_list_last.
+ Switch to g_list_prepend (O(1)) followed by a single g_list_reverse (O(n)).
+Author: Francis Russell <francis@unchartedbackwaters.co.uk>
+        Claude Sonnet 4.6 <noreply@anthropic.com>
+--- a/src/geometry.c
++++ b/src/geometry.c
+@@ -699,10 +699,11 @@
+ 		block = NEW(struct MapVBlock);
+ 		block->node = node;
+ 		block->area = area;
+-		G_LIST_APPEND(block_list, block);
++		G_LIST_PREPEND(block_list, block);
+
+ 		node = node->next;
+ 	}
++	block_list = g_list_reverse( block_list );
+
+ 	/* The blocks are going to have a total area greater than the
+ 	 * directory can provide, so they'll have to be scaled down */
+@@ -721,7 +722,7 @@
+ 			row = NEW(struct MapVRow);
+ 			row->first_block = block;
+ 			row->area = 0.0;
+-			G_LIST_APPEND(row_list, row);
++			G_LIST_PREPEND(row_list, row);
+ 		}
+
+ 		/* Add block to row */
+@@ -739,6 +740,7 @@
+
+ 		block_llink = block_llink->next;
+ 	}
++	row_list = g_list_reverse( row_list );
+
+ 	/* Third pass - optimize layout */
+ 	/* Note to self: write layout optimization routine sometime */

@@ -3,7 +3,8 @@ Description: Rate-limit gui_update() calls during filesystem scanning to ~60fps
  every file during scanning throttles the scan to only ~750 stat calls/sec.
  Rate-limit to 16ms intervals (~60fps) to keep the UI responsive without
  sacrificing scan performance.
-Author: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Author: Francis Russell <francis@unchartedbackwaters.co.uk>
+        Claude Sonnet 4.6 <noreply@anthropic.com>
 --- a/src/scanfs.c
 +++ b/src/scanfs.c
 @@ -48,6 +48,7 @@
