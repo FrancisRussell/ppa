@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Read a package's caching.yml and recipe/build-deps.yml and emit the contents
+as GitHub Actions step outputs (and GITHUB_ENV vars for sccache). Called from
+the build workflow before the install steps so each step can be conditional on
+the relevant output. Prints key=value to stdout when run outside GitHub Actions.
+"""
+
 import sys
 import os
 import yaml
