@@ -1,4 +1,4 @@
-name: Update readme
+name: Update README
 
 on:
   push:
@@ -8,13 +8,11 @@ on:
       - .github/workflows/update-readme.yml
   pull_request:
     branches: [main]
-    paths:
-      - README.md
-      - .github/workflows/update-readme.yml
   workflow_dispatch:
 
 jobs:
-  build:
+  compile-readme:
+    name: Compile README to HTML
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -65,8 +63,9 @@ jobs:
             git push --force-with-lease origin gh-pages
           fi
 
-  deploy:
-    needs: build
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: compile-readme
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: github-pages

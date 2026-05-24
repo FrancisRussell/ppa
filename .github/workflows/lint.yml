@@ -1,4 +1,4 @@
-name: pre-commit
+name: Lint
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  pre-commit:
+  run-pre-commit:
+    name: Run pre-commit hooks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
