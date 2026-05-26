@@ -31,9 +31,10 @@ def main():
         deps = {}
 
     rust = deps.get("rust", {})
+    go = deps.get("go", {})
+    node = deps.get("node", {})
     use_sccache = caching.get("sccache", False)
     use_cargo = caching.get("cargo", False)
-
     outputs = {
         "use_sccache": str(use_sccache).lower(),
         "use_cargo": str(use_cargo).lower(),
@@ -43,6 +44,11 @@ def main():
         "rust_targets": " ".join(rust.get("targets", [])),
         "rust_components": " ".join(rust.get("components", [])),
         "cargo_tools": " ".join(rust.get("cargo_tools", [])),
+        "has_go": "true" if go else "false",
+        "go_version_file": go.get("version_file", ""),
+        "go_sum_file": os.path.join(os.path.dirname(go.get("version_file", "")), "go.sum") if go else "",
+        "has_node": "true" if node else "false",
+        "node_version": str(node.get("version", "")),
     }
 
     output_file = os.environ.get("GITHUB_OUTPUT")
