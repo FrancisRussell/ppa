@@ -149,12 +149,26 @@ jobs:
             cargo install --locked "$tool"
           done
 
+      - name: Install Node.js
+        if: steps.config.outputs.has_node == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ steps.config.outputs.node_version }}
+
       - name: Clone source
         run: |
           REPO=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.repo')
           COMMIT=$(echo '${{ toJSON(matrix.inputs_key) }}' | jq -r '.commit')
           git clone "$REPO" src/${{ matrix.package }}
           git -C src/${{ matrix.package }} checkout "$COMMIT"
+
+      - name: Install Go
+        if: steps.config.outputs.has_go == 'true'
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: src/${{ matrix.package }}/${{ steps.config.outputs.go_version_file }}
+          cache: ${{ steps.config.outputs.go_sum_file != '' }}
+          cache-dependency-path: src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}
 
       - name: Get version
         id: version
