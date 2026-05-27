@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Build a Debian package from a git checkout and deposit build artifacts into
 # a pool directory. Expects SRC_DIR to already contain a debian/ directory.
 # Handles build-dep installation, changelog stamping, and dpkg-buildpackage
@@ -9,6 +9,10 @@
 #
 # Options:
 #   --epoch N   Prepend epoch N: to the Debian package version
+#
+# Environment:
+#   DEB_HOST_ARCH   If set and differs from the native architecture,
+#                   cross-compile for that architecture.
 #
 # VERSION must be a Debian upstream version (no epoch, no v prefix). Hyphens are
 # converted to tildes so they don't conflict with the Debian revision delimiter.
@@ -41,8 +45,16 @@ else
   VERSION_PKG="${UPSTREAM_VERSION}-ppa$(date -u +%Y%m%d%H%M)"
 fi
 
+BUILD_ARCH=$(dpkg --print-architecture)
+HOST_ARCH=${DEB_HOST_ARCH:-$BUILD_ARCH}
+CROSS_FLAG=()
+if [ "$HOST_ARCH" != "$BUILD_ARCH" ]; then
+  CROSS_FLAG=(--host-arch "$HOST_ARCH")
+fi
+
 sudo mk-build-deps --install --remove \
   --tool 'apt-get -y --no-install-recommends' \
+  "${CROSS_FLAG[@]}" \
   "$SRC_DIR/debian/control"
 
 COMMIT=$(git -C "$SRC_DIR" rev-parse HEAD)
@@ -56,14 +68,14 @@ if [ -f "debian/source/format" ]; then
   git -C "$SRC_DIR" archive \
     --prefix="${PACKAGE}-${UPSTREAM_VERSION}/" \
     HEAD | gzip > "$(dirname "$SRC_DIR")/${PACKAGE}_${UPSTREAM_VERSION}.orig.tar.gz"
-fi
-
-if [ -f "debian/source/format" ]; then
-  dpkg-buildpackage --no-sign
+  dpkg-buildpackage --no-sign "${CROSS_FLAG[@]}"
 else
-  dpkg-buildpackage -b --no-sign
+  dpkg-buildpackage -b --no-sign "${CROSS_FLAG[@]}"
 fi
 
+while IFS= read -r deb; do
+  "$SCRIPT_DIR/check-deb-arch.sh" "$deb"
+done < <(find "$(dirname "$SRC_DIR")" -maxdepth 1 -name "*.deb")
 mkdir -p "$POOL_DIR"
 find "$(dirname "$SRC_DIR")" -maxdepth 1 \
   \( -name "*.deb" -o -name "*.dsc" -o -name "*.tar.*" \) \
