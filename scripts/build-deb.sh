@@ -41,7 +41,7 @@ else
   VERSION_PKG="${UPSTREAM_VERSION}-ppa$(date -u +%Y%m%d%H%M)"
 fi
 
-mk-build-deps --install --remove \
+sudo mk-build-deps --install --remove \
   --tool 'apt-get -y --no-install-recommends' \
   "$SRC_DIR/debian/control"
 
@@ -56,6 +56,9 @@ if [ -f "debian/source/format" ]; then
   git -C "$SRC_DIR" archive \
     --prefix="${PACKAGE}-${UPSTREAM_VERSION}/" \
     HEAD | gzip > "$(dirname "$SRC_DIR")/${PACKAGE}_${UPSTREAM_VERSION}.orig.tar.gz"
+fi
+
+if [ -f "debian/source/format" ]; then
   dpkg-buildpackage --no-sign
 else
   dpkg-buildpackage -b --no-sign
