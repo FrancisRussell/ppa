@@ -94,7 +94,7 @@ jobs:
       - name: Install packaging tools
         run: |
           apt-get install -y --no-install-recommends \
-            dpkg-dev debhelper devscripts equivs fakeroot libdistro-info-perl sudo
+            binutils dpkg-dev debhelper devscripts equivs fakeroot libdistro-info-perl sudo
 
       - name: Install docker CLI
         if: matrix.arch != 'amd64'
