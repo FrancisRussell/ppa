@@ -1,0 +1,115 @@
+forgejo (15.0.0-4) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v15.0.0
+
+  Please read the Forgejo v15.0 release announcement and make any
+  necessary adjustments to your configuration before proceeding
+  with the upgrade.
+
+  * Forgejo v15.0 blog post: https://forgejo.org/2026-04-release-v15-0/
+  * You may check all intermediate release notes at the following URLs:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/15.0.0.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 21 Apr 2026 23:12:00 +0000
+
+forgejo (14.0.2-1) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v14.0.2
+
+  Please read the Forgejo v14.0 release announcement and make any
+  necessary adjustments to your configuration before proceeding
+  with the upgrade.
+
+  * Forgejo v14.0 blog post: https://forgejo.org/2026-01-release-v14-0/
+  * You may check all intermediate release notes at the following URLs:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.2.md
+
+ -- lm41 <lm41@noreply.codeberg.org>  Sun, 01 Feb 2026 02:07:00 +0000
+
+forgejo (13.0.2-1) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v13.0.2
+
+  Please read the Forgejo v13.0 release announcement and the release notes
+  for all v13.0.x versions and make any necessary adjustments to your
+  configuration before proceeding with the upgrade.
+
+  * Forgejo v13.0 blog post: https://forgejo.org/2025-10-release-v13-0/
+  * You may check all intermediate release notes at the following URLs:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.2.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 29 Oct 2025 05:17:00 +0000
+
+forgejo (12.0.4-1) unstable; urgency=medium
+
+  * Forgejo version 12.0.4
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Major verson 12 changelog:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.0.md
+  * Included patches:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.2.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.3.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.4.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Mon, 27 Oct 2025 04:13:00 +0000
+
+forgejo (11.0.2-1) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v11.0.2 LTS
+
+  Please read the Forgejo v11.0 release announcement and the release notes
+  for all v11.0.x versions and make any necessary adjustments to your
+  configuration before proceeding with the upgrade.
+
+  You may need to manually restart Forgejo after the upgrade is complete.
+
+  * Forgejo v11.0 Blog Post:
+    https://forgejo.org/2025-04-release-v11-0/
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Intermediate major versions:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/9.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/10.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/11.0.0.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Thu, 17 Jul 2025 15:36:00 +0000
+
+forgejo (7.0.1-2) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v7.0.1 LTS
+
+  Please read the Forgejo v7.0 release announcement and the release notes
+  for all v7.0.x versions and make any necessary adjustments to your
+  configuration before proceeding with the upgrade.
+
+  You may need to manually restart Forgejo after the upgrade is complete.
+
+  https://forgejo.org/2024-04-release-v7-0/
+  https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-1
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 27 Apr 2024 15:42:00 +0000
+
+forgejo (1.21.4.0-2) unstable; urgency=medium
+
+  WARNING: Forgejo will be upgraded to v1.21.4-0
+
+  Please read the Forgejo v1.21 release announcement and the release notes
+  for all v1.21.x-x versions and make any necessary adjustments to your
+  configuration before proceeding with the upgrade.
+
+  You may need to manually restart Forgejo after the upgrade is complete.
+
+  https://forgejo.org/2023-11-release-v1211-0/
+  https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-4-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 17 Jan 2024 00:00:00 +0000

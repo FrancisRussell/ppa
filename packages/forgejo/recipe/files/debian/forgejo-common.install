@@ -1,0 +1,5 @@
+public/ /usr/share/forgejo
+templates/ /usr/share/forgejo
+options/ /usr/share/forgejo
+forgejo.service /usr/lib/systemd/system
+app.ini /etc/forgejo

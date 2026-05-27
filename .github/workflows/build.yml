@@ -91,7 +91,7 @@ jobs:
       - name: Install packaging tools
         run: |
           apt-get install -y --no-install-recommends \
-            dpkg-dev debhelper devscripts equivs libdistro-info-perl
+            dpkg-dev debhelper devscripts equivs fakeroot libdistro-info-perl sudo
 
       - name: Install apt build deps
         if: steps.config.outputs.apt_deps != ''
@@ -101,14 +101,22 @@ jobs:
         if: steps.config.outputs.use_sccache == 'true'
         run: apt-get install -y --no-install-recommends sccache
 
+      - name: Create build user
+        run: |
+          useradd --create-home --home-dir /home/builduser --shell /bin/sh builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
+          echo "SCCACHE_DIR=/home/builduser/.cache/sccache" >> "$GITHUB_ENV"
+          echo "GOMODCACHE=/home/builduser/go/pkg/mod" >> "$GITHUB_ENV"
+          echo "GOTOOLCHAIN=local" >> "$GITHUB_ENV"
+
       - name: Restore cargo cache
         if: steps.config.outputs.use_cargo == 'true'
         uses: actions/cache@v5
         with:
           path: |
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git/db
+            /home/builduser/.cargo/registry/index
+            /home/builduser/.cargo/registry/cache
+            /home/builduser/.cargo/git/db
           key: ${{ matrix.package }}-cargo-${{ matrix.inputs_key_hash }}
           restore-keys: |
             ${{ matrix.package }}-cargo-
@@ -117,7 +125,7 @@ jobs:
         if: steps.config.outputs.use_sccache == 'true'
         uses: actions/cache/restore@v5
         with:
-          path: /github/home/.cache/sccache
+          path: /home/builduser/.cache/sccache
           key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-${{ github.run_id }}
           restore-keys: |
             ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-
@@ -133,22 +141,6 @@ jobs:
           echo "SCCACHE_COUNT_BEFORE=$SCCACHE_COUNT" >> "$GITHUB_ENV"
           find "$SCCACHE_DIR" -type f -exec touch -m -d "@$SCCACHE_PRUNE_TS" {} +
 
-      - name: Install rustup
-        if: steps.config.outputs.has_rust == 'true'
-        run: |
-          ARGS="-y --default-toolchain ${{ steps.config.outputs.rust_toolchain }}"
-          for t in ${{ steps.config.outputs.rust_targets }};     do ARGS="$ARGS --target $t";    done
-          for c in ${{ steps.config.outputs.rust_components }};  do ARGS="$ARGS --component $c"; done
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $ARGS
-
-      - name: Install Rust cargo tools
-        if: steps.config.outputs.cargo_tools != ''
-        run: |
-          . "$HOME/.cargo/env"
-          for tool in ${{ steps.config.outputs.cargo_tools }}; do
-            cargo install --locked "$tool"
-          done
-
       - name: Install Node.js
         if: steps.config.outputs.has_node == 'true'
         uses: actions/setup-node@v5
@@ -158,9 +150,24 @@ jobs:
       - name: Clone source
         run: |
           REPO=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.repo')
+          REF=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.ref')
           COMMIT=$(echo '${{ toJSON(matrix.inputs_key) }}' | jq -r '.commit')
-          git clone "$REPO" src/${{ matrix.package }}
-          git -C src/${{ matrix.package }} checkout "$COMMIT"
+          git init src/${{ matrix.package }}
+          git -C src/${{ matrix.package }} remote add origin "$REPO"
+          FETCH_REFS="$COMMIT"
+          [ "$REF" != "$COMMIT" ] && FETCH_REFS="$FETCH_REFS refs/tags/$REF:refs/tags/$REF"
+          ATTEMPT=0
+          until
+            ATTEMPT=$((ATTEMPT + 1))
+            # shellcheck disable=SC2086
+            git -C src/${{ matrix.package }} fetch --depth 1 --no-tags origin $FETCH_REFS
+          do
+            FETCH_EXIT=$?
+            [ "$FETCH_EXIT" -ne 128 ] && exit "$FETCH_EXIT"
+            [ "$ATTEMPT" -ge 3 ] && exit 1
+            sleep $((ATTEMPT * 10))
+          done
+          git -C src/${{ matrix.package }} checkout FETCH_HEAD
 
       - name: Install Go
         if: steps.config.outputs.has_go == 'true'
@@ -181,18 +188,45 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Chown build user home
+        run: chown -R builduser:builduser /home/builduser
+
+      - name: Install rustup
+        if: steps.config.outputs.has_rust == 'true'
+        run: |
+          ARGS="-y --default-toolchain ${{ steps.config.outputs.rust_toolchain }}"
+          for t in ${{ steps.config.outputs.rust_targets }};     do ARGS="$ARGS --target $t";    done
+          for c in ${{ steps.config.outputs.rust_components }};  do ARGS="$ARGS --component $c"; done
+          # shellcheck disable=SC2086
+          sudo -u builduser -H sh -c \
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $ARGS"
+
+      - name: Install Rust cargo tools
+        if: steps.config.outputs.cargo_tools != ''
+        run: |
+          for tool in ${{ steps.config.outputs.cargo_tools }}; do
+            sudo -u builduser -H sh -c \
+              ". /home/builduser/.cargo/env && cargo install --locked $tool"
+          done
+
       - name: Package .deb
         run: |
           mkdir -p /tmp/pkg
-          ./packages/${{ matrix.package }}/recipe/build.sh \
-            ${{ steps.version.outputs.version }} \
-            src/${{ matrix.package }} \
-            /tmp/pkg \
-            ${{ matrix.codename }}
+          chown builduser:builduser /tmp/pkg src
+          chown -R builduser:builduser src/${{ matrix.package }}
+          BUILD_ENV="PATH=$PATH"
+          [ -n "${GOTOOLCHAIN:-}" ] && BUILD_ENV="$BUILD_ENV GOTOOLCHAIN=$GOTOOLCHAIN"
+          [ -n "${SCCACHE_DIR:-}" ] && BUILD_ENV="$BUILD_ENV SCCACHE_DIR=$SCCACHE_DIR"
+          sudo -u builduser -H sh -c \
+            "$BUILD_ENV ./packages/${{ matrix.package }}/recipe/build.sh \
+              ${{ steps.version.outputs.version }} \
+              src/${{ matrix.package }} \
+              /tmp/pkg \
+              ${{ matrix.codename }}"
 
       - name: sccache stats
         if: steps.config.outputs.use_sccache == 'true'
-        run: sccache --show-stats
+        run: sudo -u builduser -H sh -c "SCCACHE_DIR=$SCCACHE_DIR sccache --show-stats"
 
       - name: Prune sccache and check for changes
         if: steps.config.outputs.use_sccache == 'true'
@@ -211,7 +245,7 @@ jobs:
         if: steps.config.outputs.use_sccache == 'true' && env.SCCACHE_CHANGED == 'true'
         uses: actions/cache/save@v5
         with:
-          path: /github/home/.cache/sccache
+          path: /home/builduser/.cache/sccache
           key: ${{ matrix.package }}-sccache-${{ matrix.codename }}-${{ matrix.inputs_key_hash }}-${{ github.run_id }}
 
       - name: Publish to PPA

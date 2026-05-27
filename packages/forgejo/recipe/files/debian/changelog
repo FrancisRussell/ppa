@@ -1,0 +1,384 @@
+forgejo (15.0.2-1) unstable; urgency=medium
+
+  * Forgejo version 15.0.2
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/15.0.2.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Tue, 12 May 2026 10:59:45 +0000
+
+forgejo (15.0.1-1) unstable; urgency=medium
+
+  * Forgejo version 15.0.1
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/15.0.1.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Wed, 29 Apr 2026 13:20:03 +0000
+
+forgejo (15.0.0-4) unstable; urgency=medium
+
+  * [forgejo-deb] Added arm64 support!
+  * Forgejo version 15.0.0
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Forgejo v15.0.0 changelog:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/15.0.0.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 21 Apr 2026 23:12:00 +0000
+
+forgejo (14.0.4-1) unstable; urgency=medium
+
+  * Forgejo version 14.0.4
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.4.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Fri, 10 Apr 2026 13:20:06 +0000
+
+forgejo (14.0.3-1) unstable; urgency=medium
+
+  * Forgejo version 14.0.3
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.3.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Mon, 09 Mar 2026 09:20:09 +0000
+
+forgejo (14.0.2-1) unstable; urgency=medium
+
+  * Forgejo version 14.0.2
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Forgejo v14.0.0 changelog:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.0.md
+  * Included patches:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/14.0.2.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Sun, 01 Feb 2026 02:10:00 +0000
+
+forgejo (13.0.5-1) unstable; urgency=medium
+
+  * Forgejo version 13.0.5
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.5.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Sat, 17 Jan 2026 08:29:19 +0000
+
+forgejo (13.0.4-1) unstable; urgency=medium
+
+  * Forgejo version 13.0.4
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.4.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Thu, 08 Jan 2026 11:20:05 +0000
+
+forgejo (13.0.3-1) unstable; urgency=medium
+
+  * Forgejo version 13.0.3
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.3.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Fri, 21 Nov 2025 13:20:05 +0000
+
+forgejo (13.0.2-1) unstable; urgency=medium
+
+  * Forgejo version 13.0.2
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Forgejo v13.0.0 changelog:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.0.md
+  * Included patches:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/13.0.2.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 29 Oct 2025 05:17:00 +0000
+
+forgejo (12.0.4-1) unstable; urgency=medium
+
+  * Forgejo version 12.0.4
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Major verson 12 changelog:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.0.md
+  * Included patches:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.2.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.3.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/12.0.4.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Mon, 27 Oct 2025 04:13:00 +0000
+
+forgejo (11.0.2-1) unstable; urgency=medium
+
+  * Forgejo version 11.0.2
+  * You may check all intermediate release notes at the following URL:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/
+  * Intermediate major versions:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#8-0-0
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/9.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/10.0.0.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/11.0.0.md
+  * Included patches:
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/11.0.1.md
+    https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/11.0.2.md
+
+ -- Matthieu Pignolet <matthieu@puffer.fish>  Mon, 23 Jun 2025 19:22:34 +0400  
+
+forgejo (7.0.15-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.15
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.15.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Fri, 02 May 2025 17:10:06 +0000
+
+forgejo (7.0.14-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.14~deb0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.14.md
+  * Additional commits: https://codeberg.org/forgejo/forgejo/compare/v7.0.14...79f43238bd
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 22 Apr 2025 01:33:00 +0000
+
+forgejo (7.0.13-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.13
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.13.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 15 Feb 2025 07:06:40 +0000
+
+forgejo (7.0.12-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.12
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.12.md
+
+ -- crystalbot <crystalbot@noreply.codeberg.org>  Thu, 12 Dec 2024 19:10:05 +0000
+
+forgejo (7.0.11-2) unstable; urgency=medium
+
+  * Forgejo version 7.0.11
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.11.md
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-11
+  * Fixed an issue when upgrading from non-split packages
+
+ -- crystal <crystal@noreply.codeberg.org>  Mon, 18 Nov 2024 15:22:00 +0000
+
+forgejo (7.0.11-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.11
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.11.md
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-11
+
+ -- crystal <crystal@noreply.codeberg.org>  Mon, 18 Nov 2024 05:53:00 +0000
+
+forgejo (7.0.10-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.10
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-10
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.10.md
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.9.md
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.8.md
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 13 Nov 2024 12:11:00 +0000
+
+forgejo (7.0.7-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.7
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-7
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/7.0.7.md
+  * Split `forgejo-common` package for extra data
+
+ -- crystal <crystal@noreply.codeberg.org>  Mon, 26 Aug 2024 00:55:00 +0000
+
+forgejo (7.0.5-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.5
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-5
+  * Split `forgejo-common` package for extra data
+
+ -- crystal <crystal@noreply.codeberg.org>  Sun, 07 Jul 2024 17:22:00 +0000
+
+forgejo (7.0.1-1) unstable; urgency=medium
+
+  * Forgejo version 7.0.1
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#7-0-1
+  * Forgejo Actions based build process
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 27 Apr 2024 15:35:00 +0000
+
+forgejo (1.21.11.1-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.11-1
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-11-1
+
+ -- crystal <crystal@noreply.codeberg.org>  Fri, 19 Apr 2024 15:46:00 +0000
+
+forgejo (1.21.11.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.11-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-11-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Thu, 18 Apr 2024 23:36:00 +0000
+
+forgejo (1.21.10.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.10-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-10-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 9 Apr 2024 11:27:00 +0000
+
+forgejo (1.21.8.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.8-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-8-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 23 Mar 2024 18:15:00 +0000
+
+forgejo (1.21.7.0-2) unstable; urgency=medium
+
+  * Forgejo version 1.21.7-0
+  * Add git dependency
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-7-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Fri, 22 Mar 2024 21:35:00 +0000
+
+forgejo (1.21.6.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.6-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-6-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sun, 25 Feb 2024 12:10:00 +0000
+
+forgejo (1.21.5.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.5-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-5-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 31 Jan 2024 22:22:00 +0000
+
+forgejo (1.21.4.0-2) unstable; urgency=medium
+
+  * Fix NEWS.Debian changelog
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 17 Jan 2024 00:00:00 +0000
+
+forgejo (1.21.4.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.21.4-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-21-4-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 16 Jan 2024 23:03:00 +0000
+
+forgejo (1.20.6.1-0) unstable; urgency=medium
+
+  * Forgejo version 1.20.6-1~deb0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-6-1
+  * Additional commits: https://codeberg.org/forgejo/forgejo/compare/v1.20.6-1...496b0acd22
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 10 Jan 2024 00:02:00 +0000
+
+forgejo (1.20.5.1-1) unstable; urgency=medium
+
+  * Forgejo version 1.20.5-1
+  * app.ini: Replaced example with blank default
+  * Change data directory mode to 750
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-5-1
+
+ -- crystal <crystal@noreply.codeberg.org>  Sun, 26 Nov 2023 01:57:00 +0000
+
+forgejo (1.20.5.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.20.5-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-5-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 7 Oct 2023 23:03:00 +0000
+
+forgejo (1.20.4.1-1) unstable; urgency=medium
+
+  * Forgejo version 1.20.4-1
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-4-1
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 20 Sep 2023 20:03:00 +0000
+
+forgejo (1.20.4.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.20.4-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-4-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 9 Sep 2023 11:00:00 +0000
+
+forgejo (1.20.3.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.20.3-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-3-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 21 Aug 2023 15:27:00 +0000
+
+forgejo (1.20.2.0-2) unstable; urgency=medium
+
+  * Forgejo version 1.20.2-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-2-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sun, 30 Jul 2023 15:30:00 +0000
+
+forgejo (1.20.1.0-2) unstable; urgency=medium
+
+  * Forgejo version 1.20.1-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-20-1-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 25 Jul 2023 08:00:00 +0000
+
+forgejo (1.19.4.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.19.4-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-19-4-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 5 Jul 2023 16:57:00 +0000
+
+forgejo (1.19.3.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.19.3-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-19-3-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 3 May 2023 21:54:00 +0000
+
+forgejo (1.19.2.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.19.2-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-19-2-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 29 Apr 2023 16:11:00 +0000
+
+forgejo (1.19.0.3-1) unstable; urgency=medium
+
+  * Forgejo version 1.19.0-3
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-19-0-3
+
+ -- crystal <crystal@noreply.codeberg.org>  Wed, 5 Apr 2023 22:12:00 +0000
+
+forgejo (1.19.0.2-1) unstable; urgency=medium
+
+  * Forgejo version 1.19.0-2
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-19-0-2
+
+ -- crystal <crystal@noreply.codeberg.org>  Tue, 21 Mar 2023 17:40:00 +0000
+
+forgejo (1.18.5.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.18.5-0
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-18-5-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Fri, 24 Feb 2023 18:30:00 +0000
+
+forgejo (1.18.3.2-1) unstable; urgency=medium
+
+  * Forgejo version 1.18.3-2
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-18-3-2
+
+ -- crystal <crystal@noreply.codeberg.org>  Sat, 18 Feb 2023 23:35:00 +0000
+
+forgejo (1.18.3.1-1) unstable; urgency=medium
+
+  * Forgejo version 1.18.3-1
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-18-3-1
+
+ -- crystal <crystal@noreply.codeberg.org>  Fri, 10 Feb 2023 00:36:00 +0000
+
+forgejo (1.18.3.0-1) unstable; urgency=medium
+
+  * Forgejo version 1.18.3-0
+  * Use same versioning scheme as Arch package
+  * See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/RELEASE-NOTES.md#1-18-3-0
+
+ -- crystal <crystal@noreply.codeberg.org>  Fri, 3 Feb 2023 12:38:00 +0000
+

@@ -1,0 +1,26 @@
+Source: forgejo
+Section: net
+Priority: optional
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Build-Depends: debhelper-compat (= 13), build-essential, openssh-client
+Standards-Version: 4.6.2
+
+Package: forgejo-sqlite
+Architecture: any
+Depends: ${misc:Depends}, forgejo-common (= ${source:Version}), adduser (>= 3.11), git
+Provides: forgejo, gitea
+Conflicts: forgejo, forgejo-bin
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-common
+Architecture: all
+Depends: ${misc:Depends}, forgejo-sqlite (= ${source:Version})
+Conflicts: forgejo-bin
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.

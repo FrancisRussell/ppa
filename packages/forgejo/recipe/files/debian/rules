@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+# Prevent dpkg's linker flags (e.g. -Wl,-z,relro) from reaching Go's toolchain.
+unexport LDFLAGS LDFLAGS_FOR_BUILD
+
+FORGEJO_LDFLAGS := -X forgejo.org/modules/setting.StaticRootPath=/usr/share/forgejo
+FORGEJO_LDFLAGS += -X forgejo.org/modules/setting.AppWorkPath=/var/lib/forgejo
+FORGEJO_LDFLAGS += -X forgejo.org/modules/setting.CustomConf=/etc/forgejo/app.ini
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	make deps-frontend
+	make frontend
+	LDFLAGS="$(FORGEJO_LDFLAGS)" TAGS="sqlite sqlite_unlock_notify" make build
+	[ -f gitea ] && mv gitea forgejo || true
+	[ -f forgejo ]
+
+override_dh_auto_install:
+	# The binary and static assets are already in the source tree from override_dh_auto_build.
+	# dh_install picks them up via debian/*.install; running make install would invoke go install
+	# with uncontrolled LDFLAGS and is not needed.
+
+override_dh_auto_test:
+	# Tests require CGO-compatible binutils and git environment not available in dpkg-buildpackage.

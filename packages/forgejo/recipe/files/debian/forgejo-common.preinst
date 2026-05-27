@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+case "$1" in
+  install|upgrade)
+  [ -f "/etc/default/forgejo" ] && . /etc/default/forgejo
+  [ -z "$FORGEJO_HOME" ] && FORGEJO_HOME=/var/lib/forgejo
+  [ -z "$FORGEJO_USER" ] && FORGEJO_USER=forgejo
+  [ -z "$FORGEJO_NAME" ] && FORGEJO_NAME="Forgejo (Beyond coding. We forge.)"
+  [ -z "$FORGEJO_GROUP" ] && FORGEJO_GROUP=forgejo
+  if ! getent group | grep -q "^$FORGEJO_GROUP:" ; then
+    echo -n "Adding group $FORGEJO_GROUP.."
+    addgroup --quiet --system $FORGEJO_GROUP 2>/dev/null || true
+    echo "..done"
+  fi
+  test -d $FORGEJO_HOME || mkdir $FORGEJO_HOME
+  if ! getent passwd | grep -q "^$FORGEJO_USER:"; then
+    echo -n "Adding system user $FORGEJO_USER.."
+    adduser --quiet \
+            --system \
+            --ingroup $FORGEJO_GROUP \
+            --no-create-home \
+            --disabled-password \
+            $FORGEJO_USER 2>/dev/null || true
+    echo "..done"
+  fi
+  usermod -c "$FORGEJO_NAME" \
+          -d $FORGEJO_HOME   \
+          -g $FORGEJO_GROUP  \
+          -s "/bin/bash"     \
+             $FORGEJO_USER
+  if ! dpkg-statoverride --list $FORGEJO_HOME >/dev/null ; then
+    chown -R $FORGEJO_USER:$FORGEJO_GROUP $FORGEJO_HOME
+    chmod u=rwx,g=rx,o= $FORGEJO_HOME
+  fi
+  ;;
+esac
