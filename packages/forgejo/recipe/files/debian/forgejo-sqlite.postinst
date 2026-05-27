@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+case "$1" in
+  configure)
+  [ -f "/etc/default/forgejo" ] && . /etc/default/forgejo
+  [ -z "$FORGEJO_HOME" ] && FORGEJO_HOME=/var/lib/forgejo
+  [ -z "$FORGEJO_USER" ] && FORGEJO_USER=forgejo
+  [ -z "$FORGEJO_NAME" ] && FORGEJO_NAME="Forgejo: Beyond coding. We forge."
+  [ -z "$FORGEJO_GROUP" ] && FORGEJO_GROUP=forgejo
+  chown $FORGEJO_USER:$FORGEJO_GROUP /etc/forgejo/app.ini
+  systemctl daemon-reload || true
+  systemctl restart forgejo || true
+  systemctl enable forgejo || true
+  ;;
+esac

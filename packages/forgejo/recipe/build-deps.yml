@@ -1,0 +1,5 @@
+go:
+  version_file: go.mod
+
+node:
+  version: 22
