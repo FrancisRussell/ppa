@@ -2,7 +2,7 @@ Source: pwsafe
 Section: utils
 Priority: optional
 Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
-Build-Depends: debhelper-compat (= 13), autoconf, automake, libreadline-dev, libssl-dev, libxmu-dev, libx11-dev
+Build-Depends: debhelper-compat (= 13), autoconf, automake, libreadline-dev, libssl-dev, libxmu-dev, libx11-dev, libstdc++-dev
 Standards-Version: 4.6.2
 
 Package: pwsafe

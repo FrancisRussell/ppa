@@ -2,7 +2,7 @@ Source: encspot
 Section: sound
 Priority: optional
 Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
-Build-Depends: debhelper-compat (= 13), cmake
+Build-Depends: debhelper-compat (= 13), cmake, libstdc++-dev
 Standards-Version: 4.6.2
 Homepage: https://github.com/FrancisRussell/encspot
 
