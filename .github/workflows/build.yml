@@ -158,9 +158,24 @@ jobs:
       - name: Clone source
         run: |
           REPO=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.repo')
+          REF=$(echo '${{ toJSON(matrix.inputs_meta) }}' | jq -r '.ref')
           COMMIT=$(echo '${{ toJSON(matrix.inputs_key) }}' | jq -r '.commit')
-          git clone "$REPO" src/${{ matrix.package }}
-          git -C src/${{ matrix.package }} checkout "$COMMIT"
+          git init src/${{ matrix.package }}
+          git -C src/${{ matrix.package }} remote add origin "$REPO"
+          FETCH_REFS="$COMMIT"
+          [ "$REF" != "$COMMIT" ] && FETCH_REFS="$FETCH_REFS refs/tags/$REF:refs/tags/$REF"
+          ATTEMPT=0
+          until
+            ATTEMPT=$((ATTEMPT + 1))
+            # shellcheck disable=SC2086
+            git -C src/${{ matrix.package }} fetch --depth 1 --no-tags origin $FETCH_REFS
+          do
+            FETCH_EXIT=$?
+            [ "$FETCH_EXIT" -ne 128 ] && exit "$FETCH_EXIT"
+            [ "$ATTEMPT" -ge 3 ] && exit 1
+            sleep $((ATTEMPT * 10))
+          done
+          git -C src/${{ matrix.package }} checkout FETCH_HEAD
 
       - name: Install Go
         if: steps.config.outputs.has_go == 'true'
