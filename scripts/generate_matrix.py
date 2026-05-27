@@ -14,6 +14,7 @@ Requires GITHUB_TOKEN in the environment for latest_release packages.
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -24,15 +25,32 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-def compute_build_inputs(package: str, arch: str, codename: str, container: str) -> dict:
-    script = REPO_ROOT / "scripts" / "compute-build-inputs.py"
+def resolve_source(package: str) -> dict:
     result = subprocess.run(
-        [str(script), package, arch, codename, container],
-        capture_output=True,
+        [str(REPO_ROOT / "scripts" / "resolve_source.py"), package],
+        stdout=subprocess.PIPE,
         text=True,
         check=True,
     )
     return json.loads(result.stdout)
+
+
+def compute_recipe_files(recipe_dir: Path) -> dict:
+    file_paths = []
+    for root, dirs, filenames in os.walk(recipe_dir, followlinks=True):
+        dirs.sort()
+        for filename in sorted(filenames):
+            file_paths.append(Path(root) / filename)
+    file_paths.sort()
+
+    result = {}
+    for filepath in file_paths:
+        relpath = str(filepath.relative_to(recipe_dir))
+        h = hashlib.blake2b(digest_size=32)
+        with open(filepath, "rb") as f:
+            h.update(f.read())
+        result[relpath] = h.hexdigest()
+    return result
 
 
 def inputs_key_hash(build_key: dict) -> str:
@@ -56,6 +74,8 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
         source_config = yaml.safe_load(f)
 
     targets = source_config.get("targets", default_targets)
+    source = resolve_source(package)
+    recipe_files = compute_recipe_files(REPO_ROOT / "packages" / package / "recipe")
 
     entries = []
     for target in targets:
@@ -63,9 +83,15 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
         arch = target["arch"]
         container = target["container"]
 
-        result = compute_build_inputs(package, arch, codename, container)
-        build_key = result["key"]
-        metadata = result["meta"]
+        build_key = {
+            "arch": arch,
+            "codename": codename,
+            "commit": source["commit"],
+            "container": container,
+            "package": package,
+            "recipe_files": recipe_files,
+        }
+        metadata = {"ref": source["ref"], "repo": source["repo"]}
         ref = metadata["ref"]
         hash_str = inputs_key_hash(build_key)
 
