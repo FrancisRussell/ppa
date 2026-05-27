@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 def resolve_source(package: str) -> dict:
     result = subprocess.run(
         [str(REPO_ROOT / "scripts" / "resolve_source.py"), package],
-        capture_output=True,
+        stdout=subprocess.PIPE,
         text=True,
         check=True,
     )
