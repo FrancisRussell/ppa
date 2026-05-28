@@ -175,7 +175,7 @@ jobs:
 
       - name: Install Node.js
         if: steps.config.outputs.has_node == 'true'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ steps.config.outputs.node_version }}
 
