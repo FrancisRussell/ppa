@@ -1,0 +1,38 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "amd64",
+      "codename": "noble",
+      "commit": "984fe38489c24602391e24150b450a37bfb866b7",
+      "container": "ubuntu:noble",
+      "package": "pwsafe",
+      "recipe_files": {
+        "build.sh": "3c96b51b4bba3cdc35e8a48947085a20bff6ffdacb25c824b9b031bc6e12ae7a",
+        "files/debian/changelog": "b8f9db49f4a4ef18ff7c44c67020e82c646fb46ce45f546817429aed4232d493",
+        "files/debian/control": "0b080aab0ece95d5d032fddf61f7460b652acc188154f731bb1ca6a68ba0d967",
+        "files/debian/copyright": "48b5667bfc4122b57d708632f0ed3d8ac10620991ed4fb5109aff59099b0227e",
+        "files/debian/rules": "2feed00958b6034ba59ee94b347e655f4c9492caa64d550604bcf7f41e332dbc",
+        "files/debian/source/format": "583789a01e0a08dc13dc80788daccec4a82d7e29ef799ffb498a41c17deaaf6d",
+        "get-version.sh": "beb9f7730a70d6a46329bce81efbbd4f91c811459bfe39b3bc549f2bfa9a5f8d"
+      }
+    },
+    "meta": {
+      "ref": "984fe38489c24602391e24150b450a37bfb866b7",
+      "repo": "https://github.com/nsd20463/pwsafe"
+    }
+  },
+  "output": {
+    "files": [
+      "pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz",
+      "pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc",
+      "pwsafe_0.2.2~beta+git20250604-ppa202605280946_amd64.deb",
+      "pwsafe_0.2.2~beta+git20250604.orig.tar.gz"
+    ],
+    "meta": {
+      "built_at": "2026-05-28T09:46:50Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/26567295455",
+      "upstream_version": "0.2.2-beta+git20250604",
+      "package_version": "0.2.2~beta+git20250604-ppa202605280946"
+    }
+  }
+}

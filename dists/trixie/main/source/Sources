@@ -1,0 +1,97 @@
+Format: 3.0 (quilt)
+Package: encspot
+Binary: encspot
+Architecture: any
+Version: 1:2.01+git20260523-ppa202605280946
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Homepage: https://github.com/FrancisRussell/encspot
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), cmake, libstdc++-dev
+Package-List:
+ encspot deb sound optional arch=any
+Directory: pool/trixie/main/e/encspot
+Checksums-Sha1:
+ 731f3499413d89cd18b87b5e19c5dc7aeaee956a 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 9169980ef6271f182d979b031c74b31dbb0a5914 27609 encspot_2.01+git20260523.orig.tar.gz
+ 6349234a66c5502c57f400086b4ba19ddc430a94 2556 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+Checksums-Sha256:
+ c942a744e1e0a2e8fd1fe08a3bdf1156c5364bf431f4f6c759ee28533d624b4d 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 4f850b04339dde9b8b7991230720d2693435a8f7df7889dbb747c07682a941a1 27609 encspot_2.01+git20260523.orig.tar.gz
+ 9cc2606d1193af00424ea88e4ee98b9ef541d9fe2c0cf0647202a8f243949984 2556 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+Files:
+ 6360ff40860f123a95f33c50d20502ba 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 8a07d7f2a9107cb35867a445328041b7 27609 encspot_2.01+git20260523.orig.tar.gz
+ 3313dae23de160eed5a91ae1198d5b10 2556 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: fsv
+Binary: fsv
+Architecture: any
+Version: 3.0-ppa202605280848
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkg-config, libgtk-3-dev, libgdk-pixbuf-2.0-dev, libepoxy-dev, libcglm-dev, libglib2.0-dev, libglu1-mesa-dev
+Package-List:
+ fsv deb x11 optional arch=any
+Directory: pool/trixie/main/f/fsv
+Checksums-Sha1:
+ 4efb45d751cfff73bb2cdbc30e64760f7380bf9e 933 fsv_3.0-ppa202605280848.dsc
+ c8e8e0a9b84ed1e661cc2cef288bc16372ac531a 253471 fsv_3.0.orig.tar.gz
+ 6b682f1c2d5c51072cc10d0da30b698cf02d3555 3188 fsv_3.0-ppa202605280848.debian.tar.xz
+Checksums-Sha256:
+ 390254fab5489cf10495f8ee145f40065be1030d994782e0a80c96c8d1b25368 933 fsv_3.0-ppa202605280848.dsc
+ 4aa3d904801ec552b80b5462541dc617369010be8c2ae319e403c819b970924b 253471 fsv_3.0.orig.tar.gz
+ 190a9d7f7b3586c554743ae983c7996c65e90ac8151b0a29fbc01500f9864700 3188 fsv_3.0-ppa202605280848.debian.tar.xz
+Files:
+ 5705a868554982655f89502d153fe1ea 933 fsv_3.0-ppa202605280848.dsc
+ ca8aa008052155ac83f97beb6749d0b3 253471 fsv_3.0.orig.tar.gz
+ be2612e26f9f135b6520867b6e939c32 3188 fsv_3.0-ppa202605280848.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: fsv
+Binary: fsv
+Architecture: any
+Version: 3.0-ppa202605280946
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkg-config, libgtk-3-dev, libgdk-pixbuf-2.0-dev, libepoxy-dev, libcglm-dev, libglib2.0-dev, libglu1-mesa-dev
+Package-List:
+ fsv deb x11 optional arch=any
+Directory: pool/trixie/main/f/fsv
+Checksums-Sha1:
+ 1f19d5828e2697be8a9cce20f34fae11d527ca23 933 fsv_3.0-ppa202605280946.dsc
+ c8e8e0a9b84ed1e661cc2cef288bc16372ac531a 253471 fsv_3.0.orig.tar.gz
+ 4a9086f37bfe88a14735df1fc9e8310c36835d21 3188 fsv_3.0-ppa202605280946.debian.tar.xz
+Checksums-Sha256:
+ d6b37b9f1e7282ea01355c60e0c37a5facbfb485df0f5cb66a87875b18ef2a8c 933 fsv_3.0-ppa202605280946.dsc
+ 4aa3d904801ec552b80b5462541dc617369010be8c2ae319e403c819b970924b 253471 fsv_3.0.orig.tar.gz
+ 51936482fc5cc01380533c70c827e0d89baf918ebee126e45355c39354c1e45a 3188 fsv_3.0-ppa202605280946.debian.tar.xz
+Files:
+ 21691f55065b16e8ac75a0f840a5636f 933 fsv_3.0-ppa202605280946.dsc
+ ca8aa008052155ac83f97beb6749d0b3 253471 fsv_3.0.orig.tar.gz
+ 11768a50d15a2cb01f1e75b366d8d3a1 3188 fsv_3.0-ppa202605280946.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: pwsafe
+Binary: pwsafe
+Architecture: any
+Version: 0.2.2~beta+git20250604-ppa202605280946
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), autoconf, automake, libreadline-dev, libssl-dev, libxmu-dev, libx11-dev, libstdc++-dev
+Package-List:
+ pwsafe deb utils optional arch=any
+Directory: pool/trixie/main/p/pwsafe
+Checksums-Sha1:
+ 97426ec700bfb8a441e13d1d69535ac1f098bcaf 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ d13cf33a4dc7e110acb08834723c0130675caf52 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ 8c3e2dbfb4bc0330391892745f54326306390050 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+Checksums-Sha256:
+ f17b1c2ec396cd6a19b1dc98bfdbf20c85200b583484783afbe9d680c0da84be 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ b0f35a49daed4f7d6b177c018feafda3270f9a1d56a58c48adb2f86d4365940c 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ c4c24b1d547ec324bcd0e70bde4e70d78294c5dac6f9685cf166a951b68bbcee 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+Files:
+ 87bc6fc287e3ff73d45fd15c35ff4bb1 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ 2619f68cf963aa9d9d8630a5617d9c17 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ 7bde01f565b1cf476209538a3fe5d684 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+

@@ -1,0 +1,73 @@
+Format: 3.0 (quilt)
+Package: encspot
+Binary: encspot
+Architecture: any
+Version: 1:2.01+git20260523-ppa202605280946
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Homepage: https://github.com/FrancisRussell/encspot
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), cmake, libstdc++-dev
+Package-List:
+ encspot deb sound optional arch=any
+Directory: pool/noble/main/e/encspot
+Checksums-Sha1:
+ 888eece24747a41a8f6d5b9720cef306af783940 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 9169980ef6271f182d979b031c74b31dbb0a5914 27609 encspot_2.01+git20260523.orig.tar.gz
+ 066db543afe67ebc91203599c4ad48bd6972dd3c 2548 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+Checksums-Sha256:
+ 617dba7a3023068c27de176ec7b313d9b17b4380714ce1eac8886d52c183158a 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 4f850b04339dde9b8b7991230720d2693435a8f7df7889dbb747c07682a941a1 27609 encspot_2.01+git20260523.orig.tar.gz
+ 32b5f8af40b48032d5ad8438d0ce178d289d09507e861f9add22f74c84ff0ab1 2548 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+Files:
+ 0e9cc6a77fff678de16d325ad0de0c51 1005 encspot_2.01+git20260523-ppa202605280946.dsc
+ 8a07d7f2a9107cb35867a445328041b7 27609 encspot_2.01+git20260523.orig.tar.gz
+ 6c949485bff05cbbe37535fb7916771d 2548 encspot_2.01+git20260523-ppa202605280946.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: fsv
+Binary: fsv
+Architecture: any
+Version: 3.0-ppa202605280847
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkg-config, libgtk-3-dev, libgdk-pixbuf-2.0-dev, libepoxy-dev, libcglm-dev, libglib2.0-dev, libglu1-mesa-dev
+Package-List:
+ fsv deb x11 optional arch=any
+Directory: pool/noble/main/f/fsv
+Checksums-Sha1:
+ f338dc4a099cb5fc0212a114c3f6a32209717755 933 fsv_3.0-ppa202605280847.dsc
+ c8e8e0a9b84ed1e661cc2cef288bc16372ac531a 253471 fsv_3.0.orig.tar.gz
+ a571f1d76b12e711a1b209f850e909c40ed74e87 3184 fsv_3.0-ppa202605280847.debian.tar.xz
+Checksums-Sha256:
+ 9ad204a3acaa0ec95a06f72b0bb3370e52c055a89c1ba3f5e21acce057dd58ac 933 fsv_3.0-ppa202605280847.dsc
+ 4aa3d904801ec552b80b5462541dc617369010be8c2ae319e403c819b970924b 253471 fsv_3.0.orig.tar.gz
+ 1c092abd9268fef6d487dc97508549b54689609f9cec86a200f6a109fb4b0f70 3184 fsv_3.0-ppa202605280847.debian.tar.xz
+Files:
+ 0a6082682d22a94d0487b7c2630cd9ab 933 fsv_3.0-ppa202605280847.dsc
+ ca8aa008052155ac83f97beb6749d0b3 253471 fsv_3.0.orig.tar.gz
+ f1927d79a5c224e29c6eb88a280004db 3184 fsv_3.0-ppa202605280847.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: pwsafe
+Binary: pwsafe
+Architecture: any
+Version: 0.2.2~beta+git20250604-ppa202605280946
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), autoconf, automake, libreadline-dev, libssl-dev, libxmu-dev, libx11-dev, libstdc++-dev
+Package-List:
+ pwsafe deb utils optional arch=any
+Directory: pool/noble/main/p/pwsafe
+Checksums-Sha1:
+ 7854b346cab20d71a907380fa1f98e220db212d4 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ d13cf33a4dc7e110acb08834723c0130675caf52 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ 9004250b22b076c885f5ed27f04b10bec94682b9 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+Checksums-Sha256:
+ a1c6e8b6d32c619afc78b2a482849f7c482a4197ff2f9eea3728b8b969ec311c 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ b0f35a49daed4f7d6b177c018feafda3270f9a1d56a58c48adb2f86d4365940c 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ 44869de90e5534ed81c10b1b00ddcab02887bac63d22ac6a1cca7642a1b5fbd8 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+Files:
+ a7f4a500e0e5b26e1fc37d8faf591c2d 1050 pwsafe_0.2.2~beta+git20250604-ppa202605280946.dsc
+ 2619f68cf963aa9d9d8630a5617d9c17 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ e47c949eb37eccc26e56c7a8b87e2b5f 1732 pwsafe_0.2.2~beta+git20250604-ppa202605280946.debian.tar.xz
+

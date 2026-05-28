@@ -1,0 +1,41 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "amd64",
+      "codename": "noble",
+      "commit": "8ad46459b0e2ee825d7320ca5b64e8b5a314768a",
+      "container": "ubuntu:noble",
+      "package": "fsv",
+      "recipe_files": {
+        "build.sh": "c4e7af91ea25754b3f53e23a4390166dc84cc986549150a41d0444affac69956",
+        "files/debian/changelog": "27f24bbb4267eea66946bb30dab607db19db7e9cebc930a45b3a1132713a3e47",
+        "files/debian/control": "91b7eea9bac8eeb275784ed39e59b089e88d2e5df5d28f7920d8f4aa86b0eff9",
+        "files/debian/copyright": "7c95090229cf883ba97fe2fafbab29af8bcb09adfa4ed22815908e0d9e87df3c",
+        "files/debian/patches/0001-rate-limit-gui-update-to-60fps.patch": "4946115c62e51e34e4a8ecc022bde9caa47567cd87a43c3648aaa5f1024d32f8",
+        "files/debian/patches/0002-fix-o-n-squared-list-building-in-mapv-layout.patch": "f93b528f9f1cce057cffd52135f01f0583f610826cbdb0e6f430ab53d4c273cf",
+        "files/debian/patches/series": "e8f18d4475a1ac4d94690a74a484db14804e2369e2533103d86564f899700499",
+        "files/debian/rules": "2e383ce63f2a5b3bbf1f0462602f75d3cfb3fa263f7d4ed370cf151da010c804",
+        "files/debian/source/format": "583789a01e0a08dc13dc80788daccec4a82d7e29ef799ffb498a41c17deaaf6d",
+        "get-version.sh": "b41c71c217195bcfcc7e375bf8ff31926a885c78df6526c55ded5e323c7be388"
+      }
+    },
+    "meta": {
+      "ref": "fsv-3.0",
+      "repo": "https://github.com/jabl/fsv"
+    }
+  },
+  "output": {
+    "files": [
+      "fsv_3.0-ppa202605280847.debian.tar.xz",
+      "fsv_3.0-ppa202605280847.dsc",
+      "fsv_3.0-ppa202605280847_amd64.deb",
+      "fsv_3.0.orig.tar.gz"
+    ],
+    "meta": {
+      "built_at": "2026-05-28T08:48:23Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/26564571997",
+      "upstream_version": "3.0",
+      "package_version": "3.0-ppa202605280847"
+    }
+  }
+}
