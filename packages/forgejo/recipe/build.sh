@@ -11,6 +11,8 @@ REPO_ROOT=$(readlink -f "$SCRIPT_DIR/../../..")
 # Go provides its own hardening; dpkg's ELF linker flags are incompatible with Go's linker.
 export DEB_BUILD_MAINT_OPTIONS=hardening=-all
 
+. "$REPO_ROOT/scripts/go-cross-env.sh"
+
 cp -r "$SCRIPT_DIR/files/debian/." "$SRC_DIR/debian/"
 cp "$SCRIPT_DIR/files/forgejo.service" "$SRC_DIR/forgejo.service"
 cp "$SCRIPT_DIR/files/app.ini" "$SRC_DIR/app.ini"
