@@ -1,2 +1,12 @@
 repo: https://github.com/lldap/lldap
 track: latest_release
+targets:
+  - codename: trixie
+    arch: amd64
+    container: debian:trixie
+  - codename: noble
+    arch: amd64
+    container: ubuntu:noble
+  - codename: trixie
+    arch: arm64
+    container: debian:trixie

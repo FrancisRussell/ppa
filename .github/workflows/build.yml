@@ -58,12 +58,17 @@ jobs:
     if: needs.generate-matrix.outputs.matrix != '[]'
     name: Build ${{ matrix.name }}
     runs-on: ubuntu-latest
-    container: ${{ matrix.container }}
+    container:
+      image: ${{ matrix.container }}
+      options: --privileged -v /var/run/docker.sock:/var/run/docker.sock
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    defaults:
+      run:
+        shell: bash
     permissions:
       contents: write
     steps:
@@ -89,7 +94,26 @@ jobs:
       - name: Install packaging tools
         run: |
           apt-get install -y --no-install-recommends \
-            dpkg-dev debhelper devscripts equivs fakeroot libdistro-info-perl sudo
+            binutils dpkg-dev debhelper devscripts equivs fakeroot libdistro-info-perl sudo
+
+      - name: Install docker CLI
+        if: matrix.arch != 'amd64'
+        run: apt-get install -y --no-install-recommends docker-cli
+
+      - name: Set up QEMU
+        if: matrix.arch != 'amd64'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up cross-compilation
+        run: |
+          BUILD_ARCH=$(dpkg --print-architecture)
+          if [ "${{ matrix.arch }}" != "$BUILD_ARCH" ]; then
+            dpkg --add-architecture ${{ matrix.arch }}
+            apt-get update
+            apt-get install -y --no-install-recommends \
+              crossbuild-essential-${{ matrix.arch }}
+            echo "DEB_HOST_ARCH=${{ matrix.arch }}" >> "$GITHUB_ENV"
+          fi
 
       - name: Install apt build deps
         if: steps.config.outputs.apt_deps != ''
@@ -152,13 +176,12 @@ jobs:
           COMMIT=$(echo '${{ toJSON(matrix.inputs_key) }}' | jq -r '.commit')
           git init src/${{ matrix.package }}
           git -C src/${{ matrix.package }} remote add origin "$REPO"
-          FETCH_REFS="$COMMIT"
-          [ "$REF" != "$COMMIT" ] && FETCH_REFS="$FETCH_REFS refs/tags/$REF:refs/tags/$REF"
+          FETCH_REFS=("$COMMIT")
+          [ "$REF" != "$COMMIT" ] && FETCH_REFS+=("refs/tags/$REF:refs/tags/$REF")
           ATTEMPT=0
           until
             ATTEMPT=$((ATTEMPT + 1))
-            # shellcheck disable=SC2086
-            git -C src/${{ matrix.package }} fetch --depth 1 --no-tags origin $FETCH_REFS
+            git -C src/${{ matrix.package }} fetch --depth 1 --no-tags origin "${FETCH_REFS[@]}"
           do
             FETCH_EXIT=$?
             [ "$FETCH_EXIT" -ne 128 ] && exit "$FETCH_EXIT"
@@ -192,12 +215,15 @@ jobs:
       - name: Install rustup
         if: steps.config.outputs.has_rust == 'true'
         run: |
-          ARGS="-y --default-toolchain ${{ steps.config.outputs.rust_toolchain }}"
-          for t in ${{ steps.config.outputs.rust_targets }};     do ARGS="$ARGS --target $t";    done
-          for c in ${{ steps.config.outputs.rust_components }};  do ARGS="$ARGS --component $c"; done
-          # shellcheck disable=SC2086
+          . scripts/rust-cross-env.sh
+          ARGS=(-y --default-toolchain "${{ steps.config.outputs.rust_toolchain }}")
+          for c in ${{ steps.config.outputs.rust_components }}; do ARGS+=(--component "$c"); done
           sudo -u builduser -H sh -c \
-            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- $ARGS"
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- ${ARGS[*]}"
+          TARGETS=(${{ steps.config.outputs.rust_targets }})
+          [ -n "$RUST_TARGET" ] && TARGETS+=("$RUST_TARGET")
+          [ ${#TARGETS[@]} -gt 0 ] && sudo -u builduser -H sh -c \
+            ". /home/builduser/.cargo/env && rustup target add ${TARGETS[*]}"
 
       - name: Install Rust cargo tools
         if: steps.config.outputs.cargo_tools != ''
@@ -215,6 +241,7 @@ jobs:
           BUILD_ENV="PATH=$PATH"
           [ -n "${GOTOOLCHAIN:-}" ] && BUILD_ENV="$BUILD_ENV GOTOOLCHAIN=$GOTOOLCHAIN"
           [ -n "${SCCACHE_DIR:-}" ] && BUILD_ENV="$BUILD_ENV SCCACHE_DIR=$SCCACHE_DIR"
+          [ -n "${DEB_HOST_ARCH:-}" ] && BUILD_ENV="$BUILD_ENV DEB_HOST_ARCH=$DEB_HOST_ARCH"
           sudo -u builduser -H sh -c \
             "$BUILD_ENV ./packages/${{ matrix.package }}/recipe/build.sh \
               ${{ steps.version.outputs.version }} \
