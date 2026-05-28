@@ -10,6 +10,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   compile-readme:
     name: Compile README to HTML
@@ -21,6 +25,7 @@ jobs:
 
       - name: Install python3-markdown
         run: |
+          echo 'man-db man-db/auto-update boolean false' | sudo debconf-set-selections
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends python3-markdown python3-pygments
 

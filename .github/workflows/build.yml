@@ -76,6 +76,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo 'man-db man-db/auto-update boolean false' | debconf-set-selections
           apt-get update
           apt-get install -y --no-install-recommends \
             git ca-certificates curl jq python3 python3-yaml
@@ -106,12 +107,21 @@ jobs:
 
       - name: Set up cross-compilation
         run: |
+          # build-essential is conventionally assumed present in any Debian build
+          # environment. For cross-builds, crossbuild-essential-<arch> provides the
+          # cross-compiler toolchain (and depends on build-essential itself). libc6:<arch>
+          # is installed explicitly because crossbuild-essential uses libc6-dev-<arch>-cross
+          # (an amd64-arch sysroot stub) rather than the real multiarch libc6:<arch> package;
+          # dh_shlibdeps needs the latter to resolve shared library dependencies in
+          # cross-compiled binaries.
+          apt-get install -y --no-install-recommends build-essential
           BUILD_ARCH=$(dpkg --print-architecture)
           if [ "${{ matrix.arch }}" != "$BUILD_ARCH" ]; then
             dpkg --add-architecture ${{ matrix.arch }}
             apt-get update
             apt-get install -y --no-install-recommends \
-              crossbuild-essential-${{ matrix.arch }}
+              crossbuild-essential-${{ matrix.arch }} \
+              libc6:${{ matrix.arch }}
             echo "DEB_HOST_ARCH=${{ matrix.arch }}" >> "$GITHUB_ENV"
           fi
 
