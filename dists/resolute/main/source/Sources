@@ -1,0 +1,111 @@
+Format: 3.0 (quilt)
+Package: encspot
+Binary: encspot
+Architecture: any
+Version: 1:2.01+git20260523-ppa202609291308
+Priority: optional
+Section: unknown
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Homepage: https://github.com/FrancisRussell/encspot
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), cmake, libstdc++-dev
+Package-List:
+ encspot deb sound optional arch=any
+Directory: pool/resolute/main/e/encspot
+Checksums-Sha1:
+ 5bd8c338afa0f1710fd40ab96dcf428d313ea054 1005 encspot_2.01+git20260523-ppa202609291308.dsc
+ 9169980ef6271f182d979b031c74b31dbb0a5914 27609 encspot_2.01+git20260523.orig.tar.gz
+ 093dec242ac64ff03759a3846daaac318d494a6c 2556 encspot_2.01+git20260523-ppa202609291308.debian.tar.xz
+Checksums-Sha256:
+ b18ac7486c17b490eed201880969ea16898737bfa266d3d84b4023dfe5841451 1005 encspot_2.01+git20260523-ppa202609291308.dsc
+ 4f850b04339dde9b8b7991230720d2693435a8f7df7889dbb747c07682a941a1 27609 encspot_2.01+git20260523.orig.tar.gz
+ e2b03e30a47ae3659e78e31ddc3ee1287847b6a83d2123a449472e3fa18c506d 2556 encspot_2.01+git20260523-ppa202609291308.debian.tar.xz
+Files:
+ 173229d5c549914d05faae6b1c927cb9 1005 encspot_2.01+git20260523-ppa202609291308.dsc
+ 8a07d7f2a9107cb35867a445328041b7 27609 encspot_2.01+git20260523.orig.tar.gz
+ 174cc48502952c6ef4c0969552c4c48b 2556 encspot_2.01+git20260523-ppa202609291308.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: fsv
+Binary: fsv
+Architecture: any
+Version: 3.0-ppa202609291308
+Priority: optional
+Section: unknown
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkg-config, libgtk-3-dev, libgdk-pixbuf-2.0-dev, libepoxy-dev, libcglm-dev, libglib2.0-dev, libglu1-mesa-dev
+Package-List:
+ fsv deb x11 optional arch=any
+Directory: pool/resolute/main/f/fsv
+Checksums-Sha1:
+ dfadb2cba7c110f3dcffde0099258554e748373a 933 fsv_3.0-ppa202609291308.dsc
+ c8e8e0a9b84ed1e661cc2cef288bc16372ac531a 253471 fsv_3.0.orig.tar.gz
+ 3f733f9b803a286c9353f784aa93c00ac1dbe2a6 3296 fsv_3.0-ppa202609291308.debian.tar.xz
+Checksums-Sha256:
+ 9ebd276b9578ea460a7e4576a5d587a93868f6dc7594f66250106e41e6171912 933 fsv_3.0-ppa202609291308.dsc
+ 4aa3d904801ec552b80b5462541dc617369010be8c2ae319e403c819b970924b 253471 fsv_3.0.orig.tar.gz
+ 48e92c30b947de5527e1fbcf8fdefdfaa523990e8af8e461b07339d7e672fd42 3296 fsv_3.0-ppa202609291308.debian.tar.xz
+Files:
+ 9ef36f6af7d279073c760662adc38fbe 933 fsv_3.0-ppa202609291308.dsc
+ ca8aa008052155ac83f97beb6749d0b3 253471 fsv_3.0.orig.tar.gz
+ 5ffe3cbd9d8a60950e4773220dd8ac36 3296 fsv_3.0-ppa202609291308.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: pwsafe
+Binary: pwsafe
+Architecture: any
+Version: 0.2.2~beta+git20250604-ppa202609291308
+Priority: optional
+Section: unknown
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), autoconf, automake, libreadline-dev, libssl-dev, libxmu-dev, libx11-dev, libstdc++-dev
+Package-List:
+ pwsafe deb utils optional arch=any
+Directory: pool/resolute/main/p/pwsafe
+Checksums-Sha1:
+ 3756f4e1d829cea5ccd7bcc78ed37a97972413a3 1050 pwsafe_0.2.2~beta+git20250604-ppa202609291308.dsc
+ d13cf33a4dc7e110acb08834723c0130675caf52 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ 56bf771c6efbf5a81ee2e4ff849642d716f21c66 1736 pwsafe_0.2.2~beta+git20250604-ppa202609291308.debian.tar.xz
+Checksums-Sha256:
+ e6f0c825d66a51097fd525455ac73870a8ca547fd50bff349338a335c7978533 1050 pwsafe_0.2.2~beta+git20250604-ppa202609291308.dsc
+ b0f35a49daed4f7d6b177c018feafda3270f9a1d56a58c48adb2f86d4365940c 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ b861fe045a2de40ba841d4eabb5a5f55f9e214af67dbf8f6631105c7d7326777 1736 pwsafe_0.2.2~beta+git20250604-ppa202609291308.debian.tar.xz
+Files:
+ 608bc2f4a4d8ca440f6dfadabf844845 1050 pwsafe_0.2.2~beta+git20250604-ppa202609291308.dsc
+ 2619f68cf963aa9d9d8630a5617d9c17 50152 pwsafe_0.2.2~beta+git20250604.orig.tar.gz
+ b6661a50b4d4a013b6181a4be56a734a 1736 pwsafe_0.2.2~beta+git20250604-ppa202609291308.debian.tar.xz
+
+Format: 3.0 (quilt)
+Package: roundcube
+Binary: roundcube-core, roundcube, roundcube-mysql, roundcube-pgsql, roundcube-sqlite3, roundcube-plugins
+Architecture: all
+Version: 1.7.4-ppa202609301248
+Priority: optional
+Section: unknown
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Homepage: https://www.roundcube.net/
+Standards-Version: 4.7.4
+Build-Depends: aspell-en <!nocheck>, cleancss, debhelper-compat (= 13), hunspell-en-us <!nocheck>, locales <!nocheck>, node-less (>= 3.0.0~), node-source-map, php-bacon-qr-code [!armel !armhf !i386 !mipsel] <!nocheck>, php-crypt-gpg <!nocheck>, php-enchant <!nocheck>, php-gd <!nocheck>, php-guzzlehttp-guzzle <!nocheck>, php-guzzlehttp-promises <!nocheck>, php-intl <!nocheck>, php-league-commonmark <!nocheck>, php-mail-mime <!nocheck>, php-masterminds-html5 <!nocheck>, php-mbstring, php-net-ldap3 <!nocheck>, php-pspell <!nocheck>, php-roundcube-rtf-html-php <!nocheck>, php-sqlite3 <!nocheck>, php-symfony-process <!nocheck>, phpunit (>= 9~) <!nocheck>, pigz, pkg-php-tools, po-debconf, sqlite3 <!nocheck>, uglifyjs
+Package-List:
+ roundcube deb web optional arch=all
+ roundcube-core deb web optional arch=all
+ roundcube-mysql deb web optional arch=all
+ roundcube-pgsql deb web optional arch=all
+ roundcube-plugins deb web optional arch=all
+ roundcube-sqlite3 deb web optional arch=all
+Directory: pool/resolute/main/r/roundcube
+Checksums-Sha1:
+ bcb4969f566b3da59879586f59794275d8c34971 1905 roundcube_1.7.4-ppa202609301248.dsc
+ beb026959ee89efebe5e126519bf48c7d793ed58 4273878 roundcube_1.7.4.orig.tar.gz
+ db183306bd9394d38ee45c475128546803a3e931 874588 roundcube_1.7.4-ppa202609301248.debian.tar.xz
+Checksums-Sha256:
+ 76ce763823257f9f14e53477c4027d37459ed98869843818dbf33156b47ec439 1905 roundcube_1.7.4-ppa202609301248.dsc
+ 8beeef4a5d8e7fbd0c8402b95309cf21855c3b709703636c3f7b0fb4af40428c 4273878 roundcube_1.7.4.orig.tar.gz
+ 0f026f5518d20fe92d3442dc7165ad4fbff63f4de37b0202123acaabd6bb3dd8 874588 roundcube_1.7.4-ppa202609301248.debian.tar.xz
+Files:
+ f96a25de85be5db215e789083f54ca61 1905 roundcube_1.7.4-ppa202609301248.dsc
+ 6ca363b669f12f3f8a038f95ad056509 4273878 roundcube_1.7.4.orig.tar.gz
+ f76b7ea2bd09123b60cd09fbfc95e6d0 874588 roundcube_1.7.4-ppa202609301248.debian.tar.xz
+

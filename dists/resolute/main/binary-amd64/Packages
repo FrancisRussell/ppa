@@ -1,0 +1,287 @@
+Package: encspot
+Version: 1:2.01+git20260523-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 126
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 5.2)
+Filename: pool/resolute/main/e/encspot/encspot_2.01+git20260523-ppa202609291308_amd64.deb
+Size: 42320
+MD5sum: eea651f69b11adcc628607f5680c6acc
+SHA1: 78692b602c99b3d508447acc897a52707ae5fd18
+SHA256: 61e4eebcadea227784f4d99894c55b0fabbf944b1ea610d9239e4e74712ecf43
+Section: sound
+Priority: optional
+Homepage: https://github.com/FrancisRussell/encspot
+Description: console tool for detecting the encoder used to produce an MP3 file
+ Attempts to identify which encoder was used to create an MP3 file and
+ displays other technical attributes such as bitrate, mode, frequency,
+ frame count, and reservoir usage.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.5-ppa202609291308
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 44688
+Conflicts: forgejo-bin
+Filename: pool/resolute/main/f/forgejo/forgejo-common_16.0.5-ppa202609291308_all.deb
+Size: 7173674
+MD5sum: f776e8bb5795f433ea18fe5693cfc30c
+SHA1: dbaaed8abdf734733907983c4cc652e764369bc1
+SHA256: 6b0f310f216ba34a9a6e4990e2993c05bf1115399c69da91c39e2d75dba22035
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 16.0.5-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 106537
+Depends: forgejo-common (= 16.0.5-ppa202609291308), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/resolute/main/f/forgejo/forgejo-sqlite_16.0.5-ppa202609291308_amd64.deb
+Size: 28561056
+MD5sum: 7e86ab0e79acdd4ea70f6384ecfbc73d
+SHA1: 07afb4a52971a7babdbc4904a74be541f59eac91
+SHA256: 7ab7cf1ebf8a3c83c586927f7576d6932fb6496e59e60321beeebf805a555415
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: fsv
+Version: 3.0-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 260
+Depends: libc6 (>= 2.38), libepoxy0 (>= 1.0), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.76.0), libgtk-3-0t64 (>= 3.21.5)
+Filename: pool/resolute/main/f/fsv/fsv_3.0-ppa202609291308_amd64.deb
+Size: 90468
+MD5sum: 2df035ec3c237541896748a55a486a83
+SHA1: 0fd041d8f8b1911f745e066c82e59f2c26d73851
+SHA256: fe0873e6b6cb920a0a7ec90cd5247e9d0d58898827455b3cf1c2a872dea1cd20
+Section: x11
+Priority: optional
+Description: 3D filesystem visualizer
+ fsv displays the layout of a filesystem in three dimensions. Files and
+ directories are represented as solid shapes whose size is proportional
+ to disk usage, allowing large consumers of disk space to be spotted at
+ a glance.
+
+Package: lldap
+Version: 0.6.3-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 39212
+Depends: libc6 (>= 2.39), libgcc-s1 (>= 4.2)
+Filename: pool/resolute/main/l/lldap/lldap_0.6.3-ppa202609291308_amd64.deb
+Size: 12324676
+MD5sum: a003900f58897220bc7aceb7544e878f
+SHA1: 1202b4217dbcd5875a486a7f01704eedef9d37d0
+SHA256: 06d844e3c932ad8ff5be8f89aa77a4e765cfc5e5129f6389491837f947d2b431
+Section: net
+Priority: optional
+Description: lightweight LDAP server for authentication
+ LLDAP provides a simple LDAP interface backed by SQLite,
+ with a web UI for user management.
+
+Package: postfix-ratelimitd
+Version: 0.1.0-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 6176
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 4.2), systemd | systemd-standalone-sysusers | systemd-sysusers
+Recommends: redis-server | valkey-server
+Filename: pool/resolute/main/p/postfix-ratelimitd/postfix-ratelimitd_0.1.0-ppa202609291308_amd64.deb
+Size: 1782164
+MD5sum: 2afb6962227a12eb0c50f56fa5336dce
+SHA1: 59410e843aa6ec13bcb7db6ab5afdd8c3c25ee13
+SHA256: 02207bf76b6cdb662173305a4f98875a104615886233b0265df0bf98c1e47666
+Section: mail
+Priority: optional
+Description: recipient rate-limiting policy daemon for Postfix
+ postfix-ratelimitd is a Postfix SMTP access policy daemon that rate-limits
+ recipients per SASL username within a sliding time window, backed by
+ Valkey/Redis.
+ .
+ This package also provides postfix-ratelimitctl, a client for querying the
+ running daemon's optional admin control socket.
+
+Package: pwsafe
+Version: 0.2.2~beta+git20250604-ppa202609291308
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 126
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libssl3t64 (>= 3.0.0), libstdc++6 (>= 13.1), libx11-6, libxmu6 (>= 2:1.1.3)
+Filename: pool/resolute/main/p/pwsafe/pwsafe_0.2.2~beta+git20250604-ppa202609291308_amd64.deb
+Size: 49742
+MD5sum: 292f070873abc357e5ed15878144414f
+SHA1: 3f2214d98adaa076edc382ee24c79f816560e2d5
+SHA256: c9da8c4216472338ca42dbc2889733b949552e8976e1b0529f13aeb406a68cf6
+Section: utils
+Priority: optional
+Description: command line encrypted password database manager
+ pwsafe is a unix commandline program that manages encrypted password
+ databases.
+ .
+ Features:
+  - Pure command-line operation if desired (good for remote access over ssh)
+  - or can interact with X11 selection & clipboard.
+  - Portable, endianess-clean, misaligned-access-free C++.
+  - Compatible with CounterPane's PasswordSafe Win32 program versions 2.x
+    and 1.x. See http://passwordsafe.sourceforge.net/
+
+Package: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 9
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: roundcube-core (= 1.7.4-ppa202609301248)
+Breaks: roundcube-core (<< 1.1.1+dfsg.1-1)
+Filename: pool/resolute/main/r/roundcube/roundcube_1.7.4-ppa202609301248_all.deb
+Size: 1094
+MD5sum: 26be2cbeab7eeb9c416aa25b0cfd02a5
+SHA1: ad01e686a11e32efbc2be498cf34b56a4e5cb383
+SHA256: ede3d2781124978067c8f0fd68b4ac85b636a97ba8e02c60c16e18541bdf1367
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: skinnable AJAX based webmail solution for IMAP servers - metapackage
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package will install a full roundcube application.
+
+Package: roundcube-core
+Source: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 15951
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: dbconfig-common, debconf, libjs-bootstrap4 (>= 4.5.2~), libjs-codemirror (>= 5.58.3~), libjs-jquery (>= 3.5.1~), libjs-jquery-minicolors (>= 2.2.6~), libjs-jquery-ui (>= 1.12.0~), libjs-jstimezonedetect (>= 1.0.6~), libjs-less (>= 3.13.0~), php, php-cli, php-intl, php-json, php-mbstring, php-pear (>= 1:1.10.1), roundcube-mysql (= 1.7.4-ppa202609301248) | roundcube-sqlite3 (= 1.7.4-ppa202609301248) | roundcube-pgsql (= 1.7.4-ppa202609301248), ucf, php-common, php-bacon-qr-code (>= 3.0.0), php-guzzlehttp-guzzle (>= 7.9.2), php-guzzlehttp-promises (>= 2.0), php-league-commonmark (>= 2.7), php-masterminds-html5 (>= 2.9.0), php-auth-sasl (>= 1.2.0), php-crypt-gpg (>= 1.6.3), php-mail-mime (>= 1.10.11), php-net-sieve (>= 1.4.7), php-net-smtp (>= 1.12.0), php-roundcube-rtf-html-php (>= 2.1)
+Recommends: apache2 | lighttpd | spawn-fcgi | php-fpm | httpd-cgi, php-enchant, php-gd, roundcube-skin-classic, roundcube-skin-larry
+Suggests: roundcube-plugins, roundcube-plugin-authres-status, roundcube-plugin-contextmenu, roundcube-plugin-html5-notifier, roundcube-plugin-keyboard-shortcuts, roundcube-plugin-listcommands, roundcube-plugin-message-highlight, roundcube-plugin-sauserprefs, roundcube-plugin-thunderbird-labels, php-bjeavons-zxcvbn-php, php-net-ldap3
+Filename: pool/resolute/main/r/roundcube/roundcube-core_1.7.4-ppa202609301248_all.deb
+Size: 3596990
+MD5sum: 7b227a390094cab6452c6c1f4ed92b91
+SHA1: 3555ab47e98b4a7aa9daea27a5368adf735f6d04
+SHA256: a16c4697f7c5f05c06a4d629213e91642b68b6f07bc354af72ee14c818ebeadf
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: skinnable AJAX based webmail solution for IMAP servers
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package provides the core code for roundcube. You should install
+ it along with one of the roundcube database metapackages.
+
+Package: roundcube-mysql
+Source: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 48
+Depends: mariadb-client | default-mysql-client | virtual-mysql-client, php-mysql | php-mysqlnd
+Suggests: mariadb-server | default-mysql-server
+Filename: pool/resolute/main/r/roundcube/roundcube-mysql_1.7.4-ppa202609301248_all.deb
+Size: 17934
+MD5sum: 2670e7828b1e624e1d49d34a31f7ea42
+SHA1: b409e8de002ccda8ea81bcf98afcfdd1c6e7b9a2
+SHA256: 6b78f9eb2db69e6cf9b9ebbbc19252f3f86d90158677006f8e43cda6bfb8223f
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: metapackage providing MySQL dependencies for RoundCube
+ This package provides MySQL dependencies for RoundCube Webmail, a
+ skinnable AJAX based webmail solution for IMAP servers. Install this
+ one if you want to use a MySQL database with RoundCube.
+
+Package: roundcube-pgsql
+Source: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 48
+Depends: php-pgsql, postgresql-client
+Suggests: postgresql
+Filename: pool/resolute/main/r/roundcube/roundcube-pgsql_1.7.4-ppa202609301248_all.deb
+Size: 17914
+MD5sum: 282fa138a1cf3d9bd57907ef8a9a5d79
+SHA1: 2c4ac1e576c950ba92029dfcc21a16cd437f11a3
+SHA256: 130a7334973619f43df1f386294e99efa25a4a507f6836f624d81eac8ac81e7d
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: metapackage providing PostgreSQL dependencies for RoundCube
+ This package provides PostgreSQL dependencies for RoundCube Webmail,
+ a skinnable AJAX based webmail solution for IMAP servers. Install
+ this one if you want to use a PostgreSQL database with RoundCube.
+
+Package: roundcube-plugins
+Source: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 5480
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: roundcube-core (= 1.7.4-ppa202609301248)
+Suggests: php-cli, php-crypt-gpg, php-net-sieve, php-zip, python3
+Filename: pool/resolute/main/r/roundcube/roundcube-plugins_1.7.4-ppa202609301248_all.deb
+Size: 896638
+MD5sum: 6f84ca62682d84943c0e0a47d40e353f
+SHA1: 943a671fc6aee9e4e317ee6c7d1788786232bea7
+SHA256: b2057aca76caf982e15c81700413d91aaa39eb67cbf8a0da044b8ee9adcc3e6d
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: skinnable AJAX based webmail solution for IMAP servers - plugins
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package provides several plugins for Roundcube. They should be
+ enabled in the configuration of Roundcube.
+
+Package: roundcube-sqlite3
+Source: roundcube
+Version: 1.7.4-ppa202609301248
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 48
+Depends: php-sqlite3, sqlite3
+Filename: pool/resolute/main/r/roundcube/roundcube-sqlite3_1.7.4-ppa202609301248_all.deb
+Size: 17890
+MD5sum: c766641ddc836c69cfd3c13e318e1b3f
+SHA1: a1fcf381c5b93e55db024943d0fd26f55b05f2f2
+SHA256: 2ceb7665bf186b55d8d98e38b862b8b5ad909f395f913902c9db47ab93fde03b
+Section: web
+Priority: optional
+Homepage: https://www.roundcube.net/
+Description: metapackage providing SQLite dependencies for RoundCube
+ This package provides SQLite dependencies for RoundCube Webmail,
+ a skinnable AJAX based webmail solution for IMAP servers. Install
+ this one if you want to use a SQLite database with RoundCube.
+
