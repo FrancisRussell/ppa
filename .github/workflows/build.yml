@@ -106,6 +106,7 @@ jobs:
 
       - name: Set up cross-compilation
         run: |
+          apt-get install -y --no-install-recommends build-essential
           BUILD_ARCH=$(dpkg --print-architecture)
           if [ "${{ matrix.arch }}" != "$BUILD_ARCH" ]; then
             dpkg --add-architecture ${{ matrix.arch }}
