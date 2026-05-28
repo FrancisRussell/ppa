@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: trixie
+Components: main
+Date: Mon, 23 Nov 2026 16:51:15 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: trixie
+MD5Sum:
+ 4f48101f66f033dca430ddc805fd4050              162 Release
+ 26d47de08ccf1f597f62c12c66ab8d79            36168 main/binary-amd64/Packages
+ 71bf0a8b3af651d7b4480daafaed2058             8450 main/binary-amd64/Packages.gz
+ c6f93a5f6f39ef2cde2fa515dbf1dc54            36157 main/binary-arm64/Packages
+ d5f224f046c49fc1d35e8cbbb4eea30c             8436 main/binary-arm64/Packages.gz
+ b45786a390307bbf922aaca07e3c39e7             6152 main/source/Sources
+ f50a8723f74303f66d0d13e4bc987f77             2198 main/source/Sources.gz
+SHA1:
+ ebce7727928ede19aafa384187cf812961141d9b              162 Release
+ ec6c2be14d24ecd204efc4284daac171e80d74ee            36168 main/binary-amd64/Packages
+ ad26b9faa2586d7ae26bea0023357a7b29b97c28             8450 main/binary-amd64/Packages.gz
+ 4542b0b7ba6ac4e8803ec8dbb679a81b6414c7fa            36157 main/binary-arm64/Packages
+ 0d4b2bdcf8cbbf4f401c0cebec3fa1aee7f541b1             8436 main/binary-arm64/Packages.gz
+ 03cc81cb70e97a12a6b3585a9026243633fb3cc7             6152 main/source/Sources
+ cfe6dd50b40627b4db2e6e96c9854e5b79e41947             2198 main/source/Sources.gz
+SHA256:
+ 6dab060fe0f22e3697c2c72e5188cf1037d5224d937a57cdd7ee006d9e8953d5              162 Release
+ 3a7a96d766ee4735b0750668f94e69dc206d09be3f031457ef28926ae65f9ecb            36168 main/binary-amd64/Packages
+ ee9c91c33e95ca7c45c466a2db59c68eb5ff8d0d2361036a384b17c629b181f0             8450 main/binary-amd64/Packages.gz
+ 04fd73c4b5825793d11e17d8314a8b2fe1da7ecec33fb5aa9e8fca1d95362448            36157 main/binary-arm64/Packages
+ 14499dc2a661dd792683f0dde3bfe27fbf5994b5929d5419084c2f7d4f113456             8436 main/binary-arm64/Packages.gz
+ 0a503c8cbeb10e28c63ab31bbd8a650c144834b2de43ed5cb4c2d043a20afd3f             6152 main/source/Sources
+ 8088df1cd974b81443d6a4d6131b381b6581d0c5a8b89aec60bade2c7998f7b9             2198 main/source/Sources.gz
+SHA512:
+ 1d14309feeef33eb732ec2adb19fd667df5da427b0613e9ca21ec1f449c04c85416130fa03f5b682d59f44b23c676f3d2fb014d9fa445e6b19d777c979e71039              162 Release
+ 0612728130842fa25f651b04a5ecca101792ba549170f705153232370fe77931eebd37ff05c8b6f5f24e88b0b2a2a0f0fdc1ff66fb5cde3a8c050bd016a57f3b            36168 main/binary-amd64/Packages
+ 6d4ecdd590114fece0932d11b84d41569b8a4460a4a4ef1f234ef0a929885d3baaf5bec2648ba885be63653536b68f67351464c94ef661255f653b4c8bd4af6d             8450 main/binary-amd64/Packages.gz
+ ec38a7dad33faef5a4367f3199a55027148cece99ab85b8d00f9a45dde84e9d964e03dc70e26e83664e592244e77ab70d0a618b5878cd14d60485e510d91d0b4            36157 main/binary-arm64/Packages
+ a2adbe67aa63d283d2468119098deea418bd320e27db2f724d5b7bf67077815c58c4ba9c2e47d4fbeec769814a93a678eaa90ffb631de22401623725b850736f             8436 main/binary-arm64/Packages.gz
+ ba0e6990c5e8fead9ae7ecdb3e2b5099a65767230a16cde2083e138bc00c688c25f2d9c9f5147ee12b759c6a357bbdb4ab95c42199945823ad8aeca169c6117f             6152 main/source/Sources
+ 2b7f96f4396dab98b875ac773597419e4433c72c1a9c65a7dde9717858fab813d9f4520c343f1db6ae6acf6d2e161f5ccafbb157ee7cae453ad39ae1e243b584             2198 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmsEbwMACgkQsEYQAsm7
+sBqglQ//eCZ2CZ6p/Dq7HJ9bnMRSzDHaBFSvsy/Wx3Pkz1UPxmaI3wz4Pn7AmgvC
+7jh8kA7vucTBW6PgBa3tokVB9PjqSGviA5E1+D6ZshPG1u9S9XPd+PJ4bBXWjSB8
+6QIR9lVrq6HihGA1r32Km+kGkFmSQRi3abXdEaHQ1YW4639EOak64VRSReoo7mo/
+9D05rrguHsBaRM1V/+MY59UnVyHFcz7kqJt8NCSCObIgXO+TT/wPAlSVZwsRqbXt
+S9M4VC85fQJxbWNcikZq0Zku2z4Ps9DnPThOq1Jmg0gdyM8Bl2+Ls/bEW275qgPb
+jAmi2mbqPDCl4horWyisyLVjKFjh48CApn4fQm7Aqyjti4txZ1/LL4SQukyERcGC
++OUD6LInPT6yVPBn2BacbsEj6BBQJlvxHabX6F+/mUwygQNP6eq+PGd7EaRLyb7o
+lTLqkqrue/LJF006g0TSmUBPs+yp8/ZxT6GBGCWDxkbnkXwIVJ4pigwt0s3mEmif
+x57JFKTr3+N52GNJK7Rsl0IKUlonGKEOmPSSUJ6Uj9ZK8RKkLER90YE57K26ciM7
+Zzbtz11HW4u/sg45aoEI9nSpyjbFanR9tX7lYdCMlNxCF43iFQWdI6rQRXIPHYt+
+R+qLeKKldJZT7+v0KASIoBOaNV+ylmE2iyEi+2lcavN3q/mV61Q=
+=TAVi
+-----END PGP SIGNATURE-----

@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: resolute
+Components: main
+Date: Mon, 23 Nov 2026 16:51:07 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: resolute
+MD5Sum:
+ a1d55868e7371c550ca2630bd0ac40ce              166 Release
+ 3cb78573c991ccbcdec6412ff15da761            19059 main/binary-amd64/Packages
+ 2e9aeb9fd5da2cae439d242a32b423db             5307 main/binary-amd64/Packages.gz
+ 08749e823e47465aae146fc0250c3403            10325 main/binary-arm64/Packages
+ 02862ccffb7ff4b603bd8ef3b6ca63ff             2827 main/binary-arm64/Packages.gz
+ 85ce979f4b5c2afd17ed370351e9742f             6160 main/source/Sources
+ 27e786ca00cc52bf9e051d9a17ccc6ff             2185 main/source/Sources.gz
+SHA1:
+ ebc1150777e7d6872192d1b148141e4e05c37096              166 Release
+ 3127d7b462030255e7aa00cb2e7dde413a8b4922            19059 main/binary-amd64/Packages
+ 027797ca7c3428add5013c9eeb7d68d1dbed4196             5307 main/binary-amd64/Packages.gz
+ e6ceada1e8ee51ff3320b0b43f2d98bf355814c3            10325 main/binary-arm64/Packages
+ 8ff8c8522a23b839826edb693e21d78c040a7694             2827 main/binary-arm64/Packages.gz
+ 2519758af35f7669dc70d12020adc280d9959ec3             6160 main/source/Sources
+ 304cc75503e9d987e3410ae23d7f88e4304813c6             2185 main/source/Sources.gz
+SHA256:
+ 189e56bfca36682cbdf00edd52347fb5f10711795f07e3c7ac5a214e06a6915b              166 Release
+ 44f9c5b7547cd3ea34f43dc088be06f5b8bc172d639d180752b0656569134aef            19059 main/binary-amd64/Packages
+ 5b51cf1e77baa3cbffb61ec9643ebf98f2923a17a32c1e0cc43e51427af45c8d             5307 main/binary-amd64/Packages.gz
+ f256a3c225cc19ac9bdd895882213e84d3896e9cb492846abc63cfcf33e6c2c6            10325 main/binary-arm64/Packages
+ e6f4bc9400d7ca31b0ece02b8637bc50e0e2cbf804576a4aaef3be2ce24a37ae             2827 main/binary-arm64/Packages.gz
+ b0f7c542c376961634e383c5b9688f4669bc3469ccc4d4460b2e1fb5f11ca2ea             6160 main/source/Sources
+ 941d0eb6d4c24af27b3ad6c72399a5fe17d8c589a47576de011c17cd6e29fbf1             2185 main/source/Sources.gz
+SHA512:
+ 5785dc6e0df50b8239b5354f4e78563fc66cffb636c715bf1c02edc9d0f275ce7dee43261c2411058ebfc50ca7ad7a118699f5aeacbbe068242e00237ad51681              166 Release
+ 49ffd69ca7dcf00557829bb25b076482bad5ad9e6f689cee05c31faa3a57976fa08a637ccf44c6f2553f82b77f71de6a26b66949b435cb8b504db22240503163            19059 main/binary-amd64/Packages
+ 8c36e4a88753742f37836379ced2ebfe59b9120af45ddfe537ff526741979ba0c6236407b93b49cd279a311c18c507fe20b8a50e2ae8065fd246111a14ec1714             5307 main/binary-amd64/Packages.gz
+ e33bb6b6f14f86224bb742941c4a7bf69b534a82cc4087267a393f69035189abc07a3ad4e0a5b0a89fefd6e1ddf932ee7195a0cf22d527c1f0f507fac35fb91c            10325 main/binary-arm64/Packages
+ 80ea75f0d5e6ee882c603b0bc8ad85fc19634e22779098bf09409ed96a82d46debb2bfa4018640cae4fe2b5ffee2c6d10c96e19a360d6ee300a1d5be0caffa4d             2827 main/binary-arm64/Packages.gz
+ 7a500fd97f5e266c30b3c172ea11b8993c8b73f31cf395df416caec73240f9979714ed2964aa1e1ae20ce52541d44abf039eabba0f8b4f44233a0a5c31c2aa98             6160 main/source/Sources
+ c3f6be880af8d41edb68fc5e86288ab0b02e6452afabcc9831ca80f9c46fec5ab4eec55dc3d43116c7cf75f2ffec33613cf88fc383678ccd06e761ce77a53dbc             2185 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmsEbvsACgkQsEYQAsm7
+sBr2sBAAi21Sfo1FEJuzbPPO33HjRTmaDgSJ91CAG4mwkNqvwQrteC0Jxhw7SdA/
+qJITQXXxBcnMqwwEeqjVC1jbGH7yRpwHJPr1XQBLhRRc6OAxYV5hFRCFPKUZU2ZH
+cDvlEDFgVW2q7/baZODB+NX+lXczkR6s3XTGEpHv/PBy7XXsRmu2VrSFD6glVn+W
+cvZzg7JtHG1HUiCSOYirM7p6vHN95w2Xt0QGmPYXcDe7VrkSmsYaeeBSMXiBaJkB
+nyrooBW5m6sAkMxHsDJ0EmuN2IJc91BuoBZN+AZ62yrnpV2sBZb/bZreFxnTNdfJ
+0XL1B76AJraTfWcWsbEv5InnGvO9EOL5MLLjCssaNVjA5w1PKeObJuPpiHoLSfkx
+wa+oe2KmG4GJ+udZxHkRKzAVy2dMvceNNkOCU8t3W1BDM2ePXcBlCGOU/QVfux/Y
+xiqNQgbBjLCoKTQGXhzkcRTD6Wq8ULMwHYUVMjkYGPtiXdCL6wmmFTJTN5aloeqP
+RCPzCDIEaJbqeUZrEkDgXmcPYXqBBvCd0gEe3n6twWIt6kuP4RKIIezznwcB5BL6
+oByB8g3D4q2menBqHriQ6n7sFp8E1wIrlTfgValNsmDM3OOhSiM4VMre1uesH4sv
+Vh1su8nDs8mvLVVX/aMoIXEhz/0x9JPN0C6MxodbFe8z6cIxRaQ=
+=icK6
+-----END PGP SIGNATURE-----

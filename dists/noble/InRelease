@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: noble
+Components: main
+Date: Mon, 23 Nov 2026 16:51:05 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: noble
+MD5Sum:
+ b5df9217ffaffcbabd1e1fcbb95bff70              160 Release
+ e307907d2fd78197b16dbddbd15389d8            25588 main/binary-amd64/Packages
+ bb8c1f31b1253e54e673d22238538213             5642 main/binary-amd64/Packages.gz
+ dbe28c3f2d11e2f07879a667123543a4             9020 main/binary-arm64/Packages
+ 73c91f0482b287dbf10f2f5d06a85175             1918 main/binary-arm64/Packages.gz
+ 9d823dded30c94c246474ac6f0de42ec             3937 main/source/Sources
+ 4355261ba3007ccb3d89f5a4518d5fc2             1478 main/source/Sources.gz
+SHA1:
+ 1bf5752d7fa2d1adb43605f35d1c6384e91a4446              160 Release
+ 13c48dab898ce03b4503a487488bb72da10c95e9            25588 main/binary-amd64/Packages
+ a67775e579f3c99f1c02cc5082f508d7b07a697f             5642 main/binary-amd64/Packages.gz
+ 7d4945d58b781e70af4bc264b60a3f5c93f33297             9020 main/binary-arm64/Packages
+ 93c18912ae3c226b69772134943662528e490d2c             1918 main/binary-arm64/Packages.gz
+ 6ff73c20892fa925e1f752d53d10182813ffc6d3             3937 main/source/Sources
+ 8fe36702c77dd943ad032d4e1c016e80ab8d4fc0             1478 main/source/Sources.gz
+SHA256:
+ c80383030d8768893952443570393d687b7d87667667baf908234dfae593c662              160 Release
+ 107c808575738b3ff35d868a63a4ca49b46941b800aff5ae46c876f22002a014            25588 main/binary-amd64/Packages
+ 08e817b83f6bb77ff6373b33848e705d2fae685ca5574408613a4f465bf8f97f             5642 main/binary-amd64/Packages.gz
+ 53c7ad3cc8568425e71829d0e581c923c83b4f272182d0c91ac4a068cd967616             9020 main/binary-arm64/Packages
+ c2d3d5f346e3b02dafd12ebbde3fed7db6350e5fc1f5e586a4b7eaad0b3193ec             1918 main/binary-arm64/Packages.gz
+ 4d53ad4631a2a975b731ade516397eca976b7cea0d3d1e712ad845eeb7cfe429             3937 main/source/Sources
+ f6c181ca01606398355130a4a33f227abd766336226371753bc7716771f1192e             1478 main/source/Sources.gz
+SHA512:
+ e88b8f59b86e0ecc7923f8cb79422eebf50756ce64ade0ae1df45e037c0ddeafacddb501105ddcce1b66b3a99bceb6ae0b053b89c52dc3ba27ca62337c150fde              160 Release
+ bcad1c0adcadcc55b0bdf1dc886f317829b6f41a7647893ccc1dd871b0c688f7314d2d79a6118a22a7e4aefd49853df8a2db9b204c6edea6784c80edcc17c853            25588 main/binary-amd64/Packages
+ a5800f75e934bafd59c995cd98e8a1b962d68712fe4d3859670b7c7da725e1fd312d677078d8676d7424a1c039d15292d72440c5ee9693883426394131ff4c4c             5642 main/binary-amd64/Packages.gz
+ 62c0f8902a3d8a8c9ebb3c5cf09014733f4ac3e719d30dc9d1373f61dc7e761df0713160be293f4c833ac6290e10f8421e743249ddbf94374f525a0b12c3ffe7             9020 main/binary-arm64/Packages
+ 269a9c1569fdf80cc8bb45703a66c43ba35335f8d33390e7c7057f9e7a7444e465170f262b0afe6bb5f814887fad9ac8a2a920c3d317eaaf6dcce3134caeb9cf             1918 main/binary-arm64/Packages.gz
+ bfaf0c5172e557256a18b51177400c6f56082ebf79c9e9ba1bcf15fee489ea166a9b0579705a59e4bdf3bb82be560feea2b7e2d6cfa94f1832bbb90f64f0ab80             3937 main/source/Sources
+ 3115d368d5759438236f48c2e05004551d703c1c25c81964fc5fc53c7440a42f702669d1b48923e5412eafdd6575cfc0b11627b2530eaae39df9d3a70b84bb18             1478 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmsEbvkACgkQsEYQAsm7
+sBoAehAAkmvQx2qe6hE5BBBaY0dSGiqkAebOy3IVdjzfr3C8s61K3NSHSikbdykO
+OTac9QzIExXEmyVmj/GRcL2ht074naH7+I7+0rGEMTZPpd7mo/R+UnpzOXMkzTEI
+en+Bi2JTM0ASsmOED2Gjd/IQY+U1Me7urkKnWppGASLxIGUcA0v3XA8QkrPklX4i
+B9xFaKfQ0dY04EfFlFVuuW3JIar+F45dLpqi41U6hhzbunWLbzMQa9jLsYMHrcVQ
+EwLFB3FK15CX6XqQXyXx3prxEOMuqYADboMFu4BFCXDpmt7jr+r3F1i07bEx0CbP
+7CoYnBnlQfjj4wn5ZYTA22YGcbZHA5eidJvWTPR2/5A3E6cTjqdHMBb0fXWkfhb5
+lAKiQ/CrXEuGIw2ryJaFcnoQqsJEalQaCxV32ir798ZF0zbpJimxZaCAJErsYWY0
+n0RzF4pTvRrqrGy1VB91oYYXf7nZcnQpg6ysx4thh++YiDY5/9YxYhkelHpP7v6e
+ucsKw0fRAt6KVLxZGLhR1Cil8B6rdUwx4imWhQKx3eTeibF89BJ7ub5ieW40zcG9
+uahuF5wr9fe/KFtRmcsQfC4IcP9G5ndpjsHmQGlrGbcQmb/zGjd4JHJ+CouvwfWr
+281VzkNLdNJj/nXMNWQPprx/YAjzLs9NXys3+IPMO4tVgvxcEV8=
+=QxJF
+-----END PGP SIGNATURE-----

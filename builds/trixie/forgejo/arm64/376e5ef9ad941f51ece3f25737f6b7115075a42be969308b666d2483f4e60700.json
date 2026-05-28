@@ -1,0 +1,44 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "arm64",
+      "codename": "trixie",
+      "commit": "46f47fd28450213b1cebb10db5c0f10ddae54ee1",
+      "container": "debian:trixie",
+      "package": "forgejo",
+      "recipe_files": {
+        "build-deps.yml": "7424a1e194c3a70b32b7740f0e542fc2abf05c21f54ac49f8e995fa4b3b60e85",
+        "build.sh": "ce9c0cdca34b72b5ae85d4d9286bc686e072191f32b6db342404d17de784744d",
+        "files/app.ini": "34a9e611db2f55656d3f67d0492278e3d2cb1b499cc703b1656561b5687bb2ad",
+        "files/debian/NEWS": "2eff4924292eb8c0f15967b1f5f8feaa47a29b64dec5d99647fd3156f9b3d514",
+        "files/debian/changelog": "1649b14e354a34dbe04708c914df9ff20702f883e135f5ea120e9d6f36a115b6",
+        "files/debian/control": "303edbfeb3556fb79013567aead0a5b78af01f5f69f63a87ec8c7dd04a4823f5",
+        "files/debian/copyright": "ba2841b6b1ab715d0e3ea555bcb2c43422cc0b2ee2c0940b49db158e944630eb",
+        "files/debian/forgejo-common.install": "e89d6266c91a7785532ceab2d7ebf779814fb48e4f64f9d9ad67f1236ba79696",
+        "files/debian/forgejo-common.preinst": "e7fc13689f9a1f0fb1f4c4c6fbfba82187a8182c831931541fc22d14f50ec2ad",
+        "files/debian/forgejo-sqlite.install": "542995343fee2c4864192ed488947ec8bbf7b5f77b67ba70d8c3ac4938aab8e4",
+        "files/debian/forgejo-sqlite.postinst": "0d98b356f98da0c3f4440b88007ef9acf65da897a9b03d7f8c8340bf8d0c6b74",
+        "files/debian/forgejo-sqlite.prerm": "8dfd9166970d98829bbe18b040effe4214ca62cbb303bb6fcd6b167f13ec4589",
+        "files/debian/rules": "3efa5bc6de27507035472bc5ee281189778e3b8fc30b9688e5a62568b2214cab",
+        "files/forgejo.service": "9b39ce532d1cc02b45851da3ea3cd26941275bcb6b9ade0ca1ca681cf3c455d7",
+        "get-version.sh": "cb38f4c26771b81c0f41fce30fe20525cf6e0d13c4c71e38538f81855fa06a1c"
+      }
+    },
+    "meta": {
+      "ref": "v15.0.4",
+      "repo": "https://codeberg.org/forgejo/forgejo"
+    }
+  },
+  "output": {
+    "files": [
+      "forgejo-common_15.0.4-ppa202607151024_all.deb",
+      "forgejo-sqlite_15.0.4-ppa202607151024_arm64.deb"
+    ],
+    "meta": {
+      "built_at": "2026-07-15T10:28:22Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/29407950776",
+      "upstream_version": "15.0.4",
+      "package_version": "15.0.4-ppa202607151024"
+    }
+  }
+}
