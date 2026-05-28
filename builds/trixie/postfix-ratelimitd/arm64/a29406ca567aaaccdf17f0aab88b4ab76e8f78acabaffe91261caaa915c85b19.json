@@ -1,0 +1,40 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "arm64",
+      "codename": "trixie",
+      "commit": "05a3e508933132b989e046dc2992bb9e04682835",
+      "container": "debian:trixie",
+      "package": "postfix-ratelimitd",
+      "recipe_files": {
+        "build-deps.yml": "718bb5175f443df424781399f0d6f28747e67ceb26211d81d2e9bf27ecf7ccf9",
+        "build.sh": "08e034cebbed14ffa1138af8b83fb9940452b1c07d0c962c7dcd70dbdf98473d",
+        "files/debian/changelog": "527312baa65ac6baa5c2e190f82a12be8851d30bb0c386947c3afec0e0c24615",
+        "files/debian/config.toml": "af01172c622a22c4335b72b3bc0d83b36fb224c83ff4ee6ae1d1b44dddb3f317",
+        "files/debian/control": "94679df20e6fa11358374b5ea77ac6ea98f82c9c5ecfa886b871de408a3d9b3b",
+        "files/debian/copyright": "b685d9f364a53ac98376b03cb38754eaf1113d49af1e0ad3ac7cb20a0acf033d",
+        "files/debian/postfix-ratelimitd.docs": "6e35d7289e6d15077e485cdf83b7d2923c9bcc500066b2a8dc3fff1fec02c1e6",
+        "files/debian/postfix-ratelimitd.service": "971c244c41655ea23d7cf8b0a66cddef619dc783e4a7a0fe3b0ce3aecc33030e",
+        "files/debian/postfix-ratelimitd.sysusers": "8f585e0ae077989ed606ce9c6b8fde7bd1235b592890a0c02209cb32b42c8179",
+        "files/debian/rules": "a5be8a5472d175e1287613d5bfcdeeb697ef868ae947e0f6f5b949501a83525a",
+        "get-version.sh": "44f2ba8ba48a690842cee25cfc8c1caa5e0aec3db3c4e9add469a08251e14cab"
+      }
+    },
+    "meta": {
+      "ref": "v0.1.0",
+      "repo": "https://github.com/FrancisRussell/postfix-ratelimitd"
+    }
+  },
+  "output": {
+    "files": [
+      "postfix-ratelimitd-dbgsym_0.1.0-ppa202609222257_arm64.deb",
+      "postfix-ratelimitd_0.1.0-ppa202609222257_arm64.deb"
+    ],
+    "meta": {
+      "built_at": "2026-09-22T23:01:27Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/35795068057",
+      "upstream_version": "0.1.0",
+      "package_version": "0.1.0-ppa202609222257"
+    }
+  }
+}

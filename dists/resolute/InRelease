@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: resolute
+Components: main
+Date: Mon, 12 Oct 2026 13:52:37 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: resolute
+MD5Sum:
+ 71ba6eb2da4a7f57c210d3b4add337d9              166 Release
+ 5cf616ea4515bf97aef9bd589ec74909            14508 main/binary-amd64/Packages
+ 0e93f13bce26d001ee1fab1f84797ed2             4558 main/binary-amd64/Packages.gz
+ bee7f0a25fe43eda51c717565acc45a2             8405 main/binary-arm64/Packages
+ 31ec020606b5de323281db255a2e2878             2485 main/binary-arm64/Packages.gz
+ 85ce979f4b5c2afd17ed370351e9742f             6160 main/source/Sources
+ 2f565686c750ea37ebffe167b5cf4026             2185 main/source/Sources.gz
+SHA1:
+ ff6c78e8dce0cbe1693f4b1a123ab4e1b4f1a36b              166 Release
+ 3598f594a17f22c1bfb502bd464ec4919fdfe3c7            14508 main/binary-amd64/Packages
+ ea1d9c77305d418e6bc7cf6ae8a8f9d8e48d23ec             4558 main/binary-amd64/Packages.gz
+ eddc7b8f8dde79aeffdd6339d61737e7318b9b7b             8405 main/binary-arm64/Packages
+ 07fc2845230e0b1d916aac3e4ffaf6a07b2d9fbc             2485 main/binary-arm64/Packages.gz
+ 2519758af35f7669dc70d12020adc280d9959ec3             6160 main/source/Sources
+ 996f9ffea00051dfb6b75da1fc5496e50be24cc7             2185 main/source/Sources.gz
+SHA256:
+ 263a542608f0feadb0c74bd22ce88f23ce5d9548f196900601b9d0023b201ff4              166 Release
+ 151adee2f12028adf669d9bdbcb7f9c53023f88d72b7d56e256ccfda3cab3211            14508 main/binary-amd64/Packages
+ 9b30b609593f091535246974e94ad46f3e6f39fec592ef2b1b4f3bf3ac75d0c4             4558 main/binary-amd64/Packages.gz
+ 881445d356e08dd6c709ca4e69f165d014a1b311c2e0b96d6ec15b6e289a15b1             8405 main/binary-arm64/Packages
+ a8ee3665cd205ce4cef8359123c690e01f31651b3f3bba83fae263bc3f1135c8             2485 main/binary-arm64/Packages.gz
+ b0f7c542c376961634e383c5b9688f4669bc3469ccc4d4460b2e1fb5f11ca2ea             6160 main/source/Sources
+ bd7d0a170a9df3c0723bbcd3198604122f29fa466c0f72575896c1e809a5a0da             2185 main/source/Sources.gz
+SHA512:
+ cd69751325116d2ffd3ad65e95c2cc4aa09851c49739c29b797d79393faa5adb1c9419ed4b013e9987569bd914f49196278da24523c288dd491219300b7aace5              166 Release
+ defb2f39ec79c15e10e8d50e268d0429a64a9f4e0ce52bd86d0831e1cedcb2bacf1a7bbec1d8715b3c497eba6b52020ae4dcd3ce43f15f39beb273de7ff9634b            14508 main/binary-amd64/Packages
+ 8e72e5af5f23deec4736c5fd12a44abac464174391d37833f330ba38435536ea246ec15096313753d0bfa2295cf64177aedfc6731360eed0349d4f5a55dbf1e5             4558 main/binary-amd64/Packages.gz
+ 03d11aab7270d1d6fc678a8352f0eb81d0a956a737c8c6d7375e0ab341522b7a39f4a461b8d397c1cca8717d80eb79b2775f1b48872a1c2d926792e9b3bce1eb             8405 main/binary-arm64/Packages
+ c650edf05c925b9b5c3f370143e3338b8b4baf6a3c159e5acd867dd66f3e5cc025cb74b59b12f3174a0dabbc2e25e3b3035e68d73f997be098dad85f630dd57e             2485 main/binary-arm64/Packages.gz
+ 7a500fd97f5e266c30b3c172ea11b8993c8b73f31cf395df416caec73240f9979714ed2964aa1e1ae20ce52541d44abf039eabba0f8b4f44233a0a5c31c2aa98             6160 main/source/Sources
+ 5d1442888d56d7661ead5e27a00b25136de2b256544196c1a93a53178868ccae4058ff285aa7399def706836880ede28a07d0c3c1c03e8f2511a7729939d8cf2             2185 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmrM5iUACgkQsEYQAsm7
+sBpp4w/+MSjrdluQWnok8J0LH3yiA68fps7yZTvyisN+5NHQLhAc/FVsO4hjCJ8a
+ic/5Zl0LBaxRIvOGuOIPpCvTKpQye7V9NxppBdQoJRlwtUtEAvymTPlNJqmZIeLO
+JxWwSvELe947sq2s6NRaYbclQeyeuOMy3RH4U9U6ZQuXXEwh6E/4y6QM0V2nDxMI
+hnHct5HHUaKE8Aww6hBnsymxLVDPHq/QCkhLf6jKdtrk08DznYyjbx8qPwkKLf9T
+LQNLzmkpBNt+kFpqa+aB4cnX0KGxv8Mrx+CbYg7snv5HBPLDubHQ27yVIXrCWcE2
+HJ2C/MkvwsRuO5JN+FaiyIKZuCmYF1DKgQLXqABWKNYWqvSkeo+gTSB8Zj9XoU1W
+7/UAp+AiAOGwGuAcQ2ql6s0wSaX3M27iQGj2O/cT6EZLH82cNqxaaCbzMJGSSUb7
+0blrq1GIUDGGsr5zMwyn7ytZfilpwlJznWifLwbSNAIu9U/YrJyBguL2mVTP6zg6
+okFvyh4rN0m9lTbkuB7O5dHRcHgCseLZr6lOPcCyV5hRxakr+pdb91Dijk4Cg+iB
+U+Yq1y1hSmOr78oSbzziafhjW2hCngFGeE5v9v/VFkTINHtsl1WtI86OQZ2VJ345
+VbAtHL7IUZtKI8mQohh/gMagnu8sUtfoOY77C8Rr1I6zfeO2mOM=
+=UVAN
+-----END PGP SIGNATURE-----
