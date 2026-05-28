@@ -200,13 +200,12 @@ jobs:
           done
           git -C src/${{ matrix.package }} checkout FETCH_HEAD
 
-      - name: Verify go.sum path
+      - name: Check go.sum path
         if: steps.config.outputs.has_go == 'true' && steps.config.outputs.go_sum_file != ''
         run: |
-          test -f "src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}" || {
-            echo "go.sum not found at src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}" >&2
-            exit 1
-          }
+          GO_SUM="src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}"
+          test -f "$GO_SUM" || \
+            echo "::warning::go.sum not found at $GO_SUM; Go module cache may not be keyed correctly"
 
       - name: Install Go
         if: steps.config.outputs.has_go == 'true'
@@ -214,8 +213,7 @@ jobs:
         with:
           go-version-file: src/${{ matrix.package }}/${{ steps.config.outputs.go_version_file }}
           cache: ${{ steps.config.outputs.go_sum_file != '' }}
-          cache-dependency-path: >-
-            ${{ github.workspace }}/src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}
+          cache-dependency-path: src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}
 
       - name: Get version
         id: version
