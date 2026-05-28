@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: trixie
+Components: main
+Date: Mon, 24 Aug 2026 06:40:33 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: trixie
+MD5Sum:
+ 336069fa8dcb079afeaddcb7c76378a3              162 Release
+ 29acd840c3b57b6090526cc1f46e8829            18251 main/binary-amd64/Packages
+ fe0074468687ebaeaa08a334965a3be2             4630 main/binary-amd64/Packages.gz
+ 4602b62cc69f5f90fb5bdd7c2ffc904a            18245 main/binary-arm64/Packages
+ b9e4d6ccaf7573177ab311f8c157bc0d             4613 main/binary-arm64/Packages.gz
+ c54e4d7c8fd687bf12e51dd834969fa5             5147 main/source/Sources
+ 18de3603eba4da187135906fc1430a5e             1688 main/source/Sources.gz
+SHA1:
+ 099434335ff3edd6078da0ff5e49f4bc534295f3              162 Release
+ f910b68a23de228b197d83677e6e2b0c9379a419            18251 main/binary-amd64/Packages
+ 538c1d89b8386860f5906ba4bf551711c4e78fae             4630 main/binary-amd64/Packages.gz
+ d7a176123266c23337bfe28371eb60ed26f41116            18245 main/binary-arm64/Packages
+ a455c8f1f7c368a886f42697cb39e56705de9fdd             4613 main/binary-arm64/Packages.gz
+ bf684b1145238001e013f389117ad96b5b458bfc             5147 main/source/Sources
+ ea92ab3600c04dbc65a84ab18fc9b5bb85856c78             1688 main/source/Sources.gz
+SHA256:
+ e19a4d2843258846660baab679335556077e7ee7e9b97a6df80f8403dff03920              162 Release
+ b34c4738840d040f8a22791d67426804942317a89cbfd45b223f1a1ce4cc0a66            18251 main/binary-amd64/Packages
+ 68f80c75b93834b9e656101078cbf1978f99f5a4384d216c55f7657f98642da0             4630 main/binary-amd64/Packages.gz
+ 09724a9ceb856d274bc5f699ad45cb542c8065d206dec2be9f7c6076ee2ae581            18245 main/binary-arm64/Packages
+ 16bd709b8394585814351c46cc916bea906c7969763596fbf30b503a67862377             4613 main/binary-arm64/Packages.gz
+ 0bb0e2fa73406bbb653d261026e28c4db905b164a36aca201212ac65a9847354             5147 main/source/Sources
+ d1644d421fd9331693a07204af0111e3342273eaaeddf94bdc6438e03550b634             1688 main/source/Sources.gz
+SHA512:
+ dab5f69825d2419f5a370ffa4623390ac52d75a57a625377de6cefcbad034117a49f62c091051a7e56a4c4fd37d756b8bb11bf44faf7d7b582da12d42b55cb00              162 Release
+ 8852ca5d9bfe3429cd820d71bc7b23f9839192cf95ae7ef40224ecc2ac8269c1081e1ec55178b8ce1a217d896114fdba34a8f45f33a83d229c97272ca1576a8d            18251 main/binary-amd64/Packages
+ d60d709268a801dca8f17d1e9bb9b32b64602cff8af682e2500bbc8fc8ccebfea96d3679d7eb56f33a17701f76db3366d3d0c053379df30989b9c24f263531e7             4630 main/binary-amd64/Packages.gz
+ ae7f46164c11f12306c9aab3f2e6dbf0dc082df6b8fe1c9438693f9d53b95560f5ffccd0e116858afccab1949a8e3ae22972a5cae3779583fd54fd9b18d0b143            18245 main/binary-arm64/Packages
+ 93f6da924b5916ea8cf579ba56ae9d6726bb63e5b4b7445fb83da453b7262ef3468caff3bee8210e09f503dab7a9e91abc70fcac6ed4739ca709a214a10f8b02             4613 main/binary-arm64/Packages.gz
+ fc16acf240c2b1cc7ba797d437ec8a4193a94b1e6508be0d004344b99860b36060418faa6d9adfa4b26e9779c86a08c821349f2e91203e33e759fc3659705e7c             5147 main/source/Sources
+ 14091efaa98e33d048c76611735a1cfb35bffb90e07c37bed09a23b0d3a5d3026c96a2224850a0bcd7ba2a33914d74f9ba864de59ed347bf8c86633d7bfcdfe2             1688 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmqL52EACgkQsEYQAsm7
+sBqlqg/+IgibOisDIeRADuz//8H0jchg/TbEi4ce6DEmCY9PUlwkvWRS5IMSHjup
+iKHrNQ8eP07a54Y045E7oyAvmAEZcKnxIeOIar92oGkTO6cXj7IMWk3ZUt3MhoHp
+8saIjkDHrOTCOUXtdTfJ/VuurcUqVeLYN7AGJKx/O8NLgPtdZTD8wpuISWPAt23F
+D5SYzFugZctVrD0YktxSPqFjOD/ksVMrkk8nQbvESE8NxeCyWZKrWjANA0Mt3wdK
+FMKLpRUTisjCv8xcmbejKiWXhTijySugvMw5bY4R+ShS9AgpTCRdt3pOxFMB9RCj
+P47dguuuR3Oji9oxYwdioac0y8pC7kF8gK5CmDVDg3jAgwOFcO4emB7cdzIodOmI
+2my2fWMXohGRkZY5VEQPQ0EdA+jXqksvoTnxIF1UOOacrPy/vaOIumP9nKdlhmI1
+Y66+cTYbbs4YkW4213iQwjv+wFSwjTMRT9Iysv3xh6A58QrUy3dKyJhEiVmRruEU
+TSj4rqi9cKdI+DgUzrxtriGnG99w+9CPt4szualtzTcwV/jnn4rNgOIgE8weJRDL
+R7RswXWm87nOZQ7nOAH42v2foTYOD+2z+6AHLhQa4Au8QHVVE9fluy8LhToCnItc
+cnD5QGoapAcT+l5koL51WF62sfcddN871LqgILb645Dcg39DKZE=
+=LAF4
+-----END PGP SIGNATURE-----

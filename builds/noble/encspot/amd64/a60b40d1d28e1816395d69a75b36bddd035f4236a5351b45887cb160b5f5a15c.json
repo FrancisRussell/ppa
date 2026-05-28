@@ -1,0 +1,38 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "amd64",
+      "codename": "noble",
+      "commit": "31183ae64b37c3db84e1b4c148a73ebecf045162",
+      "container": "ubuntu:noble",
+      "package": "encspot",
+      "recipe_files": {
+        "build.sh": "bdd7a25dbd384c9a093548be7470def634f6d919bb84654aee8a6e36806c103a",
+        "files/debian/changelog": "337af9476d6e539b049737db388a6427fa9b299a6edb9c02aaa3e8f0107e2134",
+        "files/debian/control": "5c7a17d37b6a5792a3eb6e615a27f698acc568466dd7785db2bdd5513c0b934a",
+        "files/debian/copyright": "0be0829dd3f5770557c082abe08454d5dc514cab005252058cdc63d4cec4e6b3",
+        "files/debian/rules": "b39b499c1c477b1e4999fa480ead9f1ae066234a607eb9b17f2fbb6c7283eccb",
+        "files/debian/source/format": "583789a01e0a08dc13dc80788daccec4a82d7e29ef799ffb498a41c17deaaf6d",
+        "get-version.sh": "b61201b6f41abe38c6a27cfa8d6ce1ca6d4f985aa58306b6e1993ee08a0e7d2c"
+      }
+    },
+    "meta": {
+      "ref": "31183ae64b37c3db84e1b4c148a73ebecf045162",
+      "repo": "https://github.com/FrancisRussell/encspot"
+    }
+  },
+  "output": {
+    "files": [
+      "encspot_2.01+git20260523-ppa202605280946.debian.tar.xz",
+      "encspot_2.01+git20260523-ppa202605280946.dsc",
+      "encspot_2.01+git20260523-ppa202605280946_amd64.deb",
+      "encspot_2.01+git20260523.orig.tar.gz"
+    ],
+    "meta": {
+      "built_at": "2026-05-28T09:46:33Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/26567295455",
+      "upstream_version": "2.01+git20260523",
+      "package_version": "1:2.01+git20260523-ppa202605280946"
+    }
+  }
+}

@@ -1,0 +1,481 @@
+Package: encspot
+Version: 1:2.01+git20260523-ppa202605280946
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 154
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.0), libstdc++6 (>= 5.2)
+Filename: pool/trixie/main/e/encspot/encspot_2.01+git20260523-ppa202605280946_amd64.deb
+Size: 51552
+MD5sum: 3460bf4fcdd00e21fe5ee2c8b8e6fc17
+SHA1: 635270dad3651b9be26361613e538e29c49855de
+SHA256: 91077554bb19f6ee59eb311023451bb3ef13b136539b56ff415c0e70a20621fc
+Section: sound
+Priority: optional
+Homepage: https://github.com/FrancisRussell/encspot
+Description: console tool for detecting the encoder used to produce an MP3 file
+ Attempts to identify which encoder was used to create an MP3 file and
+ displays other technical attributes such as bitrate, mode, frequency,
+ frame count, and reservoir usage.
+
+Package: encspot-dbgsym
+Source: encspot
+Version: 1:2.01+git20260523-ppa202605280946
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 660
+Depends: encspot (= 1:2.01+git20260523-ppa202605280946)
+Filename: pool/trixie/main/e/encspot/encspot-dbgsym_2.01+git20260523-ppa202605280946_amd64.deb
+Size: 623116
+MD5sum: e849285703614c08a70a46c04dbe9b20
+SHA1: 54e6718e927b89cf72003de56647db5eb6536859
+SHA256: 5155a59151e1675977fb799f1f3374cc5fa20fb4c62fbaba447051e5ba27b193
+Section: debug
+Priority: optional
+Description: debug symbols for encspot
+Build-Ids: 92e5b5427e145aa2bf6b88b6a92cc1ad6e695f05
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.2-ppa202605291235
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35485
+Depends: forgejo-sqlite (= 15.0.2-ppa202605291235)
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_15.0.2-ppa202605291235_all.deb
+Size: 6368164
+MD5sum: 7c8d6d91322ba2bfda2343c08544d8c5
+SHA1: 930cad30ff2e8060122ecbf78114f794b88fa5ba
+SHA256: b413c7e7394f6ae891cd3ae541c264948df2191f712d97670599fb0054c83c76
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.3-ppa202606151143
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35462
+Depends: forgejo-sqlite (= 15.0.3-ppa202606151143)
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_15.0.3-ppa202606151143_all.deb
+Size: 6368104
+MD5sum: cf1a2788f21ecb5895b85ac0c750f44c
+SHA1: 2b76e0e3e7d73ad77d2bf02854edf8ed9caf5846
+SHA256: f4b12eab00bd51df1b4000d1c86132c5fb01a9ebbd6e604da27b80aed5ac4eb6
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.4-ppa202607151024
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35518
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_15.0.4-ppa202607151024_all.deb
+Size: 6381440
+MD5sum: 7a256f19c00a5590d0c4d85d93ea435c
+SHA1: 1ca40fae3434fa7c6f347b45f662bdd76efdbcbb
+SHA256: 27d700d6b21fe619f18866f9623914fa12b9a8e7fbb406d4d08e83e3891e295b
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.5-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35518
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_15.0.5-ppa202607152307_all.deb
+Size: 6381648
+MD5sum: 85baaf71e9af3df36bab4b380f6cb581
+SHA1: d1df5e81f963cde4f3a5074ae22bfad7dc3ae63b
+SHA256: 2b095518541fc37f0e8c44543a28a68d9d155073ffbcac03e09800f0c628f3de
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.0-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_16.0.0-ppa202607152307_all.deb
+Size: 6519468
+MD5sum: a27368c0db88b95bdbea3729fe55e78f
+SHA1: 85826b6caee580a8dc7ca6678a1e62c838a853c0
+SHA256: 24e7c76eff054860c82cab3d57b3f05ff6187cdba329704ad00bf1946a1a9d5d
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.1-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_16.0.1-ppa202607152307_all.deb
+Size: 6519476
+MD5sum: 60d90e0ba23bc2aad5b9f91744cf131a
+SHA1: aa7df411a6a585f593033ed8cf64e9ef0b7e84ad
+SHA256: 5de6891c4977011bcb597533129b07db6d7c240502d4a4b6f27e772a9a741df3
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.2-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_16.0.2-ppa202607152307_all.deb
+Size: 6519660
+MD5sum: 4a9ef43fba9157ffc92a77a3ba5fb729
+SHA1: b1f3ce697f3c864123ef9d580c07f4340a6432bc
+SHA256: e1da24cf1e196c3910c13aca46a34a05af98832255c38a821f2fd0acad8e3d21
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.3-ppa202608052129
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 44563
+Conflicts: forgejo-bin
+Filename: pool/trixie/main/f/forgejo/forgejo-common_16.0.3-ppa202608052129_all.deb
+Size: 6941912
+MD5sum: efde53c62453a107de7d30574da978e6
+SHA1: 5119cdd755a9c180e8cd15fb381a7beae855b58b
+SHA256: 0462bd57a20ce48ea38a8275e10e5963e52072adc197cd96c9af7bc19160fc52
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 15.0.2-ppa202605291235
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 100351
+Depends: forgejo-common (= 15.0.2-ppa202605291235), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_15.0.2-ppa202605291235_amd64.deb
+Size: 24592028
+MD5sum: 32828cbf9976ea21d2e19ee992dc069a
+SHA1: 762acec471aa160699dd23d41924dc7064117c9f
+SHA256: 7fdf465bc4cd9fe397ef206e0d531955c718665d1f96f1dca2e96fb590f14944
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 15.0.3-ppa202606151143
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 100505
+Depends: forgejo-common (= 15.0.3-ppa202606151143), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_15.0.3-ppa202606151143_amd64.deb
+Size: 24608988
+MD5sum: edefa919f764766c53e22826ded7cedf
+SHA1: b2b672b1e568090e2f76cc6b46fdbb58ec5c36dc
+SHA256: fdd8a965fd51ea129409990ee351da90c5a95297d105e82153edc62d8938fb97
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 15.0.4-ppa202607151024
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 99675
+Depends: forgejo-common (= 15.0.4-ppa202607151024), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_15.0.4-ppa202607151024_amd64.deb
+Size: 24401304
+MD5sum: fe305a1d2957ffe6b0ec5f6263c4a349
+SHA1: 2056cdb5d446cd2838725de8563f3a636a4bf8c4
+SHA256: 29ca02bf8c05191f47a744b481b871476e69874a994e967b516a586daf0dd354
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 15.0.5-ppa202607152307
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 99675
+Depends: forgejo-common (= 15.0.5-ppa202607152307), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_15.0.5-ppa202607152307_amd64.deb
+Size: 24403872
+MD5sum: 86600daf10391ee64431271c9c661100
+SHA1: e5df7aa3ee06e433f4a3f367621ebcd993c8ce64
+SHA256: a9d10161779236eff0908b1614e46c7e6de7625f7abbc20e13d113cd01c52f38
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 16.0.0-ppa202607152307
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 105292
+Depends: forgejo-common (= 16.0.0-ppa202607152307), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_16.0.0-ppa202607152307_amd64.deb
+Size: 25904956
+MD5sum: ef066ad14b939f89b9c5f4c866c99f95
+SHA1: 0bab75c8c37e02c5e14875a18e521dd35f90af62
+SHA256: 96649d7cdf6857eb70edfd714a9a367be21ffc8978fc571a034ef1368324bf84
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 16.0.1-ppa202607152307
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 105292
+Depends: forgejo-common (= 16.0.1-ppa202607152307), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_16.0.1-ppa202607152307_amd64.deb
+Size: 25903604
+MD5sum: 10f274e99646f597ac3912f55631586d
+SHA1: db940f71f44e38f057265c833694df50de9693ab
+SHA256: 22c0eb4d8cc8196c5336d6f198a670d716138868cb67b4902e661a5ef9eb1dd7
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 16.0.2-ppa202607152307
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 105361
+Depends: forgejo-common (= 16.0.2-ppa202607152307), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_16.0.2-ppa202607152307_amd64.deb
+Size: 25931320
+MD5sum: c5d1d0413923b1bc91bf9b29e1c9b4ea
+SHA1: 251af763122d8b8d585d6d137af194fe17135e50
+SHA256: 873c30c6941c11ce0cd583fd727d363d98c79f2a51014c856a3fc0e5b3756fb3
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: forgejo-sqlite
+Source: forgejo
+Version: 16.0.3-ppa202608052129
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 105373
+Depends: forgejo-common (= 16.0.3-ppa202608052129), adduser (>= 3.11), git
+Conflicts: forgejo, forgejo-bin
+Provides: forgejo, gitea
+Filename: pool/trixie/main/f/forgejo/forgejo-sqlite_16.0.3-ppa202608052129_amd64.deb
+Size: 25935664
+MD5sum: 9c514cc1a4d655d291e42a57e836a939
+SHA1: 7209d1ce6f4ee183d899bf1fe58629881cb8159a
+SHA256: a5093c8353a385b3efc0a726b6fd821641079ca49169db04429796a7b2f1ae5f
+Section: net
+Priority: optional
+Description: Forgejo: Beyond Coding. We Forge. (SQLite)
+ Forgejo is a self-hosted lightweight software forge, built with SQLite
+ support. Compatible with PostgreSQL and MySQL.
+ .
+ Debian packaging adapted from forgejo-deb by crystal
+ <crystal@noreply.codeberg.org>.
+
+Package: fsv
+Version: 3.0-ppa202605280848
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 272
+Depends: libc6 (>= 2.38), libepoxy0 (>= 1.0), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.32.0), libgtk-3-0t64 (>= 3.21.5)
+Filename: pool/trixie/main/f/fsv/fsv_3.0-ppa202605280848_amd64.deb
+Size: 84472
+MD5sum: ed78caf35cbff4a3af3db3e40eae4de2
+SHA1: 033f817abf7a4304b7fb623320e7d3d5ed63ed34
+SHA256: 3860bf3ed5832d5c899b434c3805aea78fddec28734e5be20155d849b1f87807
+Section: x11
+Priority: optional
+Description: 3D filesystem visualizer
+ fsv displays the layout of a filesystem in three dimensions. Files and
+ directories are represented as solid shapes whose size is proportional
+ to disk usage, allowing large consumers of disk space to be spotted at
+ a glance.
+
+Package: fsv-dbgsym
+Source: fsv
+Version: 3.0-ppa202605280848
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 342
+Depends: fsv (= 3.0-ppa202605280848)
+Filename: pool/trixie/main/f/fsv/fsv-dbgsym_3.0-ppa202605280848_amd64.deb
+Size: 244036
+MD5sum: 25d5f424c00b203e9e261f3d045d35e0
+SHA1: e725de1eb6f3f9bc2e8138bf7d7412c2da3df828
+SHA256: 77979cd74552620ab4be1655d89cc98ceb85636e0ac3b36b17172c6ae3f7a608
+Section: debug
+Priority: optional
+Description: debug symbols for fsv
+Build-Ids: 0e23c25881619f532a03bb5f50913ea3537aefaa
+
+Package: lldap
+Version: 0.6.3-ppa202605281224
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 39202
+Depends: libc6 (>= 2.39), libgcc-s1 (>= 4.2)
+Filename: pool/trixie/main/l/lldap/lldap_0.6.3-ppa202605281224_amd64.deb
+Size: 11666380
+MD5sum: d8935618805c7dde7021520345fa8b96
+SHA1: 17df9078e0fa2c140e263c8596f0a55254847b29
+SHA256: 24777aad030ac401e78252cff2aa585c565a541c412e8de00fbfa0506d2dde51
+Section: net
+Priority: optional
+Description: lightweight LDAP server for authentication
+ LLDAP provides a simple LDAP interface backed by SQLite,
+ with a web UI for user management.
+
+Package: lldap-dbgsym
+Source: lldap
+Version: 0.6.3-ppa202605281224
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 12573
+Depends: lldap (= 0.6.3-ppa202605281224)
+Filename: pool/trixie/main/l/lldap/lldap-dbgsym_0.6.3-ppa202605281224_amd64.deb
+Size: 747376
+MD5sum: 3f60fe7ff5e42c86979d69504aa55693
+SHA1: e3cb2acd4d836a22128da3c99381c3d97d74989e
+SHA256: 18e0b1410bbb46b50eaf01ce0d046eb25c2910d63c0428fe4bb470afd0947047
+Section: debug
+Priority: optional
+Description: debug symbols for lldap
+Build-Ids: 23f79bca01ac4b474cea19c16c51b67cda92fddd 8e52a4250f2ab5e4b39f9035c012a1f1d67f3f9b dcbf9fe40eb9f87e8cb32a52a7bc09ac530c6ac7
+
+Package: pwsafe
+Version: 0.2.2~beta+git20250604-ppa202605280946
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 143
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libssl3t64 (>= 3.0.0), libstdc++6 (>= 13.1), libx11-6, libxmu6 (>= 2:1.1.3)
+Filename: pool/trixie/main/p/pwsafe/pwsafe_0.2.2~beta+git20250604-ppa202605280946_amd64.deb
+Size: 56316
+MD5sum: ab771c6b1971f75755af7eb41b7861a1
+SHA1: 7c4495e9bf2c20ccf411c393d5ac752cbee15a7d
+SHA256: aa822e4c0c7717b36bcdea7f1b92bee4b61562d055c6f5fb3a4141455942d83f
+Section: utils
+Priority: optional
+Description: command line encrypted password database manager
+ pwsafe is a unix commandline program that manages encrypted password
+ databases.
+ .
+ Features:
+  - Pure command-line operation if desired (good for remote access over ssh)
+  - or can interact with X11 selection & clipboard.
+  - Portable, endianess-clean, misaligned-access-free C++.
+  - Compatible with CounterPane's PasswordSafe Win32 program versions 2.x
+    and 1.x. See http://passwordsafe.sourceforge.net/
+
+Package: pwsafe-dbgsym
+Source: pwsafe
+Version: 0.2.2~beta+git20250604-ppa202605280946
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 378
+Depends: pwsafe (= 0.2.2~beta+git20250604-ppa202605280946)
+Filename: pool/trixie/main/p/pwsafe/pwsafe-dbgsym_0.2.2~beta+git20250604-ppa202605280946_amd64.deb
+Size: 337024
+MD5sum: 1bb7ceccc004184044ced64ee5550b05
+SHA1: 550d28390231a7778fd42711a9f1f42b45e67779
+SHA256: 64ce3f38bae492177c2a89c83339e139459a5994250ac40bf4e54ab6cb02e2ec
+Section: debug
+Priority: optional
+Description: debug symbols for pwsafe
+Build-Ids: fde53385fa1ddd7e546ab903500af3a25a5deff4
+

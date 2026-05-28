@@ -1,0 +1,146 @@
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.2-ppa202605291242
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35485
+Depends: forgejo-sqlite (= 15.0.2-ppa202605291242)
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_15.0.2-ppa202605291242_all.deb
+Size: 6543240
+MD5sum: c89b66fa59063e69e96f16a1a016ea84
+SHA1: 3a666d272cdbf9e073ce7c18616690bc0331135b
+SHA256: 8bf0c4f90938ef470b897150ce26ba1f527215b90c6cff5facbce87b5a915bf5
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.3-ppa202606151143
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35462
+Depends: forgejo-sqlite (= 15.0.3-ppa202606151143)
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_15.0.3-ppa202606151143_all.deb
+Size: 6542956
+MD5sum: c56f2d90bc8b042f57e22dae71bce26d
+SHA1: a57f81fd701553e087193bbd7759b73d6367980d
+SHA256: f35a4ab30d5a40ab7d44d31e8ca74670f1cdf63a6ac6eedbf19a8fb2b5829339
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.4-ppa202607151024
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35518
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_15.0.4-ppa202607151024_all.deb
+Size: 6558086
+MD5sum: 4389ec53577cbaba7b27f778fba5403d
+SHA1: d8fc0e060a403413d9ae12711ce3bd9048abe593
+SHA256: e0e49a5d70ce0c4f6539c2d0761c136ddfede364c35ce41fbdd3f29e90630015
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 15.0.5-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 35518
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_15.0.5-ppa202607152307_all.deb
+Size: 6558108
+MD5sum: 3811d4f4a4100c3d6970af1941db1a29
+SHA1: a8f2437f725dc85463425e962611d3b8c68e4ce7
+SHA256: 230916ab48e78f175e512eab522943459089ca2bf7d9d790ae80e25ed9a933c9
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.0-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_16.0.0-ppa202607152307_all.deb
+Size: 6696490
+MD5sum: 5c85524535c379f3228b5629339aa424
+SHA1: 1f8ecd03ef5a9bdab39b06c4609fea95587c9779
+SHA256: f56c5178560ee7ec397ed850ee10e8b6e518de1704f3324520a4853525635da9
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.1-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_16.0.1-ppa202607152307_all.deb
+Size: 6696836
+MD5sum: acaba3e24d61726df81bfdc2e924406a
+SHA1: 4870ff7e4875cbb8993a9750dae5de162d2bd66e
+SHA256: a1cc87a6748d288693a80315f5b6a5e59af1a37425834bba9c080304f8660452
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.2-ppa202607152307
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 36732
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_16.0.2-ppa202607152307_all.deb
+Size: 6696538
+MD5sum: 425a55677c7de397aa9bd7016e15b400
+SHA1: c739fc8881daf93ef2c39c3b7a648ce8d94e6ecd
+SHA256: 811bee78e3325843194587ae2f9fdbac6a4f83f41fc4457b983630ca2c65fea1
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
+Package: forgejo-common
+Source: forgejo
+Version: 16.0.3-ppa202608052129
+Architecture: all
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Installed-Size: 44563
+Conflicts: forgejo-bin
+Filename: pool/noble/main/f/forgejo/forgejo-common_16.0.3-ppa202608052129_all.deb
+Size: 7152896
+MD5sum: cafc646f436746eda7ebe35d695df991
+SHA1: 01acdb55c803f1f7a6ddad0061dc855a2a5556a0
+SHA256: 83f0753d2307aa152dfbea29a40b036c36848633c8edc178c8680ba91cf61144
+Section: net
+Priority: optional
+Description: Common files for Forgejo
+ Common data used by Forgejo packages: web assets, systemd service unit,
+ and default configuration file.
+
