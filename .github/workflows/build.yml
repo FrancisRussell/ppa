@@ -154,7 +154,7 @@ jobs:
             ${{ matrix.package }}-cargo-
 
       - name: Restore sccache cache
-        if: steps.config.outputs.use_sccache == 'true'
+        if: steps.config.outputs.sccache_persist == 'true'
         uses: actions/cache/restore@v5
         with:
           path: /home/builduser/.cache/sccache
@@ -284,7 +284,7 @@ jobs:
           fi
 
       - name: Save sccache cache
-        if: steps.config.outputs.use_sccache == 'true' && env.SCCACHE_CHANGED == 'true'
+        if: steps.config.outputs.sccache_persist == 'true' && env.SCCACHE_CHANGED == 'true'
         uses: actions/cache/save@v5
         with:
           path: /home/builduser/.cache/sccache
