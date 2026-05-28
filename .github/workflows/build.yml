@@ -200,6 +200,13 @@ jobs:
           done
           git -C src/${{ matrix.package }} checkout FETCH_HEAD
 
+      - name: Check go.sum path
+        if: steps.config.outputs.has_go == 'true' && steps.config.outputs.go_sum_file != ''
+        run: |
+          GO_SUM="src/${{ matrix.package }}/${{ steps.config.outputs.go_sum_file }}"
+          test -f "$GO_SUM" || \
+            echo "::warning::go.sum not found at $GO_SUM; Go module cache may not be keyed correctly"
+
       - name: Install Go
         if: steps.config.outputs.has_go == 'true'
         uses: actions/setup-go@v6
