@@ -1,0 +1,39 @@
+Architectures: amd64 arm64
+Codename: trixie
+Components: main
+Date: Mon, 09 Nov 2026 14:40:40 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: trixie
+MD5Sum:
+ 0c7513bb40702f6393678aff42aa5b73              162 Release
+ c8205bce7e564533fb11447c8cf3333e            34655 main/binary-amd64/Packages
+ 1f59436fe59de00d7764d33a347e275e             8209 main/binary-amd64/Packages.gz
+ 7e958492a0ada864b0f1c84d4435595a            34644 main/binary-arm64/Packages
+ a33949ac59b6a36df017ff3db8d3c1bb             8194 main/binary-arm64/Packages.gz
+ c6e6b075fa72494c982109e98b960085             6296 main/source/Sources
+ 8f1486db94965fa6f0ae09412555491b             2223 main/source/Sources.gz
+SHA1:
+ 51a98cc75ce60d6ec4199a8c211e18aa8279fe9e              162 Release
+ 08b61cea64b6621eeaa13d080cd10946e6f9baba            34655 main/binary-amd64/Packages
+ deba916fd320b2e198c54c394592a618d4c6ea2a             8209 main/binary-amd64/Packages.gz
+ 6ed72f412a6388d90d175549059e7ed67bedc25e            34644 main/binary-arm64/Packages
+ 10d931a9d96c212b2ef2be2758f1fe2647d1d47e             8194 main/binary-arm64/Packages.gz
+ 73dd027d811fbe8f787c5d5a4f2f781933ae90c4             6296 main/source/Sources
+ b4aae86bfc0f5efcb76bdae706c0ae3d04493ae2             2223 main/source/Sources.gz
+SHA256:
+ 608a5e436e70548e15e9191e65179cfd2f5b7f957639ac3328b5a22b5b01965b              162 Release
+ da7ebcb8f3dbeee2dbabdbb3613445b4e524d08a4309bd041b38906a47d296e9            34655 main/binary-amd64/Packages
+ fed367795420d4083c0b72fb559bfec6f9e32f99fc02a17f8a7a3f0e030a7309             8209 main/binary-amd64/Packages.gz
+ 2219c9d402e16a69671b4dc81e3673ad1598bf37ce9bd335fc103d8cce6ee814            34644 main/binary-arm64/Packages
+ 5681ad556457f6b924061a27d22161433fa0529d0212570ab981345b399cf92f             8194 main/binary-arm64/Packages.gz
+ 74e50ae2586b2068c8653947b8744816fe875ed41d5cd40c73f907c86f41d6a1             6296 main/source/Sources
+ aff355f1e0a4e17b133ea064bf46230bc2e29001ad8f430ee149301f9ef57fcc             2223 main/source/Sources.gz
+SHA512:
+ 6d8cdb59c0ba25722f0f1e5dd58ebfd2bdc3c41a5dfb3ac00adf78b28752e2e578690fe4631d14fe294cebff4dd7560a32a3d8cbaa747bb401de35cbf1e09060              162 Release
+ aef77623aec734d5e4acc9d406b9275a7b482f1acc28ab57764e46369cca67e04b37dbf15c0c56333b0701bdfa875f5c35741810d538e8fa9b7373a07a674dc9            34655 main/binary-amd64/Packages
+ 51d15bf81938f3bc1fc9735a0448bb7679f9e46600f0eb2aca565d09c3194f1aaedf973c4ee81bbfce9864d2f6ab1e01ae288b2c2e13ab63f04e87331122d4ad             8209 main/binary-amd64/Packages.gz
+ 6d1df92e4595b8547ecba17f179cc390a25fae42a47163d38167dd394fb74d08c12bce8b62080c3589028e47447a6ac1995a703162330eca68e9f6db7edc2f1e            34644 main/binary-arm64/Packages
+ 2e6622673351f79206066089e99c5107bedbbd20f9d8f48d12f4fb27e343e351567e0fab6910f86f449d6f6d955159bdf7cba5bcbefc7dc98e55363a859b187d             8194 main/binary-arm64/Packages.gz
+ e48c67206059b540870a31f3d8ca4fa09f1312b750f44cd14894c7df809f2f3ea750f3d0a57a5570cd3c5c63756564b9c53f7080a73ae82936876b7210b6e789             6296 main/source/Sources
+ ac4d2e3d5986a5abf8beabe60ddcba9201e5d9d1358ee630ed37e02b496e479e3f3a87c4dfc9ebc75a98f2484bedc1c64bc621a637482625a417c2b991c333f4             2223 main/source/Sources.gz
