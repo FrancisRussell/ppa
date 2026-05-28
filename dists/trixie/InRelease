@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: trixie
+Components: main
+Date: Mon, 26 Oct 2026 11:51:24 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: trixie
+MD5Sum:
+ 1f1e30d78734fd6b29998047224d50b1              162 Release
+ 8ae352ddab0e833758ec0f26bdd6555b            33142 main/binary-amd64/Packages
+ dd9e39566272849b0ebe8a1660038a09             7985 main/binary-amd64/Packages.gz
+ 162f6a14a04b9d4766da3d90b612dccf            33132 main/binary-arm64/Packages
+ 6e79b00ed77489e09e203365e0e652a1             7976 main/binary-arm64/Packages.gz
+ c6e6b075fa72494c982109e98b960085             6296 main/source/Sources
+ 4ada5c4b2fa9166c3827598b285fbff2             2223 main/source/Sources.gz
+SHA1:
+ ea136be03a70265dfbd11008c62e75ce099bb573              162 Release
+ 26688c26eb711a58c65a2e9a51e35825455b7a2d            33142 main/binary-amd64/Packages
+ d1f2c215ba546c81e055008fa559b7a5c47911d6             7985 main/binary-amd64/Packages.gz
+ b5f52fbdc05c85a9a924968530a24ae73ce2edce            33132 main/binary-arm64/Packages
+ eb3c013bcaf7f51113715809c28a966ff9b5f12a             7976 main/binary-arm64/Packages.gz
+ 73dd027d811fbe8f787c5d5a4f2f781933ae90c4             6296 main/source/Sources
+ 83dec9f07c3ad0730f9395ec6bc210d9f4207207             2223 main/source/Sources.gz
+SHA256:
+ ced20a333d858a6ea7742b915dbb3d1cb891a9ba2f228296064bee0cc35d205c              162 Release
+ 1f13dd57007f544a1e107109144d467b650b1ac8e520a985b47568c00ec10a68            33142 main/binary-amd64/Packages
+ 3aba6b890c867f4c4b10457755f78ac8f22578a74c5fe9f185e16fd2618aad05             7985 main/binary-amd64/Packages.gz
+ 9ae2a79641750e2df20881d854d82e612fe313dfb6388191ed87052698585364            33132 main/binary-arm64/Packages
+ 33c696e740f3291ef29c5f6e3ee9190f4a0db1e20288daa46d63b5cc80a7c396             7976 main/binary-arm64/Packages.gz
+ 74e50ae2586b2068c8653947b8744816fe875ed41d5cd40c73f907c86f41d6a1             6296 main/source/Sources
+ 028b368bf45de18d36330734d6b0f6e5d182ec7b870d995a469fba7e0ed701cb             2223 main/source/Sources.gz
+SHA512:
+ ff018b6868e1a7252774fb226383234dc13c9ade54ce1c162a1b2648ef771062cb6d5d0c801b9bffcf9b6a4ded86bf649e0659acca4ced1abbbbaa6294d7de17              162 Release
+ a2d3c9100b769b36c962ff9ea59824520475d239ff7560e91fe82e68ff83e3e71ac59834e26262017563e425b62f597d65e79c89d3ed6b53fe2abeac6ae06861            33142 main/binary-amd64/Packages
+ 7a400ff7ce30c10331c102b9741a577625393ed507c9bcff2182c52fa45f1a9e3db4ddb52c68ffb83610879b9f88572b11da82241b58e684dff12f68969a2a1f             7985 main/binary-amd64/Packages.gz
+ 74101089adea19d1c095c9502270c91170102981d030f95d6e7cad14e4180d91a370f3dd7a2189efa5af2648b37e12b8283b7b6f05c479952992de1cbe210cd3            33132 main/binary-arm64/Packages
+ 063b829815da68ee7beeef49bf6c9748daf915827d6525844531a814924e1c758ef30151a4bf96f49518645b40b62df6f81b39f27a2a27c677c04e750d2c5d63             7976 main/binary-arm64/Packages.gz
+ e48c67206059b540870a31f3d8ca4fa09f1312b750f44cd14894c7df809f2f3ea750f3d0a57a5570cd3c5c63756564b9c53f7080a73ae82936876b7210b6e789             6296 main/source/Sources
+ 35d388a7cd22679384439fa3ba25c628ba88192ee706cbbfc3e66b475c0f67d75961301b04bfafc2709dba67f61bb9f74de4fb743b1258f5d9437c83d180ef80             2223 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmrfPrwACgkQsEYQAsm7
+sBohPQ//cuQDjyQWM6QBdXWdHL4I/h7m8yw8MLxpT38Gfo3+WcFh0oKsuFfJPxL1
+ImSPIQhuRh6pAqEhhNeK5IyJDPdi87wzV8q7af6E7ZEoIdk3XbVwFhT85DhuswME
+F7wvNrj3FY8BPSmDE/RfdLKxhX+HYYm3bz0kH3T4G1jHVszHusKbMJB94dcbex93
+MPro9iuv5/9gFcanJB5pOGINz/PhUhEJ3qQLb7cBXe4/+muFcYMd7xa9qVFH0BZ4
+nNHPp5ICNHi2xNxqqhOffF2ciDo06CJwjtQP15JWqbXnoByeeZi/MqtCBqpPBBtc
+ZSNYHusgD3DVXXfCEk3o1sK9g2Wu4eJGkfSH6G6RCdeIQ0P+DAwmlvGibKwocxKR
+d7DwkyEwAz63mMyF2Z2Z9Pt7myueJsc77iOWhl9025Bqp8NHy7vzNqMs3kcL/aQK
+zJLaWLoTUw9WxupG2I51drL+mJ0G1jGCdUL5/ectfe8I6IDT9Ge10PsB0n27JC/h
+tl9ILx3Z1YhJcfKZX50Lj5yVlGhPhbIXoB0qMOPKBnNux0Yp6wRSFClnVWm1FOZp
+NBywKK/Vd1GQ728t4/JnKURqJsvIji9HdmhkcNPlQXFJUK+Pbw/9Lq65PjOywftl
+ObXjRlUdlM/BPRaiapxTbaElx71nF5MTA4ASiRrryO5wKKhCEnE=
+=1stY
+-----END PGP SIGNATURE-----

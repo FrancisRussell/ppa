@@ -1,0 +1,39 @@
+{
+  "inputs": {
+    "key": {
+      "arch": "amd64",
+      "codename": "noble",
+      "commit": "48a0a8d961f32bd8e3263b202053ce49a6c94781",
+      "container": "ubuntu:noble",
+      "package": "lldap",
+      "recipe_files": {
+        "build-deps.yml": "7b3442400f4eb45e8ee7a4bcbfe7fd613c8fe89a41c6836f16658cc6b67a64bb",
+        "build.sh": "e55a09b99e4043555f5a4d48c2db64c090eed97589b4a6d7df2aedc1f0ac738b",
+        "files/debian/changelog": "ec67509e98f19af0b58f5ef12886e37f180e6617391ce7146d82d01dc6f17687",
+        "files/debian/control": "21f66296e29d02c15001159d8c4bbbdb3e698085e0791296bf0d67f19b424fd2",
+        "files/debian/copyright": "d892a09dbf2f9da7780741f4493c7c00c278321186b79ce9ef409147621616c9",
+        "files/debian/lldap.service": "d8debaeac03c9f3509798e3ac07b676ccbbbaa8fba8664f94233b3999185bf20",
+        "files/debian/lldap_config.toml.default": "0f01dec4a8290a7b15d3640a24974dec557508f614613278cf98e43b41565e4c",
+        "files/debian/postinst": "e4bd05706b799a02383fa58b6d0afc9e697955631c9e01536358127d3f76a597",
+        "files/debian/prerm": "b50fd5ee1ffbcf09b58bd008aa87f09e89ebb04f54a7ca1a496b9f6fa34a4454",
+        "files/debian/rules": "cb84592ac9a00fb550ef15d438dd49d18cbba5561aa2bc15a9f94c8e7d391eaa",
+        "get-version.sh": "44f2ba8ba48a690842cee25cfc8c1caa5e0aec3db3c4e9add469a08251e14cab"
+      }
+    },
+    "meta": {
+      "ref": "v0.6.3",
+      "repo": "https://github.com/lldap/lldap"
+    }
+  },
+  "output": {
+    "files": [
+      "lldap_0.6.3-ppa202605281224_amd64.deb"
+    ],
+    "meta": {
+      "built_at": "2026-05-28T12:24:50Z",
+      "run_url": "https://github.com/FrancisRussell/ppa/actions/runs/26573927841",
+      "upstream_version": "0.6.3",
+      "package_version": "0.6.3-ppa202605281224"
+    }
+  }
+}
