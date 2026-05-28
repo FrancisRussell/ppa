@@ -32,8 +32,6 @@ jobs:
       ghpages_sha: ${{ steps.matrix.outputs.ghpages_sha }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          lfs: false
 
       - name: Install matrix dependencies
         run: |
@@ -52,7 +50,7 @@ jobs:
           MATRIX=$(/opt/matrix-venv/bin/python scripts/generate_matrix.py ${{ inputs.package }} $FORCE_FLAG)
           echo "$MATRIX"
           echo "matrix=$(echo "$MATRIX" | jq -c .)" >> "$GITHUB_OUTPUT"
-          GHPAGES_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
+          GHPAGES_SHA=$(git ls-remote origin refs/heads/gh-pages 2>/dev/null | cut -f1)
           echo "ghpages_sha=$GHPAGES_SHA" >> "$GITHUB_OUTPUT"
 
   build:
@@ -75,7 +73,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            git git-lfs ca-certificates curl jq python3 python3-yaml
+            git ca-certificates curl jq python3 python3-yaml
           # The checkout action's credential helper binary is not accessible
           # from inside the container, so embed the token in the URL directly.
           git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
@@ -290,8 +288,7 @@ jobs:
       - name: Check if any build published to gh-pages
         id: changed
         run: |
-          git fetch origin gh-pages 2>/dev/null || true
-          CURRENT_SHA=$(git rev-parse --verify origin/gh-pages 2>/dev/null || echo "")
+          CURRENT_SHA=$(git ls-remote origin refs/heads/gh-pages 2>/dev/null | cut -f1)
           if [ -z "$CURRENT_SHA" ] || [ "$CURRENT_SHA" = "${{ needs.generate-matrix.outputs.ghpages_sha }}" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
