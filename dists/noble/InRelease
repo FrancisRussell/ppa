@@ -1,0 +1,58 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64 arm64
+Codename: noble
+Components: main
+Date: Mon, 02 Nov 2026 14:09:53 +0000
+Label: FrancisRussell/ppa
+Origin: FrancisRussell
+Suite: noble
+MD5Sum:
+ b6a4cfbea20a8f5aef81c2105b5fe7d4              160 Release
+ ad73367e87a16570ff3ae03f33b27add            24077 main/binary-amd64/Packages
+ 58b36b99c50db29a0d7a74231b3068ba             5402 main/binary-amd64/Packages.gz
+ d969661decbd894d161a229449edd26e             8383 main/binary-arm64/Packages
+ 18168d3ebca21a0218640f9e217123cf             1810 main/binary-arm64/Packages.gz
+ 9d823dded30c94c246474ac6f0de42ec             3937 main/source/Sources
+ 61c76eae434420b8e75fd6cfb5b70231             1478 main/source/Sources.gz
+SHA1:
+ 10525660d8379f1360ca94b5a83c42b9f9980610              160 Release
+ 5544ba1346f8c38b33f2004174f7dfb9258afb2b            24077 main/binary-amd64/Packages
+ 0a2d5c430a135e64adedfeeb5fc263057b5b9faa             5402 main/binary-amd64/Packages.gz
+ 94f5050af0219575edec35082184aecd86ece439             8383 main/binary-arm64/Packages
+ c262a781e3d7cda64011c80b1d6d44f627d71ac8             1810 main/binary-arm64/Packages.gz
+ 6ff73c20892fa925e1f752d53d10182813ffc6d3             3937 main/source/Sources
+ 3ba8688d1162ca9fa53802a8f061fc58f90e576e             1478 main/source/Sources.gz
+SHA256:
+ 8522a37f21360ce1e6120cd3589cc2436509557b4d943cb8f874ad9a2a73a579              160 Release
+ d0506b89300e706e92a158d8bcb23e3036388dbd271f253940c84b77979082da            24077 main/binary-amd64/Packages
+ 601007f0abfaf47f3c176d90df664225d9253411fdf076134f375c6f141131eb             5402 main/binary-amd64/Packages.gz
+ ca0b6758688ff4bb8cf92ac8299a561377919135f4ed94e0de1e4f82a6d819de             8383 main/binary-arm64/Packages
+ 7179d21f280fc087e6b74b9bdebf6270906a0579d89b84786d4678e98bdb0a8d             1810 main/binary-arm64/Packages.gz
+ 4d53ad4631a2a975b731ade516397eca976b7cea0d3d1e712ad845eeb7cfe429             3937 main/source/Sources
+ 0070a80dc0688c0111fdf19e0471c8e8742f681f67886275a12995f23d6d2f70             1478 main/source/Sources.gz
+SHA512:
+ 3168bdf5086d2466c024003f01776a65552cb780f5ab160cb25b1fcaed60c374bd07517c43c48d4890e7dc44874ce1a960de91823855571c13452f32d55052c4              160 Release
+ 3a3a0250b587ad14661445f99cd823599cad82d1741f677b451ff7c6bae9b55458ef0c47d65bed53529bcb0c03b6f9751e30014f4f734a599eb318d936c889bd            24077 main/binary-amd64/Packages
+ b7501b98a79384b061d3a204209b85e03d98333f11670cf26b8fdc427a788414be300a9ecba75ea699b69954f881a9fef06bb1224c5f4ffd237e687a7e1f8b12             5402 main/binary-amd64/Packages.gz
+ 6dfe5ae4d1bee1e92bf2ea59d8d37909908f4f03fbe11c673346eeab2265a8490eaaa5874b5235ad43594297f07d363f8663968d911e82c3f730a162e2a79a4b             8383 main/binary-arm64/Packages
+ bea6441045d5d867eaecc6916f69be8ad742b4734897c3a2aad4133c1180f52a4bcc324d304d73305c7c4317eef6a4df06fcce2c0c264cc4a0bc3607720956cd             1810 main/binary-arm64/Packages.gz
+ bfaf0c5172e557256a18b51177400c6f56082ebf79c9e9ba1bcf15fee489ea166a9b0579705a59e4bdf3bb82be560feea2b7e2d6cfa94f1832bbb90f64f0ab80             3937 main/source/Sources
+ d36c8bf72afa86ff94d5d030cf5c976a3a883c58436525ba395bae2875f96b576b2bde9e87dbbf0b11056d6f273e01c5b86ee5f93583bddbea710d3221d2fdd2             1478 main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE5k9JAtBBNpskkwa/sEYQAsm7sBoFAmrombEACgkQsEYQAsm7
+sBquGw//djNgkwbf2nbsMaMq6l+s4UZU1DDlXqxaKBfB5TPlWhv0IBPVWh6e4cXY
+rfydYJ+i1tM/GlfDPVzejkgk+Hz5L8aEgjQ3mgIDcjsBbFE2tr93yGuzr21majTE
+ZcToDRF9J113wMMh4MTi559Jn5ehdjx1X97JHtRYepQcJhqCGN1YxG8ExOJXtxhR
+3Cx9FUJRhIedy6s8fY1aU/qQxlDCCgSQesy1n+uZGDkTeszUBB0Rfye9BXB2kT5c
+lhqgH0qYeC/0FWoHYtdIyB01cGxyIFnREKW8NBG0nH0xTKTdcJ+/1v2bJjkZmgNM
+jLk+RWWRHWM74k1es5xuIGnw3P38CV3DHIHuSkNYk0tUpxW6J+YcIkvCqrm0dZtU
+d4f//dYqzYCLP4SzoQgnof8TKjxxU7Q/kZZ2Gk+/XFMXgTeJ7IAFx27wnKTgvIIS
+wMkyNBzeIL5g77hIdGjJjNdmVJjbGSlCqTNJT7o8TwS1LrOtcUvQsv3w6gXCqvhy
+HzownJhjGITw1KXXY5F7VPT8Jf/r12Xzxvy7dlO1u7SCT3JBqspHj1oKiE9xHigk
+AsE0ePnu2e+CyjzMXsqqYKnDrsdJpv1zJMu1SXgdZexOTdLAcuFQxM+KYmHjtXeU
+d33xzmD1PSBwRMI2P3sJeDGmslFq7ovoZBZLxv4OgC5Cxk6yZCc=
+=2LQf
+-----END PGP SIGNATURE-----
