@@ -1,5 +1,5 @@
 name: Deploy site
-description: Checks out gh-pages with LFS resolved and deploys to GitHub Pages.
+description: Checks out gh-pages and deploys to GitHub Pages.
 
 runs:
   using: composite
@@ -8,7 +8,6 @@ runs:
       uses: actions/checkout@v6
       with:
         ref: gh-pages
-        lfs: true
         path: gh-pages-deploy
 
     - name: Upload Pages artifact

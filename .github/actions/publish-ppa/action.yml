@@ -51,7 +51,6 @@ runs:
     - name: Checkout gh-pages
       shell: sh
       run: |
-        git lfs install
         REPO_URL="https://x-access-token:${{ inputs.github_token }}@github.com/${{ github.repository }}.git"
         if git clone "$REPO_URL" --branch gh-pages gh-pages-work; then
           echo "GHPAGES_EXISTS=true" >> "$GITHUB_ENV"
@@ -60,7 +59,6 @@ runs:
           cd gh-pages-work
           git remote add origin "$REPO_URL"
           git checkout --orphan gh-pages
-          printf 'pool/**/*.deb filter=lfs diff=lfs merge=lfs -text\n' > .gitattributes
           echo "GHPAGES_EXISTS=false" >> "$GITHUB_ENV"
         fi
 
