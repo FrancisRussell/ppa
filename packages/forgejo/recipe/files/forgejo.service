@@ -18,5 +18,18 @@ ExecStart=/usr/bin/forgejo web --config /etc/forgejo/app.ini
 Restart=always
 Environment=USER=forgejo HOME=/var/lib/forgejo FORGEJO_WORK_DIR=/var/lib/forgejo
 
+# Increase if HTTP 500 errors occur on repositories with very large numbers of files.
+#LimitNOFILE=524288:524288
+
+# To bind Forgejo to a port below 1024 (e.g. SSH on port 22), uncomment:
+#CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+#AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+NoNewPrivileges=true
+ProtectSystem=strict
+# If Forgejo data is stored outside /var/lib/forgejo, add the path here via a
+# drop-in override, e.g.: ReadWritePaths=/srv/forgejo
+ReadWritePaths=/var/lib/forgejo /etc/forgejo
+
 [Install]
 WantedBy=multi-user.target
