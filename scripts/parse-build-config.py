@@ -33,10 +33,17 @@ def main():
     rust = deps.get("rust", {})
     go = deps.get("go", {})
     node = deps.get("node", {})
-    use_sccache = caching.get("sccache", False)
+    sccache_raw = caching.get("sccache", False)
+    if isinstance(sccache_raw, dict):
+        use_sccache = True
+        sccache_persist = sccache_raw.get("persist", True)
+    else:
+        use_sccache = bool(sccache_raw)
+        sccache_persist = use_sccache
     use_cargo = caching.get("cargo", False)
     outputs = {
         "use_sccache": str(use_sccache).lower(),
+        "sccache_persist": str(sccache_persist).lower(),
         "use_cargo": str(use_cargo).lower(),
         "apt_deps": " ".join(deps.get("apt", [])),
         "has_rust": "true" if rust else "false",
@@ -64,7 +71,6 @@ def main():
     if env_file and use_sccache:
         with open(env_file, "a") as f:
             f.write("RUSTC_WRAPPER=sccache\n")
-            f.write("SCCACHE_DIR=/github/home/.cache/sccache\n")
             f.write("CMAKE_C_COMPILER_LAUNCHER=sccache\n")
             f.write("CMAKE_CXX_COMPILER_LAUNCHER=sccache\n")
 

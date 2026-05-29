@@ -154,7 +154,7 @@ jobs:
             ${{ matrix.package }}-cargo-
 
       - name: Restore sccache cache
-        if: steps.config.outputs.use_sccache == 'true'
+        if: steps.config.outputs.sccache_persist == 'true'
         uses: actions/cache/restore@v5
         with:
           path: /home/builduser/.cache/sccache
@@ -258,6 +258,11 @@ jobs:
           BUILD_ENV="PATH=$PATH"
           [ -n "${GOTOOLCHAIN:-}" ] && BUILD_ENV="$BUILD_ENV GOTOOLCHAIN=$GOTOOLCHAIN"
           [ -n "${SCCACHE_DIR:-}" ] && BUILD_ENV="$BUILD_ENV SCCACHE_DIR=$SCCACHE_DIR"
+          [ -n "${RUSTC_WRAPPER:-}" ] && BUILD_ENV="$BUILD_ENV RUSTC_WRAPPER=$RUSTC_WRAPPER"
+          [ -n "${CMAKE_C_COMPILER_LAUNCHER:-}" ] && \
+            BUILD_ENV="$BUILD_ENV CMAKE_C_COMPILER_LAUNCHER=$CMAKE_C_COMPILER_LAUNCHER"
+          [ -n "${CMAKE_CXX_COMPILER_LAUNCHER:-}" ] && \
+            BUILD_ENV="$BUILD_ENV CMAKE_CXX_COMPILER_LAUNCHER=$CMAKE_CXX_COMPILER_LAUNCHER"
           [ -n "${DEB_HOST_ARCH:-}" ] && BUILD_ENV="$BUILD_ENV DEB_HOST_ARCH=$DEB_HOST_ARCH"
           sudo -u builduser -H sh -c \
             "$BUILD_ENV ./packages/${{ matrix.package }}/recipe/build.sh \
@@ -284,7 +289,7 @@ jobs:
           fi
 
       - name: Save sccache cache
-        if: steps.config.outputs.use_sccache == 'true' && env.SCCACHE_CHANGED == 'true'
+        if: steps.config.outputs.sccache_persist == 'true' && env.SCCACHE_CHANGED == 'true'
         uses: actions/cache/save@v5
         with:
           path: /home/builduser/.cache/sccache

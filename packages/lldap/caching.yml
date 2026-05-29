@@ -1,2 +1,3 @@
-sccache: true
+sccache:
+  persist: false
 cargo: true
