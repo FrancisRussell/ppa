@@ -17,6 +17,9 @@ WorkingDirectory=~
 ExecStart=/usr/bin/forgejo web --config /etc/forgejo/app.ini
 Restart=always
 Environment=USER=forgejo HOME=/var/lib/forgejo FORGEJO_WORK_DIR=/var/lib/forgejo
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/forgejo /etc/forgejo
 
 [Install]
 WantedBy=multi-user.target
