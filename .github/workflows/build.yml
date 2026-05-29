@@ -311,6 +311,49 @@ jobs:
           inputs_meta: ${{ toJSON(matrix.inputs_meta) }}
           dry_run: ${{ github.ref != 'refs/heads/main' }}
 
+      - name: Record build status
+        if: always() && github.ref == 'refs/heads/main'
+        run: echo "${{ job.status }}" > /tmp/build-status.txt
+
+      - name: Upload build status
+        if: always() && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-status-${{ matrix.package }}-${{ matrix.arch }}-${{ matrix.codename }}
+          path: /tmp/build-status.txt
+          overwrite: true
+
+  manage-issues:
+    name: Manage issue for ${{ matrix.name }}
+    needs: [generate-matrix, build]
+    if: always() && github.ref == 'refs/heads/main' && needs.generate-matrix.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Download build status
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: build-status-${{ matrix.package }}-${{ matrix.arch }}-${{ matrix.codename }}
+          path: /tmp/build-status/
+
+      - name: Manage build issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          STATUS=$(cat /tmp/build-status/build-status.txt 2>/dev/null || echo "unknown")
+          scripts/manage-build-issue.sh "$STATUS" \
+            ${{ matrix.package }} ${{ matrix.codename }} ${{ matrix.arch }}
+
   all-builds-passed:
     name: All builds passed
     needs: [generate-matrix, build]
