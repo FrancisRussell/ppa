@@ -71,7 +71,6 @@ def main():
     if env_file and use_sccache:
         with open(env_file, "a") as f:
             f.write("RUSTC_WRAPPER=sccache\n")
-            f.write("SCCACHE_DIR=/github/home/.cache/sccache\n")
             f.write("CMAKE_C_COMPILER_LAUNCHER=sccache\n")
             f.write("CMAKE_CXX_COMPILER_LAUNCHER=sccache\n")
 
