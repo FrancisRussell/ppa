@@ -63,7 +63,8 @@ jobs:
       options: --privileged -v /var/run/docker.sock:/var/run/docker.sock
     timeout-minutes: 45
     strategy:
-      fail-fast: false
+      fail-fast: ${{ github.ref != 'refs/heads/main' }}
+      max-parallel: 4
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     defaults:
