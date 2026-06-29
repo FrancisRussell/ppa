@@ -342,7 +342,7 @@ jobs:
 
       - name: Download build status
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-status-${{ matrix.package }}-${{ matrix.arch }}-${{ matrix.codename }}
           path: /tmp/build-status/
