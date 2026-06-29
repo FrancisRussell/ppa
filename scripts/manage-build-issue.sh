@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Opens or closes a GitHub issue tracking a build failure for a given
+# package/codename/arch combination. Called from the manage-issues CI job.
+# Usage: manage-build-issue.sh <status> <package> <codename> <arch>
 set -euo pipefail
 
 STATUS="${1?status required}"

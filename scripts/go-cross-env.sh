@@ -1,5 +1,5 @@
 #!/bin/sh
-# Source this script to set GOARCH, CC, and CGO_ENABLED based on DEB_HOST_ARCH.
+# Source this script to set GOARCH, CC, CGO_ENABLED, and (for armel) GOARM based on DEB_HOST_ARCH.
 # No-op when not cross-compiling.
 #
 # Go defaults CGO_ENABLED=0 for cross-compilation; we set it to 1 so packages

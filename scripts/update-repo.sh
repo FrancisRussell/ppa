@@ -1,4 +1,7 @@
 #!/bin/sh
+# Rebuilds the APT repository index and signs the Release files for all
+# codenames found under the pool/ directory.
+# Usage: update-repo.sh <repo-root> <arch>
 set -e
 
 REPO_ROOT=$(readlink -f "${1?repo root required}")
