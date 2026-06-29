@@ -2,7 +2,7 @@
 """
 Resolves a package's source.yml to a specific git commit hash.
 
-Usage: resolve-source.py <package>
+Usage: resolve_source.py <package>
 Outputs JSON: {repo, ref, commit}
 Requires GITHUB_TOKEN in the environment for latest_release packages.
 """
