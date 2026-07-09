@@ -155,15 +155,15 @@ source resolution.
 
 ## Build Flow
 
-Each workflow run passes through three jobs.
+Each workflow run passes through five jobs.
 
-**`check`** (runs once): `generate_matrix.py` calls `resolve_source.py` for
-each package to resolve `source.yml` to a pinned commit, then
+**`generate-matrix`** (runs once): `generate_matrix.py` calls `resolve_source.py`
+for each package to resolve `source.yml` to a pinned commit, then
 `compute-build-inputs.py` for each (package, codename, arch) triple to produce
 a `{key, meta}` pair. Each key is hashed; if a matching build record already
 exists on gh-pages the target is skipped. The surviving targets form the CI
-matrix. The current gh-pages SHA is also captured here so the `deploy` job can
-detect whether any build job actually published.
+matrix. The current gh-pages SHA is also captured here so the `deploy-pages`
+job can detect whether any build job actually published.
 
 **`build`** (one job per matrix entry):
 
@@ -191,10 +191,23 @@ detect whether any build job actually published.
    push is rejected; the action fetches, resets to the new remote state,
    re-stages on top of it (so both jobs' packages end up in the final commit),
    and retries up to three times.
+6. On main, the job's final status (`success` or `failure`) is uploaded as a
+   small artifact for consumption by `manage-issues`.
 
-**`deploy`** (runs once, after all build jobs): If gh-pages changed since the
-SHA captured in `check`, the `deploy-site` action deploys the updated gh-pages
-branch to GitHub Pages.
+**`manage-issues`** (one job per matrix entry, main branch only): Downloads the
+status artifact from the corresponding `build` job and calls
+`manage-build-issue.sh`. On failure, opens a GitHub issue if one is not already
+open for that package/codename/arch combination. On success, closes any open
+issue. Runs in a separate job on the GitHub-hosted runner (not inside the build
+container) so that the `GITHUB_TOKEN` with `issues: write` is never accessible
+to the package build.
+
+**`all-builds-passed`** (runs once): Checks that `generate-matrix` and `build`
+both succeeded; used as a required status check on the main branch.
+
+**`deploy-pages`** (runs once, after all build jobs): If gh-pages changed since
+the SHA captured in `generate-matrix`, the `deploy-site` action deploys the
+updated gh-pages branch to GitHub Pages.
 
 ---
 
@@ -215,12 +228,16 @@ packages/<pkg>/
 
 scripts/
   build-deb.sh                  # shared script: stamp changelog, run dpkg-buildpackage, collect artifacts
+  check-deb-arch.sh             # verifies ELF binaries in a .deb match its declared architecture
+  go-cross-env.sh               # sets GOARCH/CC/CGO_ENABLED for cross-compilation (source this)
   maintainer.sh                 # exports DEBEMAIL/DEBFULLNAME for dch
+  manage-build-issue.sh         # opens/closes GitHub issues tracking build failures
   compute-build-inputs.py       # outputs {key, meta} for a build target
   generate_matrix.py            # computes hashes and builds the CI matrix
   get-version-tag.sh            # shared get-version for latest-release packages
   parse-build-config.py         # emits GitHub Actions outputs from caching.yml / build-deps.yml
   resolve_source.py             # resolves source.yml to a commit + ref
+  rust-cross-env.sh             # sets RUST_TARGET/CARGO_TARGET_*_LINKER for cross-compilation (source this)
   update-repo.sh                # regenerates APT Packages, Sources, and Release indices
 
 .github/
@@ -263,7 +280,10 @@ rust:                           # optional; enables rustup install
 
 ### caching.yml
 ```yaml
-sccache: true                   # wrap compilers with sccache
+# sccache can be enabled with persistence (default) or without:
+sccache: true                   # wrap compilers with sccache; persist cache between runs
+sccache:                        # dict form: enable sccache but skip cache save/restore
+  persist: false
 cargo: true                     # cache cargo registry index and crates
 ```
 

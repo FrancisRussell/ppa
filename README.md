@@ -1,6 +1,6 @@
 # [Francis Russell's PPA](https://francisrussell.github.io/ppa)
 
-Personal APT repository for Debian and Ubuntu (amd64).
+Personal APT repository for Debian and Ubuntu (amd64 and arm64).
 
 ## Supported distributions (subject to change)
 
@@ -34,7 +34,7 @@ Types: deb deb-src
 URIs: https://francisrussell.github.io/ppa
 Suites: $CODENAME
 Components: main
-Architectures: amd64
+Architectures: amd64 arm64
 Signed-By: /etc/apt/keyrings/francis-russell-ppa.asc
 EOF
 sudo chmod 644 /etc/apt/sources.list.d/francis-russell-ppa.sources
