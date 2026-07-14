@@ -27,9 +27,12 @@ Environment=USER=forgejo HOME=/var/lib/forgejo FORGEJO_WORK_DIR=/var/lib/forgejo
 
 NoNewPrivileges=true
 ProtectSystem=strict
-# If Forgejo data is stored outside /var/lib/forgejo, add the path here via a
+# systemd creates and manages these directories, ensuring they exist before
+# namespace setup and that they remain writable under ProtectSystem=strict.
+# If Forgejo data is stored outside /var/lib/forgejo, add the path via a
 # drop-in override, e.g.: ReadWritePaths=/srv/forgejo
-ReadWritePaths=/var/lib/forgejo /etc/forgejo
+StateDirectory=forgejo
+ConfigurationDirectory=forgejo
 
 [Install]
 WantedBy=multi-user.target
