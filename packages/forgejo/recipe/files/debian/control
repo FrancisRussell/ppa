@@ -19,7 +19,7 @@ Description: Forgejo: Beyond Coding. We Forge. (SQLite)
 
 Package: forgejo-common
 Architecture: all
-Depends: ${misc:Depends}, forgejo-sqlite (= ${source:Version})
+Depends: ${misc:Depends}
 Conflicts: forgejo-bin
 Description: Common files for Forgejo
  Common data used by Forgejo packages: web assets, systemd service unit,
