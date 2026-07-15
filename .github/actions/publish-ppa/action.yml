@@ -85,25 +85,24 @@ runs:
           cp "$GITHUB_WORKSPACE/KEY.asc" KEY.asc
 
           mkdir -p "$POOL_DIR"
-          # Remove debs from previous builds of the same upstream version
-          # (i.e. old ppa timestamps). Builds of other upstream versions are kept.
+          # Drop stale build records for the same upstream version and arch
+          # (i.e. old ppa timestamps). Pool files are cleaned up by gc-pool.sh
+          # below, which only removes files not referenced by any remaining record
+          # across all arches — safe for arch:all debs shared between arch jobs.
           BUILD_DIR="builds/${{ inputs.codename }}/${{ inputs.package }}/${{ inputs.arch }}"
           if [ -d "$BUILD_DIR" ]; then
             for record in "$BUILD_DIR"/*.json; do
               [ -f "$record" ] || continue
               RECORD_VERSION=$(jq -r '.output.meta.upstream_version' "$record")
               if [ "$RECORD_VERSION" = "${{ inputs.version }}" ]; then
-                jq -r '.output.files[]' "$record" | while IFS= read -r f; do
-                  rm -f "$POOL_DIR/$f"
-                done
                 rm -f "$record"
               fi
             done
           fi
+
           find "${{ inputs.deb_dir }}" -maxdepth 1 \
             \( -name "*.deb" -o -name "*.dsc" -o -name "*.tar.*" \) \
             -exec cp {} "$POOL_DIR/" \;
-          "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
 
           mkdir -p "$(dirname "$BUILD_RECORD")"
           FILES=$(find "${{ inputs.deb_dir }}" -maxdepth 1 \
@@ -125,6 +124,12 @@ runs:
             --arg package_version "$PACKAGE_VERSION" \
             "$JQ_EXPR" \
             > "$BUILD_RECORD"
+
+          "$GITHUB_WORKSPACE/scripts/gc-pool.sh" \
+            "builds/${{ inputs.codename }}/${{ inputs.package }}" \
+            "$POOL_DIR"
+
+          "$GITHUB_WORKSPACE/scripts/update-repo.sh" . "${{ inputs.arch }}"
 
           git add -A
         }

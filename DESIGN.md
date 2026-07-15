@@ -109,15 +109,20 @@ Built packages use a UTC timestamp suffix `-ppa<YYYYmmddHHMM>` as the Debian
 revision rather than a hardcoded counter. This ensures every rebuild produces a
 version APT will offer as an upgrade without manually incrementing a counter.
 
-When publishing, old debs for the same package + upstream version + arch are
-pruned from the pool. The pool therefore never accumulates multiple ppa builds
-of the same upstream version.
+### Pool pruning via GC
 
-### Pool pruning via build records
+When a new build is published, stale build records for the same package +
+upstream version + arch are deleted. Pool files are then cleaned up by
+`gc-pool.sh`, which collects all filenames referenced by any remaining build
+record across all arches for that package, and deletes any pool file not in
+that set.
 
-Build records stored in gh-pages include the list of deb filenames produced by
-each build. Pruning reads these records to identify which files to delete —
-precise and correct across arch boundaries, with no glob matching.
+This cross-arch GC is necessary because arch:all packages (e.g.
+`forgejo-common`) are produced by every arch job and share a single pool
+subdirectory. Direct deletion by one arch job could remove a file still
+referenced by another arch's record. By deferring deletion to a GC pass that
+considers all arches, files are only removed once no build record anywhere
+needs them.
 
 ### Single-commit gh-pages history for LFS hygiene
 
@@ -182,15 +187,15 @@ job can detect whether any build job actually published.
    - Runs `dch` to prepend a timestamped changelog entry.
    - Runs `dpkg-buildpackage` and moves all produced artifacts (`.deb`, `.dsc`,
      `.tar.*`) to the pool directory.
-5. The `publish-ppa` action clones gh-pages and stages the publish: it reads
-   existing build records to find any artifacts from prior builds of the same
-   upstream version, removes them from the pool, then copies the new artifacts
-   in. `update-repo.sh` regenerates the APT `Packages`, `Sources`, and
-   `Release` indices, and a new build record is written. The staged result is
-   then committed and pushed. If a concurrent job has pushed in the meantime the
-   push is rejected; the action fetches, resets to the new remote state,
-   re-stages on top of it (so both jobs' packages end up in the final commit),
-   and retries up to three times.
+5. The `publish-ppa` action clones gh-pages and stages the publish: it deletes
+   stale build records for the same upstream version and arch, copies the new
+   artifacts into the pool, writes a new build record, then runs `gc-pool.sh`
+   to remove any pool files no longer referenced by any record across all arches.
+   `update-repo.sh` regenerates the APT `Packages`, `Sources`, and `Release`
+   indices. The staged result is then committed and pushed. If a concurrent job
+   has pushed in the meantime the push is rejected; the action fetches, resets
+   to the new remote state, re-stages on top of it (so both jobs' packages end
+   up in the final commit), and retries up to three times.
 6. On main, the job's final status (`success` or `failure`) is uploaded as a
    small artifact for consumption by `manage-issues`.
 
@@ -238,6 +243,7 @@ scripts/
   parse-build-config.py         # emits GitHub Actions outputs from caching.yml / build-deps.yml
   resolve_source.py             # resolves source.yml to a commit + ref
   rust-cross-env.sh             # sets RUST_TARGET/CARGO_TARGET_*_LINKER for cross-compilation (source this)
+  gc-pool.sh                    # removes pool files unreferenced by any build record
   update-repo.sh                # regenerates APT Packages, Sources, and Release indices
 
 .github/
