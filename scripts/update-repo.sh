@@ -22,9 +22,20 @@ for codename_dir in pool/*/; do
   mkdir -p "dists/$codename/main/binary-$ARCH"
   mkdir -p "dists/$codename/main/source"
 
-  dpkg-scanpackages --multiversion "pool/$codename/main" \
-    > "dists/$codename/main/binary-$ARCH/Packages"
-  gzip -kf "dists/$codename/main/binary-$ARCH/Packages"
+  # Regenerate Packages for every arch dir already in dists, not just the
+  # current job's. arch:all packages are shared across all arch Packages files:
+  # if a concurrent job replaces an arch:all deb in the pool and we only
+  # regenerate our own arch, the other arch's Packages entry will reference a
+  # stale size/hash.
+  ARCH_LIST=""
+  for arch_dir in "dists/$codename/main"/binary-*/; do
+    [ -d "$arch_dir" ] || continue
+    existing_arch=$(basename "$arch_dir" | sed 's/^binary-//')
+    ARCH_LIST="${ARCH_LIST:+$ARCH_LIST }$existing_arch"
+    dpkg-scanpackages --multiversion --arch "$existing_arch" "pool/$codename/main" \
+      > "$arch_dir/Packages"
+    gzip -kf "$arch_dir/Packages"
+  done
 
   dpkg-scansources "pool/$codename/main" \
     > "dists/$codename/main/source/Sources"
@@ -36,7 +47,7 @@ APT::FTPArchive::Release {
   Label "$GITHUB_REPOSITORY";
   Suite "$codename";
   Codename "$codename";
-  Architectures "$ARCH";
+  Architectures "$ARCH_LIST";
   Components "main";
 };
 EOF
