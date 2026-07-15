@@ -84,6 +84,7 @@ jobs:
           # The checkout action's credential helper binary is not accessible
           # from inside the container, so embed the token in the URL directly.
           git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - uses: actions/checkout@v7
         with:
