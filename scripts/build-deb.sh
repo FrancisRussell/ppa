@@ -39,10 +39,18 @@ export DEBEMAIL DEBFULLNAME
 
 # Replace - with ~ since - delimits the Debian revision in version strings.
 UPSTREAM_VERSION=$(echo "$VERSION" | sed 's/-/~/g')
-if [ -n "$EPOCH" ]; then
-  VERSION_PKG="${EPOCH}:${UPSTREAM_VERSION}-ppa$(date -u +%Y%m%d%H%M)"
+# Use the recipe commit timestamp for the ppa suffix so all arch builds of the
+# same recipe state get an identical version string. Fall back to wall-clock if
+# PPA_TIMESTAMP is unset (e.g. local builds).
+if [ -n "$PPA_TIMESTAMP" ]; then
+  PPA_DATE=$(date -u -d "@$PPA_TIMESTAMP" +%Y%m%d%H%M)
 else
-  VERSION_PKG="${UPSTREAM_VERSION}-ppa$(date -u +%Y%m%d%H%M)"
+  PPA_DATE=$(date -u +%Y%m%d%H%M)
+fi
+if [ -n "$EPOCH" ]; then
+  VERSION_PKG="${EPOCH}:${UPSTREAM_VERSION}-ppa${PPA_DATE}"
+else
+  VERSION_PKG="${UPSTREAM_VERSION}-ppa${PPA_DATE}"
 fi
 
 BUILD_ARCH=$(dpkg --print-architecture)
