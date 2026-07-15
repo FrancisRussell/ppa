@@ -256,7 +256,8 @@ jobs:
           mkdir -p /tmp/pkg
           chown builduser:builduser /tmp/pkg src
           chown -R builduser:builduser src/${{ matrix.package }}
-          BUILD_ENV="PATH=$PATH"
+          PPA_TIMESTAMP=$(git log -1 --format=%ct -- packages/${{ matrix.package }}/recipe/)
+          BUILD_ENV="PATH=$PATH PPA_TIMESTAMP=$PPA_TIMESTAMP"
           [ -n "${GOTOOLCHAIN:-}" ] && BUILD_ENV="$BUILD_ENV GOTOOLCHAIN=$GOTOOLCHAIN"
           [ -n "${SCCACHE_DIR:-}" ] && BUILD_ENV="$BUILD_ENV SCCACHE_DIR=$SCCACHE_DIR"
           [ -n "${RUSTC_WRAPPER:-}" ] && BUILD_ENV="$BUILD_ENV RUSTC_WRAPPER=$RUSTC_WRAPPER"

@@ -109,6 +109,14 @@ Built packages use a UTC timestamp suffix `-ppa<YYYYmmddHHMM>` as the Debian
 revision rather than a hardcoded counter. This ensures every rebuild produces a
 version APT will offer as an upgrade without manually incrementing a counter.
 
+The timestamp is derived from the git commit time of the last commit that
+touched `packages/<pkg>/recipe/`, not from wall-clock time at build time. This
+ensures all arch jobs building the same recipe state produce identical ppa
+suffixes. Without this, concurrent amd64 and arm64 jobs stamped at different
+wall-clock seconds would produce mismatched versions, causing APT's solver to
+fail when the `= <exact-version>` dep between arch-specific and arch:all
+packages could not be satisfied.
+
 ### Pool pruning via GC
 
 When a new build is published, stale build records for the same package +
