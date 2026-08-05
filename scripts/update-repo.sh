@@ -7,7 +7,9 @@ set -e
 REPO_ROOT=$(readlink -f "${1?repo root required}")
 ARCH=${2?arch required}
 
-echo "$APT_SIGNING_KEY" | gpg --import
+if [ -n "$APT_SIGNING_KEY" ]; then
+  echo "$APT_SIGNING_KEY" | gpg --import
+fi
 
 cd "$REPO_ROOT"
 
@@ -53,6 +55,8 @@ APT::FTPArchive::Release {
 EOF
 
   apt-ftparchive -c "$conf" release "dists/$codename" > "dists/$codename/Release"
-  gpg --batch --yes --clearsign -o "dists/$codename/InRelease" "dists/$codename/Release"
-  gpg --batch --yes -abs -o "dists/$codename/Release.gpg" "dists/$codename/Release"
+  if [ -n "$APT_SIGNING_KEY" ]; then
+    gpg --batch --yes --clearsign -o "dists/$codename/InRelease" "dists/$codename/Release"
+    gpg --batch --yes -abs -o "dists/$codename/Release.gpg" "dists/$codename/Release"
+  fi
 done
