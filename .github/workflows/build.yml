@@ -211,7 +211,7 @@ jobs:
 
       - name: Install Go
         if: steps.config.outputs.has_go == 'true'
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version-file: src/${{ matrix.package }}/${{ steps.config.outputs.go_version_file }}
           cache: ${{ steps.config.outputs.go_sum_file != '' }}
