@@ -8,6 +8,7 @@ Standards-Version: 4.6.2
 Package: postfix-ratelimitd
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
+Suggests: redis-server | valkey-server
 Description: recipient rate-limiting policy daemon for Postfix
  postfix-ratelimitd is a Postfix SMTP access policy daemon that rate-limits
  recipients per SASL username within a sliding time window, backed by
