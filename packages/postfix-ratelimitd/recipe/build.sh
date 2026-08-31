@@ -8,6 +8,8 @@ CODENAME=${4?codename required}
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 REPO_ROOT=$(readlink -f "$SCRIPT_DIR/../../..")
 
+. "$HOME/.cargo/env"
+
 cd "$SRC_DIR"
 cargo build --release
 
