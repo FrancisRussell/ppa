@@ -241,8 +241,10 @@ jobs:
             "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- ${ARGS[*]}"
           TARGETS=(${{ steps.config.outputs.rust_targets }})
           [ -n "$RUST_TARGET" ] && TARGETS+=("$RUST_TARGET")
-          [ ${#TARGETS[@]} -gt 0 ] && sudo -u builduser -H sh -c \
-            ". /home/builduser/.cargo/env && rustup target add ${TARGETS[*]}"
+          if [ ${#TARGETS[@]} -gt 0 ]; then
+            sudo -u builduser -H sh -c \
+              ". /home/builduser/.cargo/env && rustup target add ${TARGETS[*]}"
+          fi
 
       - name: Install Rust cargo tools
         if: steps.config.outputs.cargo_tools != ''
