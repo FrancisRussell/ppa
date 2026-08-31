@@ -13,6 +13,7 @@ Personal APT repository for Debian and Ubuntu (amd64 and arm64).
 - **forgejo** — Self-hosted lightweight software forge.
 - **fsv** — 3D filesystem visualizer.
 - **lldap** — Lightweight LDAP server with a web UI. (Binary only — source packages not available.)
+- **postfix-ratelimitd** — Postfix SMTP access policy daemon that rate-limits recipients per SASL username. (Binary only — source packages not available.)
 - **pwsafe** — Command-line password safe compatible with PasswordSafe databases.
 
 ## Adding this repository
