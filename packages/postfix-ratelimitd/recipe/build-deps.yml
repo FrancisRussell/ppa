@@ -1,2 +1,2 @@
-apt:
-  - cargo
+rust:
+  toolchain: stable
