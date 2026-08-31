@@ -1,0 +1,3 @@
+# Plain "u", not "u!": the locked-account variant needs systemd >= 257,
+# which noble's systemd-sysusers (255) doesn't understand.
+u _postfix-ratelimitd - "postfix-ratelimitd daemon" /nonexistent /usr/sbin/nologin
