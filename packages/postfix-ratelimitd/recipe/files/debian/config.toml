@@ -1,0 +1,20 @@
+[redis]
+# Connection to the RESP-compatible backend (Redis, Valkey, etc). Also accepts
+# a unix socket, or TLS via a "rediss://" scheme - see the upstream README.
+url = "redis://127.0.0.1:6379"
+
+# Defaults to 0. Pick a dedicated numbered database explicitly if this
+# instance is shared with an unrelated application, so this daemon's keys
+# never collide with it.
+#db = 0
+
+[server]
+# Matches this package's systemd unit's RuntimeDirectory=.
+socket = "/run/postfix-ratelimitd/ratelimit.sock"
+
+[[sasl]]
+type = "default"
+windows = [
+    { count = 50, duration = "1h" },
+    { count = 200, duration = "1d" },
+]

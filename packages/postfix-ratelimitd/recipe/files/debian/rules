@@ -18,3 +18,4 @@ override_dh_auto_install:
 
 	install -m 755 target/release/postfix-ratelimitd debian/postfix-ratelimitd/usr/bin/postfix-ratelimitd
 	install -m 644 debian/postfix-ratelimitd.service  debian/postfix-ratelimitd/usr/lib/systemd/system/postfix-ratelimitd.service
+	install -m 644 debian/config.toml                 debian/postfix-ratelimitd/etc/postfix-ratelimitd/config.toml
