@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+case "$1" in
+  configure)
+    if [ -d /run/systemd/system ]; then
+      systemctl daemon-reload
+      if [ -n "$2" ] && systemctl is-active --quiet postfix-ratelimitd; then
+        systemctl restart postfix-ratelimitd
+      fi
+    fi
+    ;;
+esac
