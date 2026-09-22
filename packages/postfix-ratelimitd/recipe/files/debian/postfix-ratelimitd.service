@@ -1,0 +1,77 @@
+[Unit]
+Description=Postfix recipient rate-limiting policy daemon
+Documentation=https://github.com/FrancisRussell/postfix-ratelimitd
+After=network.target redis-server.service redis.service valkey.service valkey-server.service
+Wants=redis-server.service redis.service valkey.service valkey-server.service
+Before=postfix.service
+
+# Wants=/After= just start this after whichever of these four names (common
+# Redis/Valkey unit names across distros) happens to be installed here - a
+# soft dependency, safe to leave as-is whether or not any of them match, or
+# Valkey is remote entirely.
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/postfix-ratelimitd --config /etc/postfix-ratelimitd/config.toml --log-target syslog
+Restart=on-failure
+RestartSec=2
+
+# A persistent _postfix-ratelimitd system user/group is needed here, rather
+# than DynamicUser=yes's ephemeral one, since Postfix needs a stable group
+# name to be durably added to - see below.
+User=_postfix-ratelimitd
+Group=_postfix-ratelimitd
+
+# Matches the default `server.socket` path in
+# /etc/postfix-ratelimitd/config.toml. Combined with the socket file itself
+# being mode 0660, only this daemon's own user and members of its group can
+# reach the socket at all - which by default is nobody but this daemon, since
+# nothing else is in that group yet. Run `usermod -aG _postfix-ratelimitd
+# postfix` once, in either installation order relative to this package, to let
+# Postfix in; its smtpd process picks up the new supplementary group on its
+# next restart. If `server.control_socket` is enabled, it also lives here,
+# with 0600 (owner-only) permissions.
+RuntimeDirectory=postfix-ratelimitd
+RuntimeDirectoryMode=0750
+
+# A chrooted smtpd (common on Debian/Ubuntu) can only reach sockets under
+# /var/spool/postfix: set `server.socket` to a path in a subdirectory there,
+# comment out the two RuntimeDirectory= lines above and uncomment these two.
+# The `+` runs the mkdir as root, since the daemon's own user can't write to
+# /var/spool/postfix; ReadWritePaths= then lets the daemon, restricted by
+# ProtectSystem=strict, create its socket in that subdirectory. Postfix still
+# needs the usermod step above.
+#ExecStartPre=+/usr/bin/install -d -m 0750 -o _postfix-ratelimitd -g _postfix-ratelimitd /var/spool/postfix/postfix-ratelimitd
+#ReadWritePaths=/var/spool/postfix/postfix-ratelimitd
+
+# No capabilities, privileges, or filesystem access beyond what's needed to
+# read its config and create its own socket.
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+UMask=0027
+MemoryDenyWriteExecute=yes
+SystemCallFilter=@system-service
+
+# Deliberately not PrivateNetwork=yes: Valkey/Redis may be reached over TCP or
+# TLS, not just a unix socket, and a hostname-based redis:// URL needs DNS
+# resolution too - PrivateNetwork=yes would sever all of that.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
