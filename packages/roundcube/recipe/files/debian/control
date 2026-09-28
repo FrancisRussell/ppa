@@ -1,0 +1,142 @@
+Source: roundcube
+Section: web
+Priority: optional
+Maintainer: Francis Russell <francis+ppa@unchartedbackwaters.co.uk>
+Build-Depends: aspell-en <!nocheck>,
+               cleancss,
+               debhelper-compat (= 13),
+               hunspell-en-us <!nocheck>,
+               locales <!nocheck>,
+               node-less (>= 3.0.0~),
+               node-source-map,
+               php-bacon-qr-code [!armel !armhf !i386 !mipsel] <!nocheck>,
+               php-crypt-gpg <!nocheck>,
+               php-enchant <!nocheck>,
+               php-gd <!nocheck>,
+               php-guzzlehttp-guzzle <!nocheck>,
+               php-guzzlehttp-promises <!nocheck>,
+               php-intl <!nocheck>,
+               php-league-commonmark <!nocheck>,
+               php-mail-mime <!nocheck>,
+               php-masterminds-html5 <!nocheck>,
+               php-mbstring,
+               php-net-ldap3 <!nocheck>,
+               php-pspell <!nocheck>,
+               php-roundcube-rtf-html-php <!nocheck>,
+               php-sqlite3 <!nocheck>,
+               php-symfony-process <!nocheck>,
+               phpunit (>= 9~) <!nocheck>,
+               pigz,
+               pkg-php-tools,
+               po-debconf,
+               sqlite3 <!nocheck>,
+               uglifyjs
+Homepage: https://www.roundcube.net/
+Standards-Version: 4.7.4
+
+Package: roundcube-core
+Architecture: all
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: dbconfig-common,
+         debconf,
+         libjs-bootstrap4 (>= 4.5.2~),
+         libjs-codemirror (>= 5.58.3~),
+         libjs-jquery (>= 3.5.1~),
+         libjs-jquery-minicolors (>= 2.2.6~),
+         libjs-jquery-ui (>= 1.12.0~),
+         libjs-jstimezonedetect (>= 1.0.6~),
+         libjs-less (>= 3.13.0~),
+         php,
+         php-cli,
+         php-intl,
+         php-json,
+         php-mbstring,
+         php-pear (>= 1:1.10.1),
+         roundcube-mysql (= ${source:Version}) | roundcube-sqlite3 (= ${source:Version}) | roundcube-pgsql (= ${source:Version}),
+         ucf,
+         ${phpcomposer:Debian-require}
+Recommends: apache2 | lighttpd | spawn-fcgi | php-fpm | httpd-cgi,
+            php-enchant,
+            php-gd,
+            roundcube-skin-classic,
+            roundcube-skin-larry,
+            ${phpcomposer:Debian-recommend}
+Suggests: roundcube-plugins,
+          roundcube-plugin-authres-status,
+          roundcube-plugin-contextmenu,
+          roundcube-plugin-html5-notifier,
+          roundcube-plugin-keyboard-shortcuts,
+          roundcube-plugin-listcommands,
+          roundcube-plugin-message-highlight,
+          roundcube-plugin-sauserprefs,
+          roundcube-plugin-thunderbird-labels,
+          ${phpcomposer:Debian-suggest}
+Replaces: ${phpcomposer:Debian-replace}
+Description: skinnable AJAX based webmail solution for IMAP servers
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package provides the core code for roundcube. You should install
+ it along with one of the roundcube database metapackages.
+
+Package: roundcube
+Architecture: all
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: roundcube-core (= ${source:Version})
+Breaks: roundcube-core (<< 1.1.1+dfsg.1-1)
+Description: skinnable AJAX based webmail solution for IMAP servers - metapackage
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package will install a full roundcube application.
+
+Package: roundcube-mysql
+Architecture: all
+Depends: mariadb-client | default-mysql-client | virtual-mysql-client,
+         php-mysql | php-mysqlnd
+Suggests: mariadb-server | default-mysql-server
+Description: metapackage providing MySQL dependencies for RoundCube
+ This package provides MySQL dependencies for RoundCube Webmail, a
+ skinnable AJAX based webmail solution for IMAP servers. Install this
+ one if you want to use a MySQL database with RoundCube.
+
+Package: roundcube-pgsql
+Architecture: all
+Depends: php-pgsql, postgresql-client
+Suggests: postgresql
+Description: metapackage providing PostgreSQL dependencies for RoundCube
+ This package provides PostgreSQL dependencies for RoundCube Webmail,
+ a skinnable AJAX based webmail solution for IMAP servers. Install
+ this one if you want to use a PostgreSQL database with RoundCube.
+
+Package: roundcube-sqlite3
+Architecture: all
+Depends: php-sqlite3, sqlite3
+Description: metapackage providing SQLite dependencies for RoundCube
+ This package provides SQLite dependencies for RoundCube Webmail,
+ a skinnable AJAX based webmail solution for IMAP servers. Install
+ this one if you want to use a SQLite database with RoundCube.
+
+Package: roundcube-plugins
+Architecture: all
+Pre-Depends: dpkg (>= 1.17.14)
+Depends: roundcube-core (= ${source:Version})
+Suggests: php-cli, php-crypt-gpg, php-net-sieve, php-zip, python3
+Description: skinnable AJAX based webmail solution for IMAP servers - plugins
+ RoundCube Webmail is a browser-based multilingual IMAP client with an
+ application-like user interface. It provides full functionality
+ expected from an e-mail client, including MIME support, address book,
+ folder manipulation and message filters.
+ .
+ The user interface is fully skinnable using XHTML and CSS 2.
+ .
+ This package provides several plugins for Roundcube. They should be
+ enabled in the configuration of Roundcube.

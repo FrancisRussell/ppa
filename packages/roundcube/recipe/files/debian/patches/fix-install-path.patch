@@ -1,0 +1,254 @@
+From: Guilhem Moulin <guilhem@debian.org>
+Date: Sat, 8 Jun 2019 00:44:47 +0200
+Subject: Fix INSTALL_PATH for bin/*.sh and tests/bootstrap.php
+
+These scripts get installed to /usr/share/roundcube/bin, but
+INSTALL_PATH should be /var/lib/roundcube/.  Fixed/updated with
+
+    sed -ri "s#(\\s*define\\s*\\(\\s*(['\"])INSTALL_PATH\\2)\\s*,.*#\\1, '/var/lib/roundcube/');#" \
+            bin/*.sh installer/index.php program/include/iniset.php
+
+Except:
+
+  - bin/install-jsdeps.sh, where we keep define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/' ); and
+  - bin/updatecss.sh, where we use define('INSTALL_PATH', './');
+
+We also edit tests/bootstrap.php to use the RCUBE_INSTALL_PATH environment variable.
+
+installer/index.php's INSTALL_PATH is given the same RCUBE_INSTALL_PATH
+fallback (not part of the original patch above): tests/Public/InstallerTest.php
+(added upstream after this patch was written) spawns a PHP built-in server
+straight from the source tree via tests/ServerTestCase.php and requests
+installer.php, which needs to find program/include/iniset.php there too,
+not at the hardcoded install location.
+
+Forwarded: not-needed
+---
+ bin/cleandb.sh             | 2 +-
+ bin/decrypt.sh             | 2 +-
+ bin/deluser.sh             | 2 +-
+ bin/gc.sh                  | 2 +-
+ bin/indexcontacts.sh       | 2 +-
+ bin/initdb.sh              | 2 +-
+ bin/installto.sh           | 2 +-
+ bin/moduserprefs.sh        | 2 +-
+ bin/msgexport.sh           | 2 +-
+ bin/msgimport.sh           | 2 +-
+ bin/update.sh              | 2 +-
+ bin/updatecss.sh           | 2 +-
+ bin/updatedb.sh            | 2 +-
+ installer/index.php        | 2 +-
+ program/include/iniset.php | 2 +-
+ tests/bootstrap.php        | 2 +-
+ 16 files changed, 16 insertions(+), 16 deletions(-)
+
+Index: rc-build/bin/cleandb.sh
+===================================================================
+--- rc-build.orig/bin/cleandb.sh
++++ rc-build/bin/cleandb.sh
+@@ -18,7 +18,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/decrypt.sh
+===================================================================
+--- rc-build.orig/bin/decrypt.sh
++++ rc-build/bin/decrypt.sh
+@@ -51,7 +51,7 @@
+  *  - you are dealing with counterfeit header data.
+  */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/deluser.sh
+===================================================================
+--- rc-build.orig/bin/deluser.sh
++++ rc-build/bin/deluser.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/gc.sh
+===================================================================
+--- rc-build.orig/bin/gc.sh
++++ rc-build/bin/gc.sh
+@@ -18,7 +18,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/indexcontacts.sh
+===================================================================
+--- rc-build.orig/bin/indexcontacts.sh
++++ rc-build/bin/indexcontacts.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ ini_set('memory_limit', -1);
+Index: rc-build/bin/initdb.sh
+===================================================================
+--- rc-build.orig/bin/initdb.sh
++++ rc-build/bin/initdb.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/installto.sh
+===================================================================
+--- rc-build.orig/bin/installto.sh
++++ rc-build/bin/installto.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/moduserprefs.sh
+===================================================================
+--- rc-build.orig/bin/moduserprefs.sh
++++ rc-build/bin/moduserprefs.sh
+@@ -18,7 +18,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/msgexport.sh
+===================================================================
+--- rc-build.orig/bin/msgexport.sh
++++ rc-build/bin/msgexport.sh
+@@ -15,7 +15,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ ini_set('memory_limit', -1);
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+Index: rc-build/bin/msgimport.sh
+===================================================================
+--- rc-build.orig/bin/msgimport.sh
++++ rc-build/bin/msgimport.sh
+@@ -15,7 +15,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ ini_set('memory_limit', -1);
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+Index: rc-build/bin/update.sh
+===================================================================
+--- rc-build.orig/bin/update.sh
++++ rc-build/bin/update.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/updatecss.sh
+===================================================================
+--- rc-build.orig/bin/updatecss.sh
++++ rc-build/bin/updatecss.sh
+@@ -18,7 +18,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', './');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/bin/updatedb.sh
+===================================================================
+--- rc-build.orig/bin/updatedb.sh
++++ rc-build/bin/updatedb.sh
+@@ -19,7 +19,7 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
++define('INSTALL_PATH', '/var/lib/roundcube/');
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+Index: rc-build/installer/index.php
+===================================================================
+--- rc-build.orig/installer/index.php
++++ rc-build/installer/index.php
+@@ -37,7 +37,7 @@
+ 
+ ini_set('display_errors', 1);
+ 
+-define('INSTALL_PATH', realpath(__DIR__ . '/../') . '/');
++define('INSTALL_PATH', getenv('RCUBE_INSTALL_PATH') ? getenv('RCUBE_INSTALL_PATH') . '/' : '/var/lib/roundcube/');
+
+ require INSTALL_PATH . 'program/include/iniset.php';
+ 
+Index: rc-build/program/include/iniset.php
+===================================================================
+--- rc-build.orig/program/include/iniset.php
++++ rc-build/program/include/iniset.php
+@@ -31,7 +31,7 @@ define('RCMAIL_VERSION', '1.7-git');
+ define('RCMAIL_START', microtime(true));
+ 
+ if (!defined('INSTALL_PATH')) {
+-    define('INSTALL_PATH', realpath(__DIR__ . '/../..') . '/');
++    define('INSTALL_PATH', '/var/lib/roundcube/');
+ }
+ 
+ if (!defined('RCMAIL_CONFIG_DIR')) {
+Index: rc-build/tests/bootstrap.php
+===================================================================
+--- rc-build.orig/tests/bootstrap.php
++++ rc-build/tests/bootstrap.php
+@@ -31,9 +31,7 @@ if (\PHP_SAPI != 'cli') {
+     exit('Not in shell mode (php-cli)');
+ }
+ 
+-if (!defined('INSTALL_PATH')) {
+-    define('INSTALL_PATH', realpath(__DIR__ . '/..') . '/');
+-}
++define('INSTALL_PATH', getenv('RCUBE_INSTALL_PATH') . '/');
+ 
+ define('ROUNDCUBE_TEST_MODE', true);
+ define('ROUNDCUBE_TEST_SESSION', microtime(true));

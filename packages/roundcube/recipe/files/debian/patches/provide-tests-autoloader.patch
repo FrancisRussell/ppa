@@ -1,0 +1,97 @@
+Subject: Autoload tests/ and plugin classes without a composer install
+
+composer.json declares tests/ under autoload-dev's classmap, and every
+plugin's own composer.json declares its own autoload.classmap (some just
+their top-level <name>.php, others also a lib/ or drivers/ subdirectory -
+see e.g. plugins/managesieve/composer.json, plugins/password/composer.json).
+All of this only takes effect once `composer install` has generated
+vendor/autoload.php. This package's Debian build doesn't do that - like
+the rest of this package, it relies on system-installed PHP libraries
+rather than a vendor/ tree - so phpunit fails immediately in its
+bootstrap script ("Class Roundcube\Tests\ActionTestCase not found"),
+and once that's worked around, every plugin test fails the same way on
+its own plugin's classes.
+
+tests/ classes follow a plain PSR-4 layout under the Roundcube\Tests
+namespace (Roundcube\Tests\Framework\X lives at tests/Framework/X.php,
+and so on), so a small spl_autoload_register callback mapping that
+namespace onto TESTS_DIR reproduces exactly what composer's own generated
+autoloader would have done there.
+
+Plugin classes don't follow one single convention (contrast managesieve's
+"lib/" with password's "drivers/" with example_addressbook's two explicit
+files), so rather than hardcode each plugin's layout, a second
+spl_autoload_register callback builds a classmap directly from every
+plugin's own composer.json autoload.classmap entries - the same
+authoritative metadata a real composer install would read - and reuses
+whatever it finds.
+
+Forwarded: not-needed
+---
+Index: rc-build/tests/bootstrap.php
+===================================================================
+--- rc-build.orig/tests/bootstrap.php
++++ rc-build/tests/bootstrap.php
+@@ -42,6 +42,62 @@
+ if (@is_dir(TESTS_DIR . 'config')) {
+     define('RCUBE_CONFIG_DIR', TESTS_DIR . 'config');
+ }
++
++// PSR-4 autoloading for Roundcube\Tests\* (composer's autoload-dev would
++// normally provide this via vendor/autoload.php - see PACKAGING-NOTES.md).
++spl_autoload_register(static function (string $class): void {
++    $prefix = __NAMESPACE__ . '\\';
++    if (!str_starts_with($class, $prefix)) {
++        return;
++    }
++    $file = TESTS_DIR . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
++    if (is_readable($file)) {
++        require_once $file;
++    }
++});
++
++// Autoload plugin classes the same way composer's own generated autoloader
++// would: each plugin's composer.json declares its own autoload.classmap
++// (files and/or directories, e.g. plugins/managesieve/lib/), which is
++// exactly what would be merged into vendor/autoload.php's classmap by a
++// real composer install (see the Roundcube\Tests note above for why this
++// package's Debian build doesn't do that). Built from that same metadata
++// instead of hardcoding each plugin's layout so this doesn't drift.
++spl_autoload_register(static function (string $class): void {
++    static $classmap = null;
++    if ($classmap === null) {
++        $classmap = [];
++        $addFile = static function (string $file) use (&$classmap): void {
++            if (!is_readable($file)) {
++                return;
++            }
++            if (preg_match_all('/\\bclass\\s+(\\w+)/', file_get_contents($file), $m)) {
++                foreach ($m[1] as $name) {
++                    $classmap[$name] = $file;
++                }
++            }
++        };
++        foreach (glob(INSTALL_PATH . 'plugins/*/composer.json') as $composerFile) {
++            $paths = json_decode(file_get_contents($composerFile), true)['autoload']['classmap'] ?? [];
++            foreach ($paths as $path) {
++                $full = dirname($composerFile) . '/' . $path;
++                if (is_dir($full)) {
++                    $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($full, \FilesystemIterator::SKIP_DOTS));
++                    foreach ($it as $fileInfo) {
++                        if ($fileInfo->getExtension() === 'php') {
++                            $addFile($fileInfo->getPathname());
++                        }
++                    }
++                } else {
++                    $addFile($full);
++                }
++            }
++        }
++    }
++    if (isset($classmap[$class])) {
++        require_once $classmap[$class];
++    }
++});
+ 
+ // Some tests depend on the way phpunit is executed
+ $_SERVER['SCRIPT_NAME'] = 'vendor/bin/phpunit';

@@ -1,0 +1,6 @@
+/* SQL/sqlite/2022081200.sql */
+DROP INDEX ix_responses_user_id;
+CREATE INDEX ix_responses_user_id ON responses(user_id, del);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2022081200' WHERE "name" = 'roundcube-version';

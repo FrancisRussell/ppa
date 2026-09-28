@@ -1,0 +1,6 @@
+repo: https://github.com/roundcube/roundcubemail
+pin: 0d05c37a6e565b1ff0f3a4472081f20a64d569a1
+targets:
+  - codename: trixie
+    arch: amd64
+    container: debian:trixie

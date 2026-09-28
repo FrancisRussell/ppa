@@ -1,0 +1,37 @@
+# There are Roundcube-specific patches which as of libjs-jquery-ui 1.12.1+dfsg-5
+# don't apply to /usr/share/javascript/jquery-ui/themes/base/jquery-ui.css .
+embedded-javascript-library please use libjs-jquery-ui [usr/share/roundcube/plugins/jqueryui/themes/*/jquery-ui.css]
+embedded-javascript-library please use libjs-jquery-ui [usr/share/roundcube/plugins/jqueryui/themes/*/jquery-ui.min.css]
+embedded-javascript-library please use libjs-jquery-ui [usr/share/roundcube/plugins/jqueryui/themes/*/jquery-ui.min.css.gz]
+
+# Sorry, can't do better, cf. #784351
+font-in-non-font-package [usr/share/roundcube/program/js/tinymce/*]
+font-outside-font-dir [usr/share/roundcube/program/js/tinymce/*]
+
+font-in-non-font-package [usr/share/roundcube/skins/elastic/fonts/fa-*.woff]
+font-in-non-font-package [usr/share/roundcube/skins/elastic/fonts/fa-*.woff2]
+font-outside-font-dir [usr/share/roundcube/skins/elastic/fonts/fa-*.woff]
+font-outside-font-dir [usr/share/roundcube/skins/elastic/fonts/fa-*.woff2]
+
+# Cf. #915360
+font-in-non-font-package [usr/share/roundcube/skins/elastic/fonts/roboto-*.woff]
+font-in-non-font-package [usr/share/roundcube/skins/elastic/fonts/roboto-*.woff2]
+font-outside-font-dir [usr/share/roundcube/skins/elastic/fonts/roboto-*.woff]
+font-outside-font-dir [usr/share/roundcube/skins/elastic/fonts/roboto-*.woff2]
+
+# False positives
+package-contains-documentation-outside-usr-share-doc [usr/share/roundcube/program/resources/dummy.pdf]
+package-contains-documentation-outside-usr-share-doc [usr/share/roundcube/program/resources/error.html]
+package-contains-documentation-outside-usr-share-doc [usr/share/roundcube/skins/*/watermark.html]
+repeated-path-segment js [usr/share/roundcube/program/js/tinymce/plugins/emoticons/js/]
+
+# Intentionally ship pre-compressed JS/CSS files, see #978075
+compressed-duplicate [usr/share/roundcube/plugins/*.min.js.gz]
+compressed-duplicate [usr/share/roundcube/plugins/*.min.css.gz]
+compressed-duplicate [usr/share/roundcube/program/js/*.js.gz]
+compressed-duplicate [usr/share/roundcube/program/*.min.css.gz]
+compressed-duplicate [usr/share/roundcube/skins/*.min.js.gz]
+compressed-duplicate [usr/share/roundcube/skins/*.css.gz]
+
+# False positive, cf. #1013918
+chown-with-dot "$CONFFILE.ucftmp [postinst:*]

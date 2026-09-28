@@ -1,0 +1,16 @@
+Missing source files
+--------------------
+
+Roundcube ships a tar.gz ready to use that embeds minified javascript
+libraries. The GPL requires you to provide the corresponding source
+code.
+
+For Debian all missing sources are bundled in this directory. They have
+been grabbed from the various upstream projects.
+
+Last synchronization was made with roundcube v1.4.1 on 2019-12-18 and
+handled with the script bin/install-jsdeps.sh. To update, apply all
+patches and run:
+
+    CACHEDIR=debian/missing-sources bin/install-jsdeps.sh \
+        --get=1 --source=1 --extract=0 --force=1

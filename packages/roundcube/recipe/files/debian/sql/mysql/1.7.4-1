@@ -1,0 +1,19 @@
+/* SQL/mysql/2022100100.sql */
+CREATE TABLE `uploads` (
+ `upload_id` varchar(64) NOT NULL,
+ `session_id` varchar(128) NOT NULL,
+ `group` varchar(128) NOT NULL,
+ `metadata` mediumtext NOT NULL,
+ `created` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+ PRIMARY KEY (`upload_id`),
+ INDEX `uploads_session_group_index` (`session_id`, `group`, `created`)
+) ROW_FORMAT=DYNAMIC ENGINE=INNODB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+/* SQL/mysql/2025092300.sql */
+ALTER TABLE `session` CHANGE COLUMN `changed` `expires_at` datetime NOT NULL DEFAULT '1000-01-01 00:00:00';
+ALTER TABLE `session` DROP INDEX `changed_index`;
+ALTER TABLE `session` ADD INDEX `expires_at_index` (`expires_at`);
+UPDATE session SET expires_at = ADDTIME(expires_at, '00:10:00');
+
+/* update `system` table */
+UPDATE `system` SET `value` = '2025092300' WHERE `name` = 'roundcube-version';

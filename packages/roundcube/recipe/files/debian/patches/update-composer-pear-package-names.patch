@@ -1,0 +1,50 @@
+Subject: Update PHP pear dependencies
+
+Rename pear/* to pear-pear.php.net/* (pkg-php-tools' naming convention for
+mapping PEAR-channel packages to Debian package names) and relax the
+version operators from ~/^ to >=, matching Debian's usual practice for
+this source package. Ported forward from the equivalent Debian patch
+(same intent, rebased against 1.7.4's actual dependency list - this
+version doesn't attempt to move optional deps into "suggest" like the
+original did, since upstream itself no longer separates them that way).
+
+Origin: Debian
+Forwarded: not-needed
+---
+Index: rc-final/composer.json
+===================================================================
+--- rc-final.orig/composer.json
++++ rc-final/composer.json
+@@ -4,19 +4,19 @@
+     "license": "GPL-3.0-or-later",
+     "require": {
+         "php": ">=8.1 <8.6",
+-        "bacon/bacon-qr-code": "^3.0.0",
+-        "guzzlehttp/guzzle": "^7.9.2",
+-        "guzzlehttp/promises": "^2.0",
+-        "league/commonmark": "^2.7",
+-        "masterminds/html5": "~2.9.0",
+-        "pear/auth_sasl": "~1.2.0",
+-        "pear/crypt_gpg": "~1.6.3",
+-        "pear/mail_mime": "~1.10.11",
+-        "pear/net_sieve": "~1.4.7",
+-        "pear/net_smtp": "~1.12.0",
+-        "pear/pear-core-minimal": "~1.10.15",
+-        "roundcube/plugin-installer": "~0.3.5",
+-        "roundcube/rtf-html-php": "^2.1"
++        "bacon/bacon-qr-code": ">=3.0.0",
++        "guzzlehttp/guzzle": ">=7.9.2",
++        "guzzlehttp/promises": ">=2.0",
++        "league/commonmark": ">=2.7",
++        "masterminds/html5": ">=2.9.0",
++        "pear-pear.php.net/auth_sasl": ">=1.2.0",
++        "pear-pear.php.net/crypt_gpg": ">=1.6.3",
++        "pear-pear.php.net/mail_mime": ">=1.10.11",
++        "pear-pear.php.net/net_sieve": ">=1.4.7",
++        "pear-pear.php.net/net_smtp": ">=1.12.0",
++        "pear-pear.php.net/pear-core-minimal": ">=1.10.15",
++        "roundcube/plugin-installer": ">=0.3.5",
++        "roundcube/rtf-html-php": ">=2.1"
+     },
+     "require-dev": {
+         "ergebnis/composer-normalize": "^2.13",

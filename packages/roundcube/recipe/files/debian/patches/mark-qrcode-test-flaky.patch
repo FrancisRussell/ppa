@@ -1,0 +1,38 @@
+Subject: Tag the QR-code action test with the qrcode group
+
+Matches Debian's own precedent (see the dropped mark-flaky-tests-as-such.patch
+in salsa's history, which tagged this same test for the same reason before
+upstream's phpunit-11 restructure renamed it): QrcodeTest::test_run's own
+check_support() call determines at runtime whether BaconQrCode is usable and
+calls markTestSkipped() if not, rather than failing outright - the test file
+itself expects this to be a legitimate, environment-dependent skip. But
+`--fail-on-skipped` (see debian/rules) turns any skip into a build failure
+unless it's in an excluded group, and unlike Debian's own control file (which
+only drops php-bacon-qr-code, and so only excludes this group, on
+architectures lacking it), this build's environment doesn't make
+BaconQrCode's classes available even on amd64. Excluding the group
+unconditionally in debian/rules (rather than only for 32-bit archs) covers
+that too.
+
+Forwarded: not-needed
+---
+Index: rc-build/tests/Actions/Contacts/QrcodeTest.php
+===================================================================
+--- rc-build.orig/tests/Actions/Contacts/QrcodeTest.php
++++ rc-build/tests/Actions/Contacts/QrcodeTest.php
+@@ -4,6 +4,7 @@
+ 
+ use Roundcube\Tests\ActionTestCase;
+ use Roundcube\Tests\OutputJsonMock;
++use PHPUnit\Framework\Attributes\Group;
+ 
+ /**
+  * Test class to test rcmail_action_contacts_qrcode
+@@ -13,6 +14,7 @@
+     /**
+      * Test run() method
+      */
++    #[Group('qrcode')]
+     public function test_run()
+     {
+         $action = new \rcmail_action_contacts_qrcode();

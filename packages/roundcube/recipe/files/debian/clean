@@ -1,0 +1,4 @@
+config/config-test.inc.php
+logs/errors.log
+tests/.locale/
+tests/.phpunit.result.cache

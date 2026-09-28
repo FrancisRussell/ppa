@@ -1,0 +1,29 @@
+From: Romain Beauxis <toots@rastageeks.org>
+Date: Tue, 13 Mar 2007 14:08:37 +0000
+Subject: Adapt db.inc.php to the use of dbconfig-common package
+
+Forwarded: not-needed
+---
+ config/config.inc.php.sample | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+Index: rc-build/config/config.inc.php.sample
+===================================================================
+--- rc-build.orig/config/config.inc.php.sample
++++ rc-build/config/config.inc.php.sample
+@@ -19,13 +19,8 @@
+ 
+ $config = [];
+ 
+-// Database connection string (DSN) for read+write operations
+-// Format (compatible with PEAR MDB2): db_provider://user:password@host/database
+-// Currently supported db_providers: mysql, pgsql, sqlite
+-// For examples see http://pear.php.net/manual/en/package.database.mdb2.intro-dsn.php
+-// NOTE: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
+-//       or (Windows): 'sqlite:///C:/full/path/to/sqlite.db'
+-$config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';
++// Do not set db_dsnw here, use dpkg-reconfigure roundcube-core to configure database!
++include("/etc/roundcube/debian-db-roundcube.php");
+ 
+ // IMAP host chosen to perform the log-in.
+ // See defaults.inc.php for the option description.

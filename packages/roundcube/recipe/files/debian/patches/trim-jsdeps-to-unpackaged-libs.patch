@@ -1,0 +1,132 @@
+Subject: Trim jsdeps.json to libraries this package doesn't source another way
+
+jsdeps.json (and bin/install-jsdeps.sh, which isn't invoked by this
+package's build at all) lists every third-party JS library Roundcube's
+own release process vendors. Of these:
+ - jquery, codemirror, bootstrap, less are symlinked from real Debian
+   packages instead (libjs-jquery, libjs-codemirror, libjs-bootstrap4,
+   libjs-less - see debian/rules' dh_link override and
+   debian/roundcube-core.links).
+ - tinymce, tinymce-langs, openpgp are fetched at build time by
+   recipe/build.sh in this PPA (no Debian package exists for any of the
+   three; versions/URLs/sha1s were taken from this same file before this
+   patch removed them).
+ - publickey is tiny enough to vendor its actual (non-minified) source
+   directly in debian/missing-sources/, so it's kept here as a record of
+   where that vendored copy came from, matching upstream's own metadata.
+
+Trimming this file to just what it's actually still used for prevents it
+going stale relative to what's really happening at build time.
+
+Origin: Debian
+Forwarded: not-needed
+---
+Index: rc-final/jsdeps.json
+===================================================================
+--- rc-final.orig/jsdeps.json
++++ rc-final/jsdeps.json
+@@ -1,17 +1,6 @@
+ {
+   "dependencies": [
+     {
+-      "lib": "jquery",
+-      "name": "jQuery",
+-      "version": "3.7.1",
+-      "url": "https://code.jquery.com/jquery-$v.min.js",
+-      "dest": "program/js/jquery.min.js",
+-      "sha1": "ee48592d1fff952fcf06ce0b666ed4785493afdc",
+-      "license": "MIT",
+-      "copyright": "Copyright JS Foundation and other contributors",
+-      "source": "https://github.com/jquery/jquery/tree/$v"
+-    },
+-    {
+       "lib": "publickey",
+       "name": "PublicKey.js",
+       "version": "0e011cb1",
+@@ -20,83 +9,7 @@
+       "dest": "program/js/publickey.js",
+       "sha1": "d0920e190754e024c4be76ad5bbc7e76b2e37a4d",
+       "license": "GPLv3",
+-      "copyright": "Copyright (c) 2015 Daniel Roesler",
+-      "source": "https://github.com/diafygi/publickeyjs/blob/master/publickey.js"
+-    },
+-    {
+-      "lib": "tinymce",
+-      "version": "5.10.9",
+-      "url": "https://download.tiny.cloud/tinymce/community/tinymce_$v.zip",
+-      "dest": "program/js",
+-      "sha1": "ea53c43cc4cf932d9fb88dbb66e4671f1e858951",
+-      "license": "LGPL",
+-      "copyright": "Copyright (c) Tiny Technologies, Inc. All rights reserved",
+-      "rm": "program/js/tinymce",
+-      "map": {
+-        "js/tinymce": "tinymce"
+-      },
+-      "omit": [
+-        "tinymce/license.txt",
+-        "tinymce/tinymce.d.ts",
+-        "tinymce/jquery.tinymce.min.js",
+-        "tinymce/themes/mobile"
+-      ]
+-    },
+-    {
+-      "lib": "tinymce-langs",
+-      "version": "5.10.9",
+-      "url": "https://download.tiny.cloud/tinymce/community/languagepacks/5/langs.zip?v=$v",
+-      "dest": "program/js/tinymce"
+-    },
+-    {
+-      "lib": "openpgp",
+-      "name": "OpenPGP.js",
+-      "version": "6.3.0",
+-      "url": "https://cdn.jsdelivr.net/npm/openpgp@$v/dist/openpgp.min.js",
+-      "dest": "plugins/enigma/openpgp.min.js",
+-      "sha1": "fcfc7c22633bd018b7793de050dbde9b0d284799",
+-      "license": "LGPL",
+-      "copyright": "Copyright (c) OpenPGP Development Team",
+-      "source": "https://cdn.jsdelivr.net/npm/openpgp@$v/dist/openpgp.js"
+-    },
+-    {
+-      "lib": "codemirror",
+-      "version": "5.58.3",
+-      "url": "https://codemirror.net/codemirror-$v.zip",
+-      "dest": "plugins/managesieve/codemirror",
+-      "sha1": "9dffee4cda2d2f94f80e9ed282cfb152285dfef9",
+-      "license": "MIT",
+-      "map": {
+-        "lib": "lib",
+-        "addon/selection": "addon/selection",
+-        "mode/sieve": "mode/sieve"
+-      }
+-    },
+-    {
+-      "lib": "bootstrap",
+-      "name": "Bootstrap",
+-      "version": "4.5.3",
+-      "url": "https://github.com/twbs/bootstrap/releases/download/v$v/bootstrap-$v-dist.zip",
+-      "dest": "skins/elastic/deps",
+-      "sha1": "754b94b6d4fface5c0876b13d739dbe920c79ac4",
+-      "license": "MIT",
+-      "flat": true,
+-      "sourcemap": false,
+-      "map": {
+-        "bootstrap.bundle.min.js": "bootstrap.bundle.min.js",
+-        "bootstrap.min.css": "bootstrap.min.css"
+-      }
+-    },
+-    {
+-      "lib": "less",
+-      "name": "LessJS",
+-      "version": "4.6.0",
+-      "url": "https://github.com/less/less.js/releases/download/v$v/less.min.js",
+-      "api_url": "https://api.github.com/repos/less/less.js/contents/dist/less.min.js?ref=v$v",
+-      "dest": "skins/elastic/deps/less.min.js",
+-      "sha1": "ae3deff980984c83ff0cad5b1ba379be6d493b7c",
+-      "license": "Apache-2.0",
+-      "source": "https://github.com/less/less.js/releases/download/v$v/less.min.js"
++      "copyright": "Copyright (c) 2015 Daniel Roesler"
+     }
+   ]
+-}
+\ No newline at end of file
++}

@@ -1,0 +1,16 @@
+# extension used for log filenames (default: ".log") is configurable
+# with $config['log_file_ext'].
+/var/log/roundcube/*.log
+/var/log/roundcube/errors
+/var/log/roundcube/sendmail
+/var/log/roundcube/session
+/var/log/roundcube/userlogins
+{
+  create 0640 www-data adm
+  compress
+  delaycompress
+  missingok
+  notifempty
+  rotate 14
+  daily
+}

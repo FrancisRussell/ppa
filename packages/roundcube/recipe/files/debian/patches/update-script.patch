@@ -1,0 +1,144 @@
+From: Sandro Knauß <bugs@sandroknauss.de>
+Date: Fri, 13 Mar 2015 00:42:00 +0100
+Subject: Patch update scripts to work with Debian package
+
+Forwarded: not-needed
+---
+ bin/update.sh                      | 19 +++++++++++--------
+ program/include/rcmail_install.php | 33 +++++++++++++++++++++++++++++----
+ 2 files changed, 40 insertions(+), 12 deletions(-)
+
+Index: rc-build/bin/update.sh
+===================================================================
+--- rc-build.orig/bin/update.sh
++++ rc-build/bin/update.sh
+@@ -20,6 +20,7 @@
+ */
+ 
+ define('INSTALL_PATH', '/var/lib/roundcube/');
++define('DEBIAN_PKG', getenv('DEBIAN_PKG') ? true : false);
+ 
+ require_once INSTALL_PATH . 'program/include/clisetup.php';
+ 
+@@ -88,19 +89,21 @@ if ($RCI->configured) {
+             if (!empty($opts['accept']) || strtolower($input) == 'y') {
+                 $error = $written = false;
+ 
+-                echo "- backing up the current config file(s)...\n";
++                if (!DEBIAN_PKG) {
++                    echo "- backing up the current config file(s)...\n";
+ 
+-                foreach (['config', 'main', 'db'] as $file) {
+-                    if (file_exists(RCMAIL_CONFIG_DIR . '/' . $file . '.inc.php')) {
+-                        if (!copy(RCMAIL_CONFIG_DIR . '/' . $file . '.inc.php', RCMAIL_CONFIG_DIR . '/' . $file . '.old.php')) {
+-                            $error = true;
++                    foreach (['config', 'main', 'db'] as $file) {
++                        if (file_exists(RCMAIL_CONFIG_DIR . '/' . $file . '.inc.php')) {
++                            if (!copy(RCMAIL_CONFIG_DIR . '/' . $file . '.inc.php', RCMAIL_CONFIG_DIR . '/' . $file . '.old.php')) {
++                                $error = true;
++                            }
+                         }
+                     }
+                 }
+ 
+                 if (!$error) {
+                     $RCI->merge_config();
+-                    echo '- writing ' . RCMAIL_CONFIG_DIR . "/config.inc.php...\n";
++                    echo '- writing ' . RCMAIL_CONFIG_DIR . '/config.inc.php' . (DEBIAN_PKG ? '.dpkg-new' : '') . "...\n";
+                     $written = $RCI->save_configfile($RCI->create_config(false));
+                 }
+ 
+@@ -116,7 +119,7 @@ if ($RCI->configured) {
+                         }
+                     }
+ 
+-                    if ($RCI->legacy_config) {
++                    if (!DEBIAN_PKG && $RCI->legacy_config) {
+                         foreach (['main', 'db'] as $file) {
+                             @unlink(RCMAIL_CONFIG_DIR . '/' . $file . '.inc.php');
+                         }
+@@ -166,7 +169,7 @@ if ($RCI->configured) {
+     }
+ 
+     // check database schema
+-    if (!empty($RCI->config['db_dsnw'])) {
++    if (!DEBIAN_PKG && !empty($RCI->config['db_dsnw'])) {
+         echo "Executing database schema update.\n";
+         $success = rcmail_utils::db_update(INSTALL_PATH . 'SQL', 'roundcube', $opts['version'], ['errors' => true]);
+     }
+Index: rc-build/program/include/rcmail_install.php
+===================================================================
+--- rc-build.orig/program/include/rcmail_install.php
++++ rc-build/program/include/rcmail_install.php
+@@ -18,6 +18,9 @@
+  +-----------------------------------------------------------------------+
+ */
+ 
++if (!defined('DEBIAN_PKG'))
++    define('DEBIAN_PKG', false);
++
+ /**
+  * Class to control the installation process of the Roundcube Webmail package
+  *
+@@ -126,10 +129,22 @@ class rcmail_install
+                 $this->legacy_config = true;
+             }
+ 
++            // Debian saves its old config in .dpkg-bak file
++            if (DEBIAN_PKG && $config = $this->load_config_file(RCUBE_CONFIG_DIR . 'main.inc.php.dpkg-bak')) {
++                $this->config = array_merge($this->config, $config);
++                $this->legacy_config = true;
++            }
++
+             if ($config = $this->load_config_file(RCUBE_CONFIG_DIR . 'db.inc.php')) {
+                 $this->config = array_merge($this->config, $config);
+                 $this->legacy_config = true;
+             }
++
++            // Debian saves its old config in .dpkg-bak file
++            if (DEBIAN_PKG && $config = $this->load_config_file(RCUBE_CONFIG_DIR . 'db.inc.php.dpkg-bak')) {
++                $this->config = array_merge($this->config, $config);
++                $this->legacy_config = true;
++            }
+         }
+ 
+         $this->configured = !empty($config);
+@@ -271,8 +286,10 @@ class rcmail_install
+             }
+ 
+             // save change
+-            $this->config[$prop] = $value;
+-            $config[$prop] = $value;
++            if (!DEBIAN_PKG || $prop != 'db_dsnw') {
++                $this->config[$prop] = $value;
++                $config[$prop] = $value;
++            }
+         }
+ 
+         $out = "<?php\n\n";
+@@ -284,6 +301,11 @@ class rcmail_install
+             $out .= "\$config['{$prop}'] = " . self::_dump_var($value, $prop) . ";\n\n";
+         }
+ 
++        if (DEBIAN_PKG) {
++            $out .= "// Do not set db_dsnw here, use dpkg-reconfigure roundcube-core to configure database!\n";
++            $out .= "include(\"/etc/roundcube/debian-db-roundcube.php\");\n";
++        }
++
+         return $out;
+     }
+ 
+@@ -294,8 +316,11 @@ class rcmail_install
+      */
+     public function save_configfile($config)
+     {
+-        if (is_writable(RCUBE_CONFIG_DIR)) {
+-            return file_put_contents(RCUBE_CONFIG_DIR . 'config.inc.php', $config);
++        $filename = RCUBE_CONFIG_DIR . "config.inc.php"
++                  . (DEBIAN_PKG ? ".dpkg-new" : "");
++
++        if (is_writable(file_exists($filename) ? $filename : RCUBE_CONFIG_DIR)) {
++            return file_put_contents($filename, $config);
+         }
+ 
+         return false;

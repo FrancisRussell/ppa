@@ -1,0 +1,184 @@
+#!/bin/bash
+
+#----------------------------------------------------------------------
+# debian/sqlupdate [DEB_VERSION [REFSPEC]]
+# Apply upstream's SQL schema migrations to debian/sql, and adjust the
+# system table accordingly.
+#
+# Copyright © 2015 Sandro Knauß <bugs@sandroknauss.de>
+# Copyright © 2021-2022 Guilhem Moulin <guilhem@debian.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------------
+
+set -ue
+PATH="/usr/bin:/bin"
+export PATH
+
+NAME="debian/sqlupdate"
+export GIT_PAGER="cat"
+
+if [ ! -f "$NAME" ] || [ ! -x "$NAME" ]; then
+    echo "ERROR: \`$NAME\` doesn't exist or isn't executable."
+    echo "Is $(pwd) the basedir of the roundcube source package?" >&2
+    exit 1
+elif ! git ls-files --error-unmatch -- "SQL/" "debian/sql/" >/dev/null 2>&1; then
+    echo "This script is intended to be run in a local git clone of the roundcube repository" >&2
+    exit 1
+fi
+
+DEB_VERSION="$(dpkg-parsechangelog -SVersion)"
+SINCE="$(git log --max-count=1 --format="%H" -- debian/sql/)"
+
+usage() {
+    local rv=${1-0}
+    cat >&2 <<-EOF
+		$NAME [DEB_VERSION [REFSPEC]]
+		    Add SQL schema updates since REFSPEC to debian/sql/*/DEB_VERSION
+		    Example: \`$NAME 1.6~beta+dfsg-1 1.5.1\`
+
+		    Default DEB_VERSION: $DEB_VERSION (from debian/changelog)
+		    Default REFSPEC: $SINCE (last time debian/sql/ was touched; FROM..TO ranges work as well)
+	EOF
+    exit $rv
+}
+
+[ $# -le 2 ] || usage 1
+if [ "${1-}" = "-h" ] || [ "${1-}" = "--help" ] || [ "${1-}" = "-?" ]; then
+    usage 0
+fi
+
+if [ $# -ge 1 ]; then
+    DEB_VERSION="$1"
+fi
+if [ $# -ge 2 ]; then
+    SINCE="$2"
+fi
+
+nothing_to_do() {
+    echo "No new migrations since $SINCE." >&2
+    echo "Nothing to do for $DEB_VERSION, exiting." >&2
+    exit 0
+}
+
+MIGRATION_LIST="$(mktemp --tmpdir)"
+trap 'rm -f -- "$MIGRATION_LIST"' EXIT INT TERM
+declare -a MIGRATIONS
+
+get_migrations() {
+    local i t s
+    declare -a args=() skipped=()
+    for i in "mysql" "postgres" "sqlite"; do
+        args+=( "SQL/$i/" )
+    done
+
+    declare -a MAPFILE
+    readarray -d "" < <(git diff -z --name-status "$SINCE" -- "${args[@]}")
+
+    for ((i = 0; i < ${#MAPFILE[@]}; i += 2)); do
+        s="${MAPFILE[i]}"
+        p="${MAPFILE[i+1]}"
+        if ! [[ "$p" =~ .*/[0-9]+\.sql$ ]]; then
+            # numeric sort, cf. program/include/rcmail_utils.php:db_update()
+            echo "WARN: Skipping invalid pathname '$p'" >&2
+        elif [ "$s" != "A" ]; then
+            echo "ERROR: $p isn't new (status=$s), refusing to proceed!" >&2
+            # manual intervention is needed, for instance backporting a change to an existing migration
+            skipped+=( "$p" )
+        else
+            printf "%s\\0" "$p" >>"$MIGRATION_LIST"
+        fi
+    done
+
+    if (( ${#skipped[@]} > 0 )); then
+        git diff --color="auto" "$SINCE" -- "${skipped[@]}"
+        exit 1
+    fi
+
+    readarray -d "" MIGRATIONS < <(sort -zn -t/ -k3 <"$MIGRATION_LIST")
+}
+
+apply_migration() {
+    local from="$1" to v
+    local db id_quot='"' # SQL standard
+
+    case "$from" in
+        SQL/mysql/*) db="mysql"; id_quot='`';; # https://mariadb.com/kb/en/identifier-names/
+        SQL/postgres/*) db="pgsql";;
+        SQL/sqlite/*) db="sqlite3";;
+        *) echo "ERROR: invalid pathname '$p'" >&2; exit 1;;
+    esac
+
+    to="debian/sql/$db/$DEB_VERSION"
+    if [ -s "$to" ]; then
+        echo >>"$to"
+    fi
+
+    echo "/* $from */" >>"$to"
+    cat <"$from" >>"$to"
+    sed -i '$a\' -- "$to" # append newline if missing
+
+    v="${from#SQL/*/}"
+    v="${v%.sql}"
+    cat >>"$to" <<-EOF
+
+		/* update ${id_quot}system${id_quot} table */
+		UPDATE ${id_quot}system${id_quot} SET ${id_quot}value${id_quot} = '$v' WHERE ${id_quot}name${id_quot} = 'roundcube-version';
+	EOF
+    echo "appended '$from' to '$to'"
+}
+
+get_migrations
+if [ ! -s "$MIGRATION_LIST" ]; then
+    nothing_to_do
+fi
+
+declare -a DESTFILES=( "debian/sql/mysql/$DEB_VERSION" "debian/sql/pgsql/$DEB_VERSION" "debian/sql/sqlite3/$DEB_VERSION" )
+rm -vf -- "${DESTFILES[@]}"
+
+for p in "${MIGRATIONS[@]}"; do
+    apply_migration "$p"
+done
+
+git add -- "${DESTFILES[@]}"
+if git diff --quiet --cached HEAD -- "${DESTFILES[@]}"; then
+    nothing_to_do
+fi
+
+declare -a SCHEMA_VERSIONS
+readarray -d "" SCHEMA_VERSIONS < <(sed -nrz 's#^(.*/)?([^/]+)\.sql$#\2#p' <"$MIGRATION_LIST" | sort -unz)
+
+if (( ${#SCHEMA_VERSIONS[@]} == 1 )); then
+    COMMIT_MSG_LONG="Applied schema migration since $SINCE: ${SCHEMA_VERSIONS[0]}."
+else
+    COMMIT_MSG_LONG="Applied schema migrations since $SINCE:"$'\n'
+    for (( i = 0; i < ${#SCHEMA_VERSIONS[@]}; i++ )); do
+        COMMIT_MSG_LONG="$COMMIT_MSG_LONG"$'\n'"    - ${SCHEMA_VERSIONS[i]}"
+        if (( i == ${#SCHEMA_VERSIONS[@]} - 2 )); then
+            COMMIT_MSG_LONG="${COMMIT_MSG_LONG}; and"
+        elif (( i == ${#SCHEMA_VERSIONS[@]} - 1 )); then
+            COMMIT_MSG_LONG="${COMMIT_MSG_LONG}."
+        else
+            COMMIT_MSG_LONG="${COMMIT_MSG_LONG};"
+        fi
+    done
+fi
+
+git commit --file=- -- "${DESTFILES[@]}" <<-EOF
+	Update d/sql for $DEB_VERSION.
+
+	$COMMIT_MSG_LONG
+
+	Generated-by: \`$NAME${*:+ "$*"}\`
+EOF

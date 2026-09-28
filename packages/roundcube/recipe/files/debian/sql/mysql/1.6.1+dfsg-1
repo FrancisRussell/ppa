@@ -1,0 +1,5 @@
+/* SQL/mysql/2022081200.sql */
+-- SQLite/Postgres only
+
+/* update `system` table */
+UPDATE `system` SET `value` = '2022081200' WHERE `name` = 'roundcube-version';

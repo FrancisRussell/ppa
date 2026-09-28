@@ -1,0 +1,236 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/pkg-info.mk
+DEB_VERSION_UPSTREAM_MINOR = $(shell echo "$(DEB_VERSION_UPSTREAM)" | sed -r 's/\+dfsg(\.[0-9])?[0-9]*$$//')
+DEB_VERSION_UPSTREAM_BRANCH = $(shell echo "$(DEB_VERSION_UPSTREAM_MINOR)" | sed -r 's/\.[0-9]+$$/-git/')
+
+SRC_FILES := $(shell find program skins plugins -path program/js/tinymce -prune -o -type f -print)
+PLUGINS := $(patsubst plugins/%/composer.json,%,$(wildcard plugins/*/composer.json))
+SKINS := $(patsubst skins/%/meta.json,%,$(wildcard skins/*/meta.json))
+CORE_PLUGINS = filesystem_attachments jqueryui
+
+# don't use bin/install-jsdeps.sh on purpose: we need to export to the right place and minify manually
+JSDEPS_FILES = program/js/publickey.js \
+	$(shell find tinymce/js/tinymce -path tinymce/js/tinymce/themes/mobile -prune -o \
+		\( \! -path tinymce/js/tinymce/license.txt \! -path tinymce/js/tinymce/langs/README.md \
+			\! -path tinymce/js/tinymce/README.md \! -path tinymce/js/tinymce/tinymce.d.ts \
+			-type f \) \
+		-printf "program/js/tinymce/%P\\n" )
+JSDEPS_FILES_NOSHRINK = $(patsubst tinymce-langs/%,program/js/tinymce/langs/%,$(wildcard tinymce-langs/*.js))
+
+%:
+	dh $@ --with phpcomposer
+
+program/js/publickey.js: $(wildcard debian/missing-sources/publickey-*.js)
+	install -m0644 -DT -- $< $@
+
+program/js/tinymce/%: tinymce/js/tinymce/%
+	install -m0644 -DT -- $< $@
+
+program/js/tinymce/langs/%.js: tinymce-langs/%.js
+	install -m0644 -DT -- $< $@
+
+JS_MINFILES = $(patsubst %.js,%.min.js,$(filter-out %.min.js,$(filter %.js,$(SRC_FILES) $(JSDEPS_FILES))))
+CSS_MINFILES = $(patsubst %.css,%.min.css,$(filter-out %.min.css, \
+		$(filter %.css,$(SRC_FILES) $(JSDEPS_FILES))) $(CSS_GENFILES_ELASTIC))
+CSS_GENFILES_ELASTIC = $(addprefix skins/elastic/styles/,styles.css print.css embed.css)
+, = ,
+
+# Minify JS: generate .min.js from .js source (cf. bin/jsshrink.sh)
+%.min.js: %.js
+	uglifyjs --compress --mangle $(if $(filter $@.map,$(GENERATED_MAPFILES)),--source-map "base='$(@D)'$(,)url='$(@F).map'",) \
+		-o $@ -- $<
+
+# Minify CSS: generate .min.css from .css source (cf. bin/cssshrink.sh)
+CSS_STAMPFILE = updatecss-stamp
+%.min.css: %.css $(CSS_STAMPFILE)
+	cd $(@D) && cleancss $(if $(filter $@.map,$(GENERATED_MAPFILES)),--source-map,) -o $(@F) -- $(<F)
+
+# XXX bin/updatecss.sh edits CSS sources in place, so auto_clean might
+# not cleanup; it is idempotent so it doesn't matter too much for us though
+updatecss: $(CSS_STAMPFILE)
+$(CSS_STAMPFILE): $(filter-out %.min.css,$(filter %.css,$(SRC_FILES))) $(CSS_GENFILES_ELASTIC)
+	env ROUNDCUBE_CONFIG_DIR=$(CURDIR)/config bin/updatecss.sh
+	touch -- $@
+.PHONY: updatecss
+
+# Cf. skins/elastic/README.md
+$(CSS_GENFILES_ELASTIC): skins/elastic/%.css: skins/elastic/%.less
+	cd skins/elastic && lessc --source-map "$*.less" "$*.css"
+
+# For each plugin with a config.inc.php.dist, we create a config.inc.php with dummy content
+PLUGINS_CONFIGURABLE = $(patsubst plugins/%/config.inc.php.dist,%, \
+	$(wildcard $(patsubst %,plugins/%/config.inc.php.dist,$(PLUGINS))))
+PLUGIN_CONF_GEN = $(patsubst %,plugins/%/config.inc.php,$(PLUGINS_CONFIGURABLE))
+$(PLUGIN_CONF_GEN): plugins/%/config.inc.php: plugins/%/config.inc.php.dist
+	$(file >$@,<?php)
+	$(file >>$@,// Empty configuration for $*)
+	$(file >>$@,// See /usr/share/roundcube/plugins/$*/config.inc.php.dist for instructions)
+	$(file >>$@,// Check the access right of the file if you put sensitive information in it.)
+	$(file >>$@,$$config=array();)
+	$(file >>$@,?>)
+
+GENERATED_FILES = $(PLUGIN_CONF_GEN) $(JSDEPS_FILES) $(JSDEPS_FILES_NOSHRINK) \
+	$(JS_MINFILES) $(CSS_MINFILES) $(CSS_GENFILES_ELASTIC)
+
+# Skip source map creation for the bundled stuff
+GENERATED_MAPFILES = $(addsuffix .map,$(filter-out program/js/publickey.min.js program/js/tinymce/%, \
+	$(filter %.css %.js,$(JS_MINFILES) $(CSS_MINFILES) $(CSS_GENFILES_ELASTIC))))
+GENERATED_FILES += $(GENERATED_MAPFILES)
+$(GENERATED_MAPFILES): %.map: | % ;
+
+# Pre-compress minified files (and also tinymce-langs/*.js and embed.css,
+# since for these the client never requests the minified version)
+COMPRESSED_FILES = $(JS_MINFILES) $(CSS_MINFILES) \
+	$(filter %.css %.js,$(JSDEPS_FILES_NOSHRINK) $(CSS_GENFILES_ELASTIC))
+COMPRESSED_FILES := $(addsuffix .gz,$(COMPRESSED_FILES))
+GENERATED_FILES += $(COMPRESSED_FILES)
+$(COMPRESSED_FILES): %.gz: %
+	pigz -11 -mnk -- $<
+
+execute_after_dh_auto_clean:
+	debconf-updatepo
+	@rm -f -- $(GENERATED_FILES) $(CSS_STAMPFILE)
+	@rm -rf -- program/js/tinymce
+
+override_dh_auto_build: $(GENERATED_FILES) ;
+.SECONDARY:
+
+PHPUNIT_EXCLUDE_GROUPS = flaky
+# BaconQrCode doesn't work for 32 bit archs (see
+# https://github.com/Bacon/BaconQrCode/issues/76), and this PPA's build
+# environment doesn't make BaconQrCode's classes available at all (see
+# mark-qrcode-test-flaky.patch) - so this is excluded unconditionally here,
+# unlike Debian's own real packaging, which only drops it for 32-bit archs.
+PHPUNIT_EXCLUDE_GROUPS += qrcode
+override_dh_auto_test:
+	[ -d tests/.locale ] || mkdir tests/.locale
+	localedef -c -i en_US -f UTF-8 tests/.locale/en_US.utf8
+	ln -sfT ../.ci/config-test.inc.php config/config-test.inc.php
+	env RCUBE_INSTALL_PATH=$(CURDIR) LOCPATH=$(CURDIR)/tests/.locale \
+		phpunit -c tests/phpunit.xml --fail-on-skipped \
+			--display-deprecations --display-phpunit-deprecations \
+			$(addprefix --exclude-group , $(PHPUNIT_EXCLUDE_GROUPS))
+
+NONCORE_PLUGINS = $(filter-out $(CORE_PLUGINS),$(PLUGINS))
+execute_after_dh_install:
+	install -m0644 composer.json debian/roundcube-core/usr/share/roundcube/composer.json
+
+	# database intial
+	install -m0644 -DT SQL/mysql.initial.sql    debian/roundcube-core/usr/share/dbconfig-common/data/roundcube/install/mysql
+	install -m0644 -DT SQL/postgres.initial.sql debian/roundcube-core/usr/share/dbconfig-common/data/roundcube/install/pgsql
+	install -m0644 -DT SQL/sqlite.initial.sql   debian/roundcube-core/usr/share/dbconfig-common/data/roundcube/install/sqlite3
+
+	# database update
+	cp -rt debian/roundcube-core/usr/share/dbconfig-common/data/roundcube/upgrade debian/sql/*
+
+	# install plugins
+ifneq ($(CORE_PLUGINS),)
+	dh_install -proundcube-core $(addprefix plugins/,$(CORE_PLUGINS)) \
+		usr/share/roundcube/plugins
+endif
+ifneq ($(NONCORE_PLUGINS),)
+	dh_install -proundcube-plugins $(addprefix plugins/,$(NONCORE_PLUGINS)) \
+		usr/share/roundcube/plugins
+endif
+
+	# install plugin configuration
+	$(foreach plugin,$(PLUGINS_CONFIGURABLE), \
+		dh_install -p$(if $(filter $(plugin),$(CORE_PLUGINS)),roundcube-core,roundcube-plugins) \
+			plugins/$(plugin)/config.inc.php etc/roundcube/plugins/$(plugin) && \
+		) true
+
+	# setup /usr/share/bug/$PACKAGE/control files
+	$(foreach pkg,$(shell dh_listpackages), \
+		install -m0644 -DT -- debian/bug.control debian/$(pkg)/usr/share/bug/$(pkg)/control && \
+		) true
+
+	# fix upstream version, cf. upstream's Makefile
+	sed -ri 's/\<$(DEB_VERSION_UPSTREAM_BRANCH)\>/$(DEB_VERSION_UPSTREAM_MINOR)/' \
+		debian/roundcube-core/usr/share/roundcube/index.php \
+		debian/roundcube-core/var/lib/roundcube/public_html/index.php \
+		debian/roundcube-core/usr/share/roundcube/installer/index.php \
+		debian/roundcube-core/usr/share/roundcube/program/include/iniset.php \
+		debian/roundcube-core/usr/share/roundcube/program/lib/Roundcube/bootstrap.php
+
+	# remove irrelevant upstream stuff from binary packages
+	find debian/roundcube-*/usr/share/roundcube -name .gitignore -type f -delete
+	rm -rf debian/roundcube-*/usr/share/roundcube/plugins/*/tests/
+	rm -f debian/roundcube-core/etc/roundcube/config-test.inc.php
+
+override_dh_installdocs:
+	dh_installdocs --link-doc=roundcube-core -proundcube -proundcube-core
+	dh_installdocs -proundcube-mysql -proundcube-pgsql -proundcube-sqlite3 -proundcube-plugins
+
+	# fix upstream version, cf. upstream's Makefile
+	sed -ri 's/^(#+\s+)Unreleased(\s|$$)/\1Release $(DEB_VERSION_UPSTREAM_MINOR)\2/' \
+		debian/*/usr/share/doc/*/CHANGELOG.md
+
+	# remove documentation from /usr/share/roundcube/ and install into /usr/share/doc/roundcube-*/
+	rm -f debian/roundcube-*/usr/share/roundcube/program/lib/Roundcube/README.md \
+		debian/roundcube-*/usr/share/roundcube/skins/*/README* \
+		debian/roundcube-*/usr/share/roundcube/plugins/*/README* \
+		debian/roundcube-*/usr/share/roundcube/plugins/*/readme*
+
+	$(foreach doc,$(wildcard skins/*/README* $(patsubst %,plugins/%/README*,$(CORE_PLUGINS))), \
+		install -m0644 -DT $(doc) debian/roundcube-core/usr/share/doc/roundcube-core/$(doc) && \
+		) true
+	$(foreach doc,$(wildcard $(addprefix plugins/,\
+			$(addsuffix /README*,$(NONCORE_PLUGINS)) $(addsuffix /readme*,$(NONCORE_PLUGINS)))), \
+		install -m0644 -DT $(doc) debian/roundcube-plugins/usr/share/doc/roundcube-plugins/$(doc) && \
+		) true
+
+	install -m0755 -Dd debian/$(if $(filter managesieve,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins)/usr/share/doc/roundcube-plugins/plugins/managesieve
+	mv -nt debian/$(if $(filter managesieve,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins)/usr/share/doc/roundcube-plugins/plugins/managesieve \
+		debian/$(if $(filter managesieve,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins)/usr/share/roundcube/plugins/managesieve/helpdocs
+
+override_dh_phpcomposer:
+	dh_phpcomposer --sourcedirectory=$(CURDIR)/debian/roundcube-core/usr/share/roundcube
+
+execute_after_dh_link:
+	# symlink plugin configuration (and delete existing usr/share/roundcube/plugins/*/config.inc.php
+	# file which we installed as etc/roundcube/plugins/*/config.inc.php instead)
+	$(foreach plugin,$(PLUGINS_CONFIGURABLE), \
+		dh_link -p$(if $(filter $(plugin),$(CORE_PLUGINS)),roundcube-core,roundcube-plugins) \
+			etc/roundcube/plugins/$(plugin)/config.inc.php usr/share/roundcube/plugins/$(plugin)/config.inc.php && \
+		) true
+
+	# symlink plugin directories to var/lib/roundcube/plugins
+	$(foreach plugin,$(PLUGINS), \
+		dh_link -p$(if $(filter $(plugin),$(CORE_PLUGINS)),roundcube-core,roundcube-plugins) \
+			usr/share/roundcube/plugins/$(plugin) var/lib/roundcube/plugins/$(plugin) && \
+		) true
+
+	# symlink skin directories to var/lib/roundcube/skins
+	$(foreach skin,$(SKINS), \
+		dh_link -proundcube-core usr/share/roundcube/skins/$(skin) var/lib/roundcube/skins/$(skin) && \
+		) true
+
+	# fix library path
+	# jqueryui bundles its own copy of jquery-ui's datepicker i18n files;
+	# remove it so it can be symlinked to the system package's copy below,
+	# like the other jquery-ui files in this same plugin.
+	rm -rf debian/$(if $(filter jqueryui,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins)/usr/share/roundcube/plugins/jqueryui/js/i18n
+	dh_link -p$(if $(filter jqueryui,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins) \
+		usr/share/javascript/jquery-minicolors/jquery.minicolors.min.js usr/share/roundcube/plugins/jqueryui/js/jquery.minicolors.min.js \
+		usr/share/javascript/jquery-ui/jquery-ui.js                     usr/share/roundcube/plugins/jqueryui/js/jquery-ui.js \
+		usr/share/javascript/jquery-ui/jquery-ui.min.js                 usr/share/roundcube/plugins/jqueryui/js/jquery-ui.min.js \
+		usr/share/javascript/jquery-ui/ui/i18n                          usr/share/roundcube/plugins/jqueryui/js/i18n
+	dh_link -p$(if $(filter managesieve,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins) \
+		usr/share/javascript/codemirror/addon/selection usr/share/roundcube/plugins/managesieve/codemirror/addon/selection \
+		usr/share/javascript/codemirror/lib             usr/share/roundcube/plugins/managesieve/codemirror/lib \
+		usr/share/javascript/codemirror/mode/sieve      usr/share/roundcube/plugins/managesieve/codemirror/mode/sieve
+
+execute_after_dh_installsystemd:
+	dh_installsystemd -proundcube-core --name=roundcube-cleandb
+	dh_installsystemd -proundcube-core --name=roundcube-gc
+
+execute_after_dh_fixperms:
+	# roundcube-core only make scripts in bin dir executable
+	find debian/roundcube-core/usr/share/roundcube     -type f -exec chmod -x -- {} +
+	find debian/roundcube-core/usr/share/roundcube/bin -type f -exec chmod +x -- {} +
+
+	# plugins: make everything non executable
+	find debian/roundcube-plugins/usr/share/roundcube -type f -exec chmod -x -- {} +
+	chmod 0755 debian/$(if $(filter password,$(CORE_PLUGINS)),roundcube-core,roundcube-plugins)/usr/share/roundcube/plugins/password/helpers/*.p[ly] \
+	           debian/roundcube-*/usr/share/roundcube/plugins/*/bin/*.sh

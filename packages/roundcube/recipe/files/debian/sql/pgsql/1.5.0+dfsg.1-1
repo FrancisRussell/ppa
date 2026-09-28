@@ -1,0 +1,41 @@
+/* 2020020100 */
+ALTER TABLE "dictionary" ALTER COLUMN "language" TYPE varchar(16);
+ALTER TABLE "users" ALTER COLUMN "language" TYPE varchar(16);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020020100' WHERE "name" = 'roundcube-version';
+
+/* 2020020101 */
+-- empty
+/* update "system" table */
+UPDATE "system" SET "value" = '2020020101' WHERE "name" = 'roundcube-version';
+
+/* 2020091000 */
+CREATE SEQUENCE collected_addresses_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE collected_addresses (
+    address_id integer DEFAULT nextval('collected_addresses_seq'::text) PRIMARY KEY,
+    user_id integer NOT NULL
+        REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    changed timestamp with time zone DEFAULT now() NOT NULL,
+    name varchar(255) DEFAULT '' NOT NULL,
+    email varchar(255) NOT NULL,
+    "type" integer NOT NULL
+);
+
+CREATE UNIQUE INDEX collected_addresses_user_id_idx ON collected_addresses (user_id, "type", email);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020091000' WHERE "name" = 'roundcube-version';
+
+/* 2020122900 */
+ALTER TABLE "users" ALTER COLUMN "preferences" DROP NOT NULL;
+ALTER TABLE "users" ALTER COLUMN "preferences" SET DEFAULT NULL;
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020122900' WHERE "name" = 'roundcube-version';

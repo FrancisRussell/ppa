@@ -1,0 +1,7 @@
+bin/cleandb.sh bin/gc.sh bin/deluser.sh bin/update.sh bin/updatedb.sh usr/share/roundcube/bin
+bin/decrypt.sh bin/indexcontacts.sh bin/moduserprefs.sh bin/msgexport.sh bin/msgimport.sh usr/share/roundcube/bin
+config/*.php debian/conf/* etc/roundcube
+config/config.inc.php.sample usr/share/roundcube
+index.php SQL/ installer/ usr/share/roundcube
+program/ skins/ usr/share/roundcube
+public_html/ var/lib/roundcube

@@ -1,0 +1,72 @@
+Subject: Backport array_first()/array_last() instead of vendoring symfony/polyfill-php85
+
+Upstream's composer.json requires symfony/polyfill-php85, which is not
+packaged in Debian (checked: absent from trixie, sid, and backports).
+This is a real dependency, not a version-floor nicety: array_first()/
+array_last() (added to PHP itself in 8.5) are called at 30+ sites across
+program/lib and program/include, and trixie's PHP is 8.4.
+
+Rather than package the whole polyfill library or vendor it via a
+separate composer install, this is a direct backport: the two functions
+Roundcube actually calls are reimplemented in program/include/iniset.php
+(the single bootstrap shared by both the web and CLI entry points, see
+program/include/clisetup.php), ported verbatim from that package's
+Php85.php, guarded by function_exists() and PHP_VERSION_ID < 80500 so it
+becomes a no-op once trixie eventually ships PHP >= 8.5.
+
+This is judged low-risk because the ported implementation is small,
+directly comparable line-by-line to upstream's polyfill source, and
+guarded to only ever run on exactly the PHP versions upstream's own
+polyfill would have covered.
+
+Forwarded: not-needed
+---
+Index: rc-build/composer.json
+===================================================================
+--- rc-build.orig/composer.json
++++ rc-build/composer.json
+@@ -16,8 +16,7 @@
+         "pear/net_smtp": "~1.12.0",
+         "pear/pear-core-minimal": "~1.10.15",
+         "roundcube/plugin-installer": "~0.3.5",
+-        "roundcube/rtf-html-php": "^2.1",
+-        "symfony/polyfill-php85": "^1.33.0"
++        "roundcube/rtf-html-php": "^2.1"
+     },
+     "require-dev": {
+         "ergebnis/composer-normalize": "^2.13",
+Index: rc-build/program/include/iniset.php
+===================================================================
+--- rc-build.orig/program/include/iniset.php
++++ rc-build/program/include/iniset.php
+@@ -26,6 +26,30 @@ if (\PHP_VERSION_ID < 80100) {
+     exit('Unsupported PHP version. Required PHP >= 8.1.');
+ }
+ 
++// Backport of array_first()/array_last(), added to PHP in 8.5. Debian doesn't
++// package symfony/polyfill-php85, so the two functions this codebase actually
++// uses from it are reimplemented here directly (ported from that package's
++// Php85.php, which Roundcube's own composer.json requires).
++if (\PHP_VERSION_ID < 80500) {
++    if (!function_exists('array_first')) {
++        function array_first(array $array)
++        {
++            foreach ($array as $value) {
++                return $value;
++            }
++
++            return null;
++        }
++    }
++
++    if (!function_exists('array_last')) {
++        function array_last(array $array)
++        {
++            return $array ? current(array_slice($array, -1)) : null;
++        }
++    }
++}
++
+ // application constants
+ define('RCMAIL_VERSION', '1.7-git');
+ define('RCMAIL_START', microtime(true));
