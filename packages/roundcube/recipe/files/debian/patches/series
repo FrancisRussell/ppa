@@ -15,5 +15,6 @@ update-composer-pear-package-names.patch
 trim-jsdeps-to-unpackaged-libs.patch
 use-system-JQueryUI.patch
 provide-tests-autoloader.patch
+fix-autoload-locations.patch
 mark-qrcode-test-flaky.patch
 drop-slow-test-detector-extension.patch

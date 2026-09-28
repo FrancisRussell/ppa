@@ -1,0 +1,64 @@
+From: Guilhem Moulin <guilhem@debian.org>
+Date: Sun, 13 Mar 2022 00:08:19 +0100
+Subject: Fix autoload locations
+
+Snippets generated with `phpabtpl --suggest bacon/bacon-qr-code` and
+`phpabtpl --suggest GuzzleHttp`.
+
+Rebased for 1.7.4: upstream moved qrcode.php's `use BaconQrCode\...`
+imports above the file's header comment block (rcmail_oauth.php's own
+`use GuzzleHttp\...` imports are unaffected, still below the header);
+the inserted snippet keeps its position immediately before the code
+that needs it, now after the header block in both files rather than
+context-matching the (in qrcode.php's case, since-relocated) `use`
+block that immediately used to follow it.
+
+Without this, program/lib/Roundcube/bootstrap.php's generic
+rcube_autoload() is the only mechanism that ever resolves these
+classes (this build never runs `composer install`, so
+`vendor/autoload.php` never exists) and it assumes a class's PHP
+namespace root maps 1:1 onto the installed Debian package's directory
+layout. That holds for GuzzleHttp (php-guzzlehttp-guzzle installs
+under /usr/share/php/GuzzleHttp/ directly), but not for BaconQrCode:
+php-bacon-qr-code installs under an extra vendor-style prefix,
+/usr/share/php/Bacon/BaconQrCode/, so class_exists() on any
+BaconQrCode\* class was always false and the QR-code contact-export
+feature was silently unavailable, regardless of architecture, despite
+php-bacon-qr-code being a correctly declared and satisfiable
+dependency on amd64.
+
+Forwarded: not-needed
+Bug-Debian: https://bugs.debian.org/1040705
+---
+ program/actions/contacts/qrcode.php | 3 +++
+ program/include/rcmail_oauth.php    | 3 +++
+ 2 files changed, 6 insertions(+)
+
+Index: rc-build/program/actions/contacts/qrcode.php
+===================================================================
+--- rc-build.orig/program/actions/contacts/qrcode.php
++++ rc-build/program/actions/contacts/qrcode.php
+@@ -22,6 +22,9 @@
+  | Author: Aleksander Machniak <alec@alec.pl>                            |
+  +-----------------------------------------------------------------------+
+ */
++
++if (stream_resolve_include_path('Bacon/BaconQrCode/autoload.php'))
++    include_once('Bacon/BaconQrCode/autoload.php');
+
+ class rcmail_action_contacts_qrcode extends rcmail_action_contacts_index
+ {
+Index: rc-build/program/include/rcmail_oauth.php
+===================================================================
+--- rc-build.orig/program/include/rcmail_oauth.php
++++ rc-build/program/include/rcmail_oauth.php
+@@ -18,6 +18,9 @@
+  | Author: Thomas Bruederli <roundcube@gmail.com>                        |
+  +-----------------------------------------------------------------------+
+ */
++
++if (stream_resolve_include_path('GuzzleHttp/autoload.php'))
++    include_once 'GuzzleHttp/autoload.php';
+
+ use GuzzleHttp\Client as HttpClient;
+ use GuzzleHttp\Exception\RequestException;

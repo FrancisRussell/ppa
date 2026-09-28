@@ -97,12 +97,11 @@ override_dh_auto_build: $(GENERATED_FILES) ;
 .SECONDARY:
 
 PHPUNIT_EXCLUDE_GROUPS = flaky
-# BaconQrCode doesn't work for 32 bit archs (see
-# https://github.com/Bacon/BaconQrCode/issues/76), and this PPA's build
-# environment doesn't make BaconQrCode's classes available at all (see
-# mark-qrcode-test-flaky.patch) - so this is excluded unconditionally here,
-# unlike Debian's own real packaging, which only drops it for 32-bit archs.
-PHPUNIT_EXCLUDE_GROUPS += qrcode
+ifeq ($(DEB_TARGET_ARCH_BITS),32)
+	# unfortunately BaconQrCode doesn't work for 32 bits archs, see
+	# https://github.com/Bacon/BaconQrCode/issues/76
+	PHPUNIT_EXCLUDE_GROUPS += qrcode
+endif
 override_dh_auto_test:
 	[ -d tests/.locale ] || mkdir tests/.locale
 	localedef -c -i en_US -f UTF-8 tests/.locale/en_US.utf8

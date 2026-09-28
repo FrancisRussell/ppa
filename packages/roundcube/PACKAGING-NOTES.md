@@ -23,7 +23,7 @@ Most of salsa's patch series is upstream cherry-picks already merged into
 1.7.4, so they're dropped. What's kept or added:
 
 Ported forward unchanged: `dbconfig-common-support.patch`,
-`debianize-config.patch`, `fix-install-path.patch`, `update-script.patch`,
+`debianize-config.patch`, `update-script.patch`,
 `use-enchant.patch`, `default-charset-utf8.patch`,
 `debianize-password-plugin.patch`,
 `map-sqlite3-to-sqlite.patch` (Debian bug #714727),
@@ -33,6 +33,17 @@ Ported forward unchanged: `dbconfig-common-support.patch`,
 Ported forward but hand-rebased against 1.7.4's actual code (upstream moved
 on since whatever version the original Debian patch targeted):
 
+- `fix-install-path.patch` - Debian's original patch (by Guilhem Moulin)
+  hardcodes `INSTALL_PATH` to `/var/lib/roundcube/` across `bin/*.sh`,
+  `installer/index.php`, `program/include/iniset.php`, and makes
+  `tests/bootstrap.php` use the `RCUBE_INSTALL_PATH` environment
+  variable instead. Extended this session to give
+  `installer/index.php` the same `RCUBE_INSTALL_PATH` fallback:
+  `tests/Public/InstallerTest.php` (added upstream after Debian's patch
+  was written) spawns a PHP built-in server straight from the source
+  tree and requests `installer.php`, which needs to find
+  `program/include/iniset.php` there too, not at the hardcoded install
+  location.
 - `Avoid-dependency-on-new-package-mlocati-ip-lib.patch` (Debian bug
   #1131182) - avoids a dependency on `mlocati/ip-lib` (not packaged in
   Debian), introduced upstream to fix **CVE-2026-35540** (SSRF via
@@ -45,7 +56,7 @@ on since whatever version the original Debian patch targeted):
   is unchanged from Debian's fix. Debian's own patch also added dedicated
   CVE-regression cases to `tests/Framework/UtilsTest.php`; that hunk is
   restored here (rebased onto the current PSR-4/attribute-based test
-  structure), and restoring it surfaced a real gap it closes - see "Two
+  structure) and extended with an IPv4-compatible-IPv6 case - see "Two
   separate test mechanisms" below.
 - `update-composer-pear-package-names.patch` - renames `pear/*` requires to
   `pear-pear.php.net/*` (pkg-php-tools' PEAR-channel naming convention) and
@@ -78,6 +89,30 @@ New patches, not in Debian's 1.6.19 packaging at all:
   points), ported verbatim from the polyfill's `Php85.php`, guarded by
   `function_exists()` and `PHP_VERSION_ID < 80500` so it becomes a no-op
   once trixie eventually ships PHP >= 8.5.
+- `provide-tests-autoloader.patch`, `mark-qrcode-test-flaky.patch`,
+  `drop-slow-test-detector-extension.patch` - enable `dh_auto_test`
+  (disabled in Debian's own 1.6.19 packaging). See "Two separate test
+  mechanisms" below for what each one does and why.
+
+Ported forward but hand-rebased (structural change, not just content):
+
+- `fix-autoload-locations.patch` (Debian bug #1040705) - restores a
+  `stream_resolve_include_path()`/`include_once` guard in
+  `program/actions/contacts/qrcode.php` and
+  `program/include/rcmail_oauth.php`, needed because this build never
+  runs `composer install` and so has no `vendor/autoload.php`; without
+  it, `program/lib/Roundcube/bootstrap.php`'s generic `rcube_autoload()`
+  is the only autoloader available, and it assumes a class's PHP
+  namespace maps 1:1 onto the installed package's directory layout -
+  true for `php-guzzlehttp-guzzle` but not for `php-bacon-qr-code`,
+  which installs under an extra `Bacon/` prefix
+  (`/usr/share/php/Bacon/BaconQrCode/...`). Without this patch the
+  QR-code contact-export feature is silently unavailable on every
+  install, on every architecture, regardless of `php-bacon-qr-code`
+  being correctly declared and installed. Rebased only because upstream
+  moved `qrcode.php`'s `use BaconQrCode\...` imports above the file's
+  header comment block; the patch's own header explains the exact
+  insertion-point change.
 
 ### `debian/control`
 
@@ -255,20 +290,29 @@ than it's worth for a package this dependency-heavy.
 8. **Re-verify the noble-exclusion reasoning** in `source.yml` still holds
    - re-check the composer floors above against noble's current package
    versions in case they've caught up.
+9. **Re-check upstream's `composer.json` `"php"` constraint and any new
+   `symfony/polyfill-*` requires** against the target distros' shipped PHP
+   versions. A polyfill dependency in `composer.json` is a signal that
+   upstream calls a function from a newer PHP than some target distro
+   ships; since this build never runs `composer install`
+   (`fix-autoload-locations.patch` above), that polyfill is never actually
+   installed, so such a call would fail at runtime with no build-time
+   warning. `backport-php85-array-first-last.patch` is the existing
+   example of this class of issue.
 
 ## Switching to Debian's official package
 
 When Debian eventually packages Roundcube 1.7 and this PPA's package is
 retired in favor of it, what to check:
 
-1. **dbconfig-common schema migration collision (the likely failure)**.
-   `dbc_go` (invoked from `roundcube-core.postinst`) gates purely on
-   comparing the previously-installed package version against each shipped
-   migration filename via `dpkg --compare-versions` - it has no idea what
-   schema state the database is actually in. `apt` treats the switch as an
-   ordinary upgrade of the same `roundcube-core` package name, so the "old
-   version" dbconfig-common sees is literally this PPA's build version
-   (`1.7.4-ppa<timestamp>`).
+1. **dbconfig-common schema migration collision (the likely failure, if
+   not pre-empted)**. `dbc_go` (invoked from `roundcube-core.postinst`)
+   gates purely on comparing the previously-installed package version
+   against each shipped migration filename via `dpkg --compare-versions`
+   - it has no idea what schema state the database is actually in. `apt`
+   treats the switch as an ordinary upgrade of the same `roundcube-core`
+   package name, so the "old version" dbconfig-common sees is literally
+   this PPA's build version (`1.7.4-ppa<timestamp>`).
 
    Debian's own future packaging will almost certainly not freeze at
    exactly upstream `1.7.4` - by the time they package 1.7 at all, they'll
@@ -277,38 +321,66 @@ retired in favor of it, what to check:
    migration point into one file named after whatever version they're
    packaging, that file will almost certainly re-include the same
    `uploads` table and `session.expires_at` rename `1.7.4-1` already
-   applies here - under a version string dbconfig-common considers newer
-   than ours, so it reruns it. Neither statement is idempotent
-   (`CREATE TABLE` without `IF NOT EXISTS`;
-   `ALTER TABLE ... RENAME COLUMN` on an already-renamed column), so it
-   errors outright.
+   applies here. Whether dbconfig-common considers that file "new" and
+   reruns it depends on how our version string compares to theirs at
+   `dpkg --compare-versions` (not guaranteed either way - it depends on
+   Debian's exact revision string, e.g. a `+dfsg` repack marker they've
+   historically used), so don't rely on version ordering alone to avoid
+   this. Neither statement is idempotent (`CREATE TABLE` without
+   `IF NOT EXISTS`; `ALTER TABLE ... RENAME COLUMN` on an already-renamed
+   column), so a rerun errors outright.
 
-   In practice: `apt upgrade` fails partway with a visible SQL error,
-   `dpkg` marks `roundcube-core` half-configured, and `apt` stops. This is
-   a loud, recoverable maintainer-script failure, not silent data
-   corruption - standard recovery:
+   **Recommended procedure - sidesteps version comparison entirely**
+   rather than depending on it going the right way:
 
-   a. Read the error to see which migration file and statement failed.
-   b. Compare it against `1.7.4-1` above (this file needs to survive as a
-      record long after this PPA package itself is retired).
-   c. Edit the offending file on disk at
-      `/usr/share/dbconfig-common/data/roundcube/upgrade/<db>/<version>`
-      (a plain data file, not dpkg-protected) to drop the already-applied
-      statements, then re-run `dpkg --configure roundcube-core` (or
-      `apt --fix-broken install`) - dbconfig-common re-reads the edited
-      file and completes normally.
-   d. Or pre-empt it entirely: `apt-get download roundcube-core`,
-      `dpkg-deb -R` it, patch the upgrade file, `dpkg-deb -b` it back, and
-      install that patched `.deb` for this one transition instead of
-      hitting the failure live.
+   a. Write `/etc/dbconfig-common/roundcube-core.conf` containing
+      `dbc_upgrade='false'`. `dbc_read_package_config()` in
+      `dbconfig-common`'s own `dpkg/common` script sets `dbc_upgrade=true`
+      as a default and then sources this file if present, so its value
+      wins deterministically - unlike preseeding the `dbconfig-upgrade`
+      debconf question directly, which dbconfig-common's own source warns
+      against relying on for exactly this ("we cannot fully trust
+      debconf ... just edit the configuration files appropriately").
+      This disables dbconfig-common's automatic schema migration for the
+      *next* postinst run, regardless of what version string Debian's
+      package carries.
+   b. Install Debian's package (e.g. `apt install
+      roundcube-core=<debian's-version>`, named explicitly since this is
+      a deliberate action). Nothing gets auto-applied to the schema
+      because of (a).
+   c. Run upstream's own `bin/updatedb.sh` (packaged at
+      `/usr/share/roundcube/bin/updatedb.sh` by both this PPA and Debian)
+      against the live database. Unlike dbconfig-common, it reads the
+      actual `system.roundcube-version` value out of the database and
+      applies only genuinely-missing numbered migrations - correct
+      regardless of how this PPA's and Debian's migration histories
+      diverged, because it's driven by real schema state, not package
+      version bookkeeping.
+   d. Remove `/etc/dbconfig-common/roundcube-core.conf` (or set
+      `dbc_upgrade='true'` back). This step isn't optional: the file
+      persists across every future postinst run, not just this one, so
+      leaving it in place would silently disable dbconfig-common's
+      automatic migration for all of Debian's subsequent point-release
+      upgrades too.
 
-2. **apt priority/pinning**. Once Debian ships a real package, ordinary
-   version comparison alone will prefer it over this PPA's build (their
-   upstream version will be newer than `1.7.4`). That only holds if this
-   PPA hasn't been given elevated `Pin-Priority` over the default archive
-   in `/etc/apt/preferences.d/` wherever it's deployed - if it has, that
-   pin needs removing too, or `apt` keeps preferring the PPA build even
-   after Debian's is available.
+   If (a) is skipped and the collision happens live anyway: `apt upgrade`
+   fails partway with a visible SQL error, `dpkg` marks `roundcube-core`
+   half-configured, `apt` stops - a loud, recoverable maintainer-script
+   failure, not silent data corruption. Read the error to see which
+   migration file/statement failed, edit it on disk at
+   `/usr/share/dbconfig-common/data/roundcube/upgrade/<db>/<version>` (a
+   plain data file, not dpkg-protected) to drop the already-applied
+   statements, then re-run `dpkg --configure roundcube-core`.
+
+2. **apt priority/pinning**. If this PPA has been given elevated
+   `Pin-Priority` over the default archive in `/etc/apt/preferences.d/`
+   wherever it's deployed, that pin needs removing as part of the switch,
+   or `apt` keeps preferring the PPA build even after Debian's is
+   available. Since the switch is a deliberate action anyway (step 1
+   above already needs one), installing Debian's package by explicit
+   name and version rather than relying on ordinary upgrade-preference
+   ordering sidesteps needing to reason about version comparison here
+   too.
 
 3. **Conffile prompts**. `/etc/roundcube/*` are dpkg conffiles; if their
    content differs between this PPA's build and Debian's, `dpkg` will
@@ -357,14 +429,17 @@ than at build time.
   (phpunit-11 attribute syntax, the `tests/` tree's `Roundcube\Tests`
   namespace, and the `.github/` -> `.ci/` config-file move all postdate
   them) - so all of `adjust-test-environment-for-dep8`,
-  `fix-autoload-locations`, `mark-flaky-tests-as-such`,
+  `mark-flaky-tests-as-such`,
   `dont-force-set-session.gc_probability=1`, `fix-upstream-test-suite`,
   `Tests-Use-mocked-Guzzle-client-in-Modcss-action-test`,
-  `Fix-FTBFS-with-phpunit-11`, `Fix-flaky-test` are dropped. What's kept
-  or added instead, driven by this package never running `composer
-  install` (system PHP packages cover the runtime deps instead, via
-  `dh_phpcomposer`/substvars only - no dependency-resolving step ever
-  generates `vendor/autoload.php`):
+  `Fix-FTBFS-with-phpunit-11`, `Fix-flaky-test` are dropped.
+  `fix-autoload-locations.patch` is hand-rebased and kept (see "Ported
+  forward but hand-rebased" above) - it's not test-only, it fixes a real
+  runtime bug, but it does affect what `QrcodeTest::test_run` needs, see
+  below. What's kept or added instead, driven by this package never
+  running `composer install` (system PHP packages cover the runtime deps
+  instead, via `dh_phpcomposer`/substvars only - no dependency-resolving
+  step ever generates `vendor/autoload.php`):
   - `provide-tests-autoloader.patch` - two `spl_autoload_register`
     callbacks added to `tests/bootstrap.php`, replacing what
     `composer install` would otherwise have wired up: a PSR-4 mapping of
@@ -381,12 +456,13 @@ than at build time.
   - `mark-qrcode-test-flaky.patch` - tags `QrcodeTest::test_run` with the
     `qrcode` phpunit group, matching salsa's own dropped
     `mark-flaky-tests-as-such.patch` precedent for the same test.
-    `debian/rules` excludes that group unconditionally: Debian's own
-    `debian/control` only drops `php-bacon-qr-code` (and so only needs to
-    exclude this group) on 32-bit archs, but this build's environment
-    doesn't make BaconQrCode's classes available even on amd64 (not fully
-    root-caused - other `pkg-php-tools`-packaged composer libraries, e.g.
-    guzzle, autoload fine here).
+    `debian/rules` excludes that group only on 32-bit archs, matching
+    Debian's own `debian/control` precedent of only dropping
+    `php-bacon-qr-code` there (BaconQrCode doesn't work on 32-bit, see
+    https://github.com/Bacon/BaconQrCode/issues/76). On other archs the
+    test now genuinely passes rather than being skipped, once
+    `fix-autoload-locations.patch` (above) makes `BaconQrCode\*` classes
+    resolvable at all.
   - `drop-slow-test-detector-extension.patch` - `tests/phpunit.xml`
     bootstraps `Ergebnis\PHPUnit\SlowTestDetector\Extension`, a
     require-dev-only composer dependency that (for the same no-`composer
