@@ -8,6 +8,15 @@ this source package. Ported forward from the equivalent Debian patch
 version doesn't attempt to move optional deps into "suggest" like the
 original did, since upstream itself no longer separates them that way).
 
+pear/pear-core-minimal is dropped entirely rather than renamed, matching
+Debian's own patch exactly (not just its general intent): there is no
+php-pear-core-minimal Debian package on trixie (or any other suite) for
+dh_phpcomposer to depend on - plain php-pear, already a direct Depends
+in debian/control, is what actually provides this at runtime. Renaming
+it like the other pear/* entries (an earlier version of this patch did)
+makes dh_phpcomposer generate a Depends on a nonexistent package,
+producing an uninstallable roundcube-core on a clean system.
+
 Origin: Debian
 Forwarded: not-needed
 ---
@@ -15,7 +24,7 @@ Index: rc-final/composer.json
 ===================================================================
 --- rc-final.orig/composer.json
 +++ rc-final/composer.json
-@@ -4,19 +4,19 @@
+@@ -4,19 +4,18 @@
      "license": "GPL-3.0-or-later",
      "require": {
          "php": ">=8.1 <8.6",
@@ -42,7 +51,6 @@ Index: rc-final/composer.json
 +        "pear-pear.php.net/mail_mime": ">=1.10.11",
 +        "pear-pear.php.net/net_sieve": ">=1.4.7",
 +        "pear-pear.php.net/net_smtp": ">=1.12.0",
-+        "pear-pear.php.net/pear-core-minimal": ">=1.10.15",
 +        "roundcube/plugin-installer": ">=0.3.5",
 +        "roundcube/rtf-html-php": ">=2.1"
      },
