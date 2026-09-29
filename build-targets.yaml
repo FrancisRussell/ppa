@@ -7,3 +7,6 @@
 - codename: noble
   arch: amd64
   container: ubuntu:noble
+- codename: resolute
+  arch: amd64
+  container: ubuntu:resolute

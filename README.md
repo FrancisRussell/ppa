@@ -6,6 +6,7 @@ Personal APT repository for Debian and Ubuntu (amd64 and arm64).
 
 - Debian Trixie.
 - Ubuntu Noble (24.04 LTS).
+- Ubuntu Resolute (26.04 LTS).
 
 ## Packages (subject to change)
 
