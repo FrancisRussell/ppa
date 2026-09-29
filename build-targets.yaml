@@ -1,6 +1,9 @@
 - codename: trixie
   arch: amd64
   container: debian:trixie
+- codename: trixie
+  arch: arm64
+  container: debian:trixie
 - codename: noble
   arch: amd64
   container: ubuntu:noble
