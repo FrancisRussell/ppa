@@ -1,0 +1,36 @@
+From: Sandro Knauß <bugs@sandroknauss.de>
+Date: Mon, 9 May 2016 23:45:20 +0200
+Subject: Debianize sample config file
+
+  * By default we do not have any plugins available (these are in
+    roundcube-plugins).
+  * Disable spellchecking, because it needs recommended packages.
+
+Forwarded: not-needed
+---
+ config/config.inc.php.sample | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/config/config.inc.php.sample b/config/config.inc.php.sample
+index cc7d6f4..b460d1f 100644
+--- a/config/config.inc.php.sample
++++ b/config/config.inc.php.sample
+@@ -52,10 +52,16 @@ $config['product_name'] = 'Roundcube Webmail';
+ $config['des_key'] = 'rcmail-!24ByteDESkey*Str';
+ 
+ // List of active plugins (in plugins/ directory)
++// Debian: install roundcube-plugins first to have any
+ $config['plugins'] = [
+-    'archive',
+-    'zipdownload',
++    // 'archive',
++    // 'zipdownload',
+ ];
+ 
+ // skin name: folder from skins/
+ $config['skin'] = 'elastic';
++
++// Disable spellchecking
++// Debian: spellchecking needs additional packages to be installed, or calling external APIs
++//         see defaults.inc.php for additional informations
++$config['enable_spellcheck'] = false;

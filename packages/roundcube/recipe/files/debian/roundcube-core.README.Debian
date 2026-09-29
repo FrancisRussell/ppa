@@ -1,0 +1,84 @@
+This package ships with configuration files for Apache and lighttpd.  However,
+it is not possible to cover all cases and you still need to do some manual
+steps to adapt the installation to your site configuration.
+
+You can uncomment the Alias directives in `/etc/roundcube/apache.conf'.  You
+can then access your roundcube installation under `/roundcube' in all virtual
+hosts.  If you want to create a specific virtual host, just point DocumentRoot
+to `/var/lib/roundcube/public_html'.
+
+It is important to keep in mind that the root installation of roundcube is
+`/var/lib/roundcube' and NOT `/usr/share/roundcube'.  You also need to
+keep the configuration file provided.  Otherwise, your installation will
+be non functional and insecure.
+
+Set `$rcmail_config['htmleditor'] = TRUE' in /etc/roundcube/config.inc.php in
+order to use the TinyMCE editor.
+
+No plugins are shipped (except core plugins) with this package.  Non-core
+plugins can be found in the roundcube-plugins and roundcube-plugins-extra
+binary packages.  You can also manually install plugin to
+/var/lib/roundcube/plugins.
+
+This package makes use of dbconfig-common to setup the database.  If you do not
+wish to use dbconfig-common, you can find the SQL commands to use to install
+and upgrade the database in `/usr/share/dbconfig-common/data/roundcube'.  When
+upgrading, you need to apply each upgrade file from the version you are
+upgrading (excluded).  For example, if you are using MySQL and want to upgrade
+from 0.3-1, you need to apply `mysql/0.5-1'.  If you are upgrading from
+0.2~alpha-5, you need to apply `mysql/0.2~stable-1' and `mysql/0.5-1'.
+
+Debian GNU/Linux systems use the `www-data' Unix user/group for PHP code
+execution by default, so that's also what the roundcube package assumes.
+However for better privilege separation you may prefer to use a dedicated
+user/group.  This isolates roundcube from other PHP applications on the system,
+and also avoids exposing sensitive data to the HTTPd (HTTPd workers use
+`www-data' and won't be able to serve static files they can't read).  Switching
+an existing roundcube installation to a dedicated user/group requires the
+following manual steps, but no further changes will be required when upgrading
+to a new version.
+
+    0. Choose and create suitable user/group names.
+
+        $ username="_roundcube"
+        $ groupname="_roundcube"
+        $ groupadd --system -- "$groupname"
+        $ useradd -p\* -Ng"$groupname" -Md/nonexistent -s/usr/sbin/nologin \
+            --system -- "$username"
+
+    1. Update logrotate configuration and systemd.service(5) files.
+
+        $ sed -ri "/^(\\s*create)\\s.*/ s//\\1create 0640 $username adm/" \
+            /etc/logrotate.d/roundcube-core
+        $ mkdir /etc/systemd/system/roundcube-cleandb.service.d \
+            /etc/systemd/system/roundcube-gc.service.d
+        $ cat >/etc/systemd/system/roundcube-cleandb.service.d/override.conf <<-EOF
+			[Service]
+			User=$username
+			Group=$username
+        EOF
+        $ cp /etc/systemd/system/roundcube-cleandb.service.d/override.conf \
+            /etc/systemd/system/roundcube-gc.service.d/override.conf
+
+        (Further hardening is possible depending on the DB type and
+        connection, see comments in roundcube-cleandb.service.)
+
+    2. Transfer ownership (and add a stat override to make it stick on upgrades).
+       (chown/chgrp'ing `/var/lib/dbconfig-common/*/roundcube' is only needed for
+       roundcube-sqlite3.)
+
+        $ find /etc/roundcube /var/lib/roundcube /var/log/roundcube \
+            /var/lib/dbconfig-common/*/roundcube \
+            -user www-data -exec chown -c -- "$username" {} +
+        $ find /etc/roundcube /var/lib/roundcube /var/log/roundcube \
+            /var/lib/dbconfig-common/*/roundcube \
+            -group www-data -exec chgrp -c -- "$groupname" {} +
+        $ dpkg-statoverride --add "$username" "$groupname" 0700 /var/lib/roundcube/temp
+        $ dpkg-statoverride --add "$username" "adm"        0750 /var/log/roundcube
+
+    3. Configure the PHP stack so roundcube code is executed by the new user/group.
+       If you use PHP-FPM you can for instance specify `user = $username' and
+       `group = $groupname' in the pool definition (if you have other PHP
+       applications you'll need to create a dedicated pool for roundcube).
+
+ -- Guilhem Moulin <guilhem@debian.org>  Wed, 10 Feb 2021 21:09:15 +0100

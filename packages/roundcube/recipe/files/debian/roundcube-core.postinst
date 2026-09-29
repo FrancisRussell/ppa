@@ -1,0 +1,287 @@
+#!/bin/sh
+# postinst script for roundcube
+#
+# see: dh_installdeb(1)
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+if [ -f /usr/share/dbconfig-common/dpkg/postinst ]; then
+    . /usr/share/dbconfig-common/dpkg/postinst
+    dbc_generate_include=php:/etc/roundcube/debian-db.php
+    dbc_generate_include_owner="root:www-data"
+    dbc_generate_include_perms="640"
+    dbc_dbfile_owner="www-data:www-data"
+    dbc_dbfile_perms="0660"
+    dbc_dbuser=roundcube
+    dbc_dbname=roundcube
+
+    dbc_go roundcube "$@"
+fi
+
+pathfind() {
+    local OLDIFS p rv=1
+    [ -n "${IFS+x}" ] && OLDIFS="$IFS" || unset OLDIFS
+    IFS=":"
+    for p in $PATH; do
+        if [ -x "$p/$1" ]; then
+            rv=0
+            break
+        fi
+    done
+    [ -n "${OLDIFS+x}" ] && IFS="$OLDIFS" || unset IFS
+    return $rv
+}
+
+lighttpd_install() {
+    local has_fastcgi_php="n" m v
+    if [ -d /etc/lighttpd/conf-available ] && [ ! -h /etc/lighttpd/conf-available/50-roundcube.conf ] \
+            && [ ! -e /etc/lighttpd/conf-available/50-roundcube.conf ]; then
+        ln -sT /etc/roundcube/lighttpd.conf /etc/lighttpd/conf-available/50-roundcube.conf
+    fi
+    if pathfind lighty-enable-mod; then
+        # check if a fastcgi .php handler is enabled already
+        # (lighttpd complains if more than one is enabled, see #988236)
+        for m in /etc/lighttpd/conf-enabled/*-fastcgi-php.conf /etc/lighttpd/conf-enabled/*-fastcgi-php-*.conf; do
+            if [ -f "$m" ]; then
+                has_fastcgi_php="y"
+                break
+            fi
+        done
+        if [ "$has_fastcgi_php" = "n" ]; then
+            if v="$(dpkg-query -f '${Version}' -W 'lighttpd')" && [ -n "$v" ] \
+                    && dpkg --compare-versions "$v" lt "1.4.55-2"; then
+                m="fastcgi-php"
+            else
+                # prefer PHP-FPM on lighttpd/1.4.55-2 and later, see #916677
+                m="fastcgi-php-fpm"
+            fi
+            # exit status 2 denotes a minor flaw (e.g., a module was not enabled because it was already loaded before)
+            if ! { lighty-enable-mod "fastcgi" "$m" || [ $? -eq 2 ]; } then
+                return 1
+            fi
+        fi
+        if ! { lighty-enable-mod "roundcube" || [ $? -eq 2 ]; } then
+            return 1
+        fi
+    fi
+    return 0
+}
+
+if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+    . /usr/share/apache2/apache2-maintscript-helper # for apache2_invoke()
+fi
+apache_install() {
+    if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+        if [ -d /etc/apache2/conf-available ] && [ ! -h /etc/apache2/conf-available/roundcube.conf ] \
+                && [ ! -e /etc/apache2/conf-available/roundcube.conf ]; then
+            ln -sT /etc/roundcube/apache.conf /etc/apache2/conf-available/roundcube.conf
+        fi
+        # remove old symlink if present
+        if [ -d /etc/apache2/conf.d ] && [ -h /etc/apache2/conf.d/roundcube ]; then
+            rm -f /etc/apache2/conf.d/roundcube
+        fi
+        # enable the configuration
+        apache2_invoke enconf roundcube.conf
+    elif dpkg-query -f '${Version}' -W 'apache2.2-common' >/dev/null 2>&1; then
+        # old Apache
+        if [ -d /etc/apache2/conf.d ] && [ ! -h /etc/apache2/conf.d/roundcube.conf ] \
+                && [ ! -e /etc/apache2/conf.d/roundcube.conf ]; then
+            ln -sT /etc/roundcube/apache.conf /etc/apache2/conf.d/roundcube.conf
+        fi
+    fi
+}
+
+
+case "$1" in
+    configure)
+        # configuration file to save
+        CONFFILE=/etc/roundcube/config.inc.php
+
+        # upstream's configuration sample file to use as base
+        BASEFILE=/usr/share/roundcube/config.inc.php.sample
+
+        des_key=""
+        if [ -n "$2" ] && [ -f "$CONFFILE" ]; then
+            OLD_UPSTREAM_VERSION="${2%-*}" # assume there is no epoch
+            OLD_UPSTREAM_VERSION="${OLD_UPSTREAM_VERSION%%[!0-9.]*}" # strip +dfsg, ~beta etc suffixes
+
+            # attempt to run bin/update.sh without root privileges (the script doesn't need
+            # database access but needs to be able to reed the configuration file and write
+            # its updated version) -- we can't guess the user user to run the webmail so we
+            # use a heuristic based on ownership and mode of the configuration file
+            if ! m="$(stat -c%f -- "$CONFFILE")" || [ $((0x$m & 0x0007)) -ne 0 ]; then
+                # $CONFFILE is world-readable: don't bother
+                user="www-data"
+                echo "WARN: $CONFFILE is word-readable!" >&2
+            elif user="$(stat -c%u -- "$CONFFILE")" && [ -n "$user" ] && [ $user -ne 0 ] && \
+                user="$(getent passwd -- "$user" | sed -n "1s/:.*//p")" && [ -n "$user" ]; then
+                # $CONFFILE is not owned by root: run script as its owner
+                true
+            elif [ $((0x$m & 0x0020)) -eq 0 ] || \
+                    ! gid="$(stat -c%g -- "$CONFFILE")" || [ $gid -eq 0 ] || \
+                    ! user="$(getent passwd | cut -sd: -f1,4 | sed -n "s/:0*$gid$//p")" || \
+                    [ -z "$user" ] || ! getent passwd -- "$user" >/dev/null; then
+                # $CONFFILE is owned by root:$group where $group is a
+                # primary group for a single user: run script as that
+                # user, otherwise use root
+                user="root"
+            fi
+
+            # pre-create config.inc.php.dpkg-new (to hold the updated configuration) with restrictive permissions
+            install -o"$user" -groot -m0600 /dev/null "$CONFFILE.dpkg-new"
+            st1="$(stat -c"%i %#a" -- "$CONFFILE.dpkg-new")" || st1=""
+
+            if [ "$user" = "root" ]; then
+                echo "WARN: Running /usr/share/roundcube/bin/update.sh as root!" >&2
+                user=""
+            else
+                echo "INFO: Running /usr/share/roundcube/bin/update.sh as user '$user'" >&2
+            fi
+
+            # update config / merge old config
+            ${user:+runuser -u"$user" --} env DEBIAN_PKG=1 \
+                php /usr/share/roundcube/bin/update.sh --version="$OLD_UPSTREAM_VERSION" --accept=true
+
+            if ! st2="$(stat -c"%i %#a" -- "$CONFFILE.dpkg-new")" || [ -z "$st1" ] || [ "$st1" != "$st2" ]; then
+                # make sure update.sh used the file we pre-created
+                echo "WARN: Possible security leak: $CONFFILE.dpkg-new (\"$st1\" != \"$st2\")" >&2
+            fi
+
+            # update script was successfull
+            if [ -s "$CONFFILE.dpkg-new" ]; then
+                BASEFILE="$CONFFILE.dpkg-new"
+                des_key="$(sed -nr "/^\\\$config\\['des_key'\\]\\s*=\\s*'([^']*)'\\s*;.*/ {s//\\1/;h}; \${x;p}" "$CONFFILE.dpkg-new")"
+            fi
+        fi
+
+        # read config values
+        if db_get roundcube/hosts && [ -n "$RET" ]; then
+            imap_host="[\"$(printf "%s" "$RET" | sed -rz 's/\s+/\",\"/g')\"]"
+        else
+            imap_host="''"
+        fi
+
+        # get current 3DES key from config file
+        if [ -f "$CONFFILE" ]; then
+            des_key="$(sed -nr "/^\\\$config\\['des_key'\\]\\s*=\\s*'([^']*)'\\s*;.*/ {s//\\1/;h}; \${x;p}" "$CONFFILE")"
+        fi
+        # generate a new one if empty or default from config/config.inc.php.sample
+        if [ -z "$des_key" ] || [ "$des_key" = "rcmail-!24ByteDESkey*Str" ]; then
+            # base64-encode a random 18-bytes long string (the key must be 24-chars long)
+            des_key="$(head -c18 /dev/urandom | base64)"
+        fi
+
+        # create temporary config file (with restricted ownership and mode,
+        # refined later on); in same directory as the parent's ownership/mode
+        # might be the only thing protecting config.inc.php from
+        # world-readability
+        install -oroot -groot -m0600 /dev/null "$CONFFILE.ucftmp"
+
+        # put imap_host, language and key in temporary config file
+        while IFS="" read -r line; do
+            k="${line#"${line%%[![:space:]]*}\$config["[\"\']}"
+            [ "$k" = "$line" -o "${k%%[\"\']\]*=*}" = "$k" ] && k="" || k="${k%%[\"\']\]*}"
+            [ "${line#*;}" = "$line" ] && rest="" || rest="${line#*;}" # comments etc
+            case "$k" in
+                "imap_host")
+                    printf "\$config['%s'] = %s;%s\n" "$k" "$imap_host" "$rest"
+                ;;
+                "des_key")
+                    printf "\$config['%s'] = '%s';%s\n" "$k" "$des_key" "$rest"
+                ;;
+                *)
+                    printf "%s\n" "$line"
+                ;;
+            esac
+        done <"$BASEFILE" >"$CONFFILE.ucftmp"
+
+        if ! grep -Eq "^\\\$config\\['imap_host'\\]\\s*=" <"$CONFFILE.ucftmp"; then
+            printf "\$config['%s'] = %s;\\n" "$imap_host" >>"$CONFFILE.ucftmp"
+        fi
+
+        if ! grep -Eq "^\\\$config\\['des_key'\\]\\s*=" <"$CONFFILE.ucftmp"; then
+            # the migration logic has a serious problem if $config['des_key'] is missing
+            echo "ERROR: $CONFFILE.ucftmp is missing 'des_key' configuration setting!" >&2
+            exit 1
+        fi
+
+        rm -f "$CONFFILE.dpkg-new" # don't need that file anymore
+
+        if db_fget roundcube/language seen && [ "$RET" = "true" ] && \
+                db_get roundcube/language && [ -n "$RET" ]; then
+            cat >>"$CONFFILE.ucftmp" <<-EOF
+
+				// the default locale setting (leave empty for auto-detection)
+				// RFC1766 formatted language name like en_US, de_DE, de_CH, fr_FR, pt_BR
+				\$config['language'] = '$RET';
+			EOF
+        fi
+
+        # register new config file
+        if [ -f "$CONFFILE" ]; then
+            # preserve existing ownership and permissions on the temp file
+            # as they'll stick to the .ucf-dist (cf. #671474)
+            chmod --reference="$CONFFILE" "$CONFFILE.ucftmp"
+            chown --reference="$CONFFILE" "$CONFFILE.ucftmp"
+        else
+            # new file, assume proccess running php will have gid www-data
+            install -oroot -gwww-data -m0640 "$CONFFILE.ucftmp" "$CONFFILE"
+        fi
+        ucf --debconf-ok "$CONFFILE.ucftmp" "$CONFFILE"
+        ucfr roundcube "$CONFFILE"
+        rm -f "$CONFFILE.ucftmp"
+
+        # handle webserver reconfiguration/restart; stolen from zabbix package
+        db_get roundcube/reconfigure-webserver || true
+        webservers="$RET"
+        restart=""
+
+        for webserver in $webservers; do
+            webserver="${webserver%,}"
+            case "$webserver" in
+                lighttpd) lighttpd_install;;
+                apache2) apache_install;;
+            esac
+            pathfind "$webserver" || continue
+            restart="${restart:+"$restart "}$webserver"
+        done
+
+        db_get roundcube/restart-webserver || true
+        res="$RET"
+        db_stop || true
+        if [ "$res" = "true" ]; then
+            for webserver in $restart; do
+                if [ -d /run/systemd/system ]; then
+                    deb-systemd-invoke reload "$webserver.service" || true
+                elif pathfind invoke-rc.d; then
+                    # redirection of 3 is needed because Debconf uses it and it might
+                    # be inherited by webserver. See bug #446324.
+                    invoke-rc.d "$webserver" reload 3>/dev/null || true
+                fi
+            done
+        fi
+
+        # allow local admin to override
+        if ! dpkg-statoverride --list /var/log/roundcube >/dev/null; then
+            chown www-data:adm /var/log/roundcube
+            chmod 0750 /var/log/roundcube
+        fi
+        if ! dpkg-statoverride --list /var/lib/roundcube/temp >/dev/null; then
+            chown www-data:www-data /var/lib/roundcube/temp
+            chmod 0750 /var/lib/roundcube/temp
+        fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

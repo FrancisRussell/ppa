@@ -1,0 +1,378 @@
+From: Guilhem Moulin <guilhem@debian.org>
+Date: Fri, 20 Mar 2026 17:34:30 +0100
+Subject: Avoid dependency on new package mlocati/ip-lib
+
+mlocati/ip-lib is not present in Debian. The dependency was introduced
+upstream in order to fix CVE-2026-35540.
+
+Rebased for 1.7.4: upstream has since refactored is_local_url() to
+delegate range checks to a shared is_ip_in_range() helper (also used for
+proxy_whitelist checks against $_SERVER['REMOTE_ADDR']), so the
+IPLib\Factory calls are removed from that helper instead of inlined in
+is_local_url(). is_ip_in_range() now does its own CIDR matching against
+inet_pton()'s binary representation. The obfuscated-IP-literal parsing
+(inet_pton2(), for hosts like "0x7f.1" that inet_pton() rejects but
+browsers still resolve) is unchanged from upstream's fix.
+
+Restores (rebased onto tests/Framework/UtilsTest.php's current
+PSR-4/attribute-based structure) the CVE-regression cases Debian's
+original patch added to the test suite, plus one fix found while
+restoring them: upstream's own $nets list in is_local_url() only
+special-cases IPv4-*mapped* IPv6 addresses (::ffff:a.b.c.d,
+'::ffff:0:0/96' below), not the older IPv4-*compatible* form
+(::a.b.c.d, deprecated by RFC4291 2.5.5.1 but still resolved by
+inet_pton(3) and so by PHP/curl) that Debian's original, inlined
+version of this check also covered. Without it, a URL like
+"https://[::127.0.0.1]" is not recognised as local - the same class of
+obfuscated-IP-literal SSRF-filter bypass this CVE fix otherwise closes.
+Added a parallel '::0.0.0.0/96' entry to close it back up.
+
+Bug-Debian: https://bugs.debian.org/1131182
+Forwarded: not-needed
+---
+ composer.json                         |   1 -
+ program/lib/Roundcube/rcube_utils.php | 167 +++++++++++++++++++++++++++++---
+ tests/Framework/UtilsTest.php         |  85 ++++++++++++++++
+ 3 files changed, 239 insertions(+), 14 deletions(-)
+
+Index: rc-build/program/lib/Roundcube/rcube_utils.php
+===================================================================
+--- rc-build.orig/program/lib/Roundcube/rcube_utils.php
++++ rc-build/program/lib/Roundcube/rcube_utils.php
+@@ -1,7 +1,4 @@
+ <?php
+-
+-use IPLib\Factory;
+-use IPLib\ParseStringFlag;
+
+ /*
+  +-----------------------------------------------------------------------+
+@@ -418,6 +415,116 @@
+     }
+
+     /**
++     * Converts a human readable IP address to its packed in_addr representation
++     * Like the builtin inet_pton() function, but fallback to
++     * inet_aton(3)-behavior for IPv4.
++     *
++     * @param string $ip    A human readable IPv4 or IPv6 address.
++     *
++     * @return string|false
++     */
++    public static function inet_pton2($ip) {
++        $address = @inet_pton($ip);
++        if (is_string($address)) {
++            return $address;
++        }
++
++        /* emulate inet_aton(3) behavior */
++        $fields = explode('.', $ip, 4); /* at most 4 dot-separated fields */
++        $field_last = array_pop($fields);
++        if (!is_string($field_last)) {
++            return false;
++        }
++        $address = "\x00\x00\x00\x00";
++        foreach ($fields as $i => $field) {
++            /* process each field except the last one; values must not exceed 0xFF */
++            if (preg_match('/^0[xX]0*([0-9A-Fa-f]{0,2})$/D', $field, $matches)) {
++                /* hexadecimal field, 0x00 to 0xFF */
++                $b = $matches[1] === '' ? 0 : hexdec($matches[1]);
++            } elseif (preg_match('/^0+([1-3][0-7][0-7]|[1-7][0-7]?|)$/D', $field, $matches)) {
++                /* octal field, o0 to o377 */
++                $b = $matches[1] === '' ? 0 : intval($matches[1], 8);
++            } elseif (preg_match('/^(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?)$/D', $field)) {
++                /* decimal field, 1 to 255 */
++                $b = intval($field, 10);
++            } else {
++                /* invalid field */
++                return false;
++            }
++            $address[$i] = chr($b);
++        }
++
++        /* split into 2 groups of 16 bits to avoid overflowing PHP_INT_MAX on 32-bits platforms */
++        $hi = $li = 0x0000;
++        $carry = null;
++        if (preg_match('/^0[xX]0*([0-9A-Fa-f]{0,8})$/D', $field_last, $matches)) {
++            /* hexadecimal field, 0x00 to 0xFFFFFFFF */
++            if (strlen($matches[1]) > 4) {
++                $hi = hexdec(substr($matches[1], 0, -4));
++                $li = hexdec(substr($matches[1], -4));
++            } elseif ($matches[1] !== '') {
++                $li = hexdec($matches[1]);
++            }
++        } elseif (preg_match('/^0+([1-3][0-7]{10}|[1-7][0-7]{0,9}|)$/D',
++                           $field_last, $matches)) {
++            /* octal field, o0 to o37777777777 */
++            if ($matches[1] !== '') {
++                $base = 8;
++                $hi = intval(substr($matches[1], 0, 10), $base);
++                $li = $hi % (1 << 16);
++                $hi = intdiv($hi, 1 << 16); /* <= 65535 */
++                if (strlen($matches[1]) > 10) {
++                    $carry = substr($matches[1], -1); /* last digit */
++                }
++            }
++        } elseif (preg_match('/^[1-9][0-9]{0,9}$/D', $field_last)) {
++            /* decimal field, 1 to 9999999999 (values >=2^32 are rejected later) */
++            $base = 10;
++            $hi = intval(substr($field_last, 0, 9), $base);
++            $li = $hi % (1 << 16);
++            $hi = intdiv($hi, 1 << 16); /* <= 152587 */
++            if (strlen($field_last) > 9) {
++                $carry = substr($field_last, -1); /* last digit */
++            }
++        } else {
++            /* invalid field */
++            return false;
++        }
++        if ($carry !== null) {
++            /* carry over the last digit; there won't be any overflow
++             * since the value won't exceed 152587 * $base + $base-1 */
++            $li = $li * $base + intval($carry, $base);
++            $hi = $hi * $base + intdiv($li, 1 << 16);
++            $li %= 1 << 16;
++        }
++
++        $i = count($fields);
++        if ($hi === 0x0000 && $li <= 0x00ff && $i <= 3) {
++            /* first 0-3 bytes have been set already, now set the last byte */
++            $address[3] = chr($li);
++        } elseif ($hi === 0x0000 && $li <= 0xffff && $i <= 2) {
++            /* first 0-2 bytes have been set already, now set the last 2 bytes */
++            $address[2] = chr( intdiv($li, 1 << 8) );
++            $address[3] = chr( $li % (1 << 8) );
++        } elseif ($hi <= 0x00ff && $li <= 0xffff && $i <= 1) {
++            /* first 0-1 bytes have been set already, now set the last 3 bytes */
++            $address[1] = chr( $hi );
++            $address[2] = chr( intdiv($li, 1 << 8) );
++            $address[3] = chr( $li % (1 << 8) );
++        } elseif ($hi <= 0xffff && $li <= 0xffff && $i === 0) {
++            /* set all 4 bytes */
++            $address[0] = chr( intdiv($hi, 1 << 8) );
++            $address[1] = chr( $hi % (1 << 8) );
++            $address[2] = chr( intdiv($li, 1 << 8) );
++            $address[3] = chr( $li % (1 << 8) );
++        } else {
++            /* overflow, all numeric values must be <2^32 */
++            return false;
++        }
++        return $address;
++    }
++
++    /**
+      * Check if an URL point to a local network location.
+      *
+      * @param string $url
+@@ -429,11 +536,6 @@
+         $host = parse_url($url, \PHP_URL_HOST);
+
+         if (is_string($host)) {
+-            $options = ParseStringFlag::IPV4_MAYBE_NON_DECIMAL
+-                | ParseStringFlag::IPV4SUBNET_MAYBE_COMPACT
+-                | ParseStringFlag::IPV4ADDRESS_MAYBE_NON_QUAD_DOTTED
+-                | ParseStringFlag::MAY_INCLUDE_ZONEID;
+-
+             $host = trim($host, '[].');
+
+             if (preg_match('/([0-9a-f.-]+)\.(nip|sslip)\.io$/i', $host, $matches)) {
+@@ -447,9 +549,14 @@
+                 }
+             }
+
++            if (strpos($host, ':') !== false && ($n = strpos($host, '%')) > 0) {
++                /* drop the zone ID */
++                $host = substr($host, 0, $n);
++            }
++
+             // TODO: This is pretty fast, but a single message can contain multiple links
+             // to the same target, maybe we should do some in-memory caching.
+-            if ($address = Factory::parseAddressString($host, $options)) {
++            if (is_string($address_bin = self::inet_pton2($host)) && ($address = @inet_ntop($address_bin)) !== false) {
+                 $nets = [
+                     '0.0.0.0',
+                     '127.0.0.0/8',    // loopback
+@@ -461,7 +568,8 @@
+                     '::1/128',
+                     'fc00::/7',
+                     'fe80::/10',      // IPv6 link-local
+-                    '::ffff:0:0/96',  // RFC5156
++                    '::ffff:0:0/96',  // IPv4-mapped, RFC5156
++                    '::0.0.0.0/96',   // IPv4-compatible (deprecated), RFC4291 2.5.5.1
+                 ];
+
+                 return self::is_ip_in_range($address, $nets);
+@@ -488,15 +596,48 @@
+             return false;
+         }
+
+-        $address = Factory::parseAddressString($ip);
++        $address = @inet_pton($ip);
+
+         foreach ($whitelist as $entry) {
+             if ($entry === $ip) {
+                 return true;
+             }
+-            if ($address && ($range = Factory::parseRangeString($entry)) && $range->contains($address)) {
+-                return true;
+-            }
++
++            if ($address === false) {
++                continue;
++            }
++
++            if (($slash = strpos($entry, '/')) !== false) {
++                $subnet = substr($entry, 0, $slash);
++                $bits = (int) substr($entry, $slash + 1);
++            } else {
++                $subnet = $entry;
++                $bits = null;
++            }
++
++            $subnet_bin = @inet_pton($subnet);
++            if ($subnet_bin === false || strlen($subnet_bin) !== strlen($address)) {
++                continue;
++            }
++
++            if ($bits === null) {
++                $bits = strlen($address) * 8;
++            }
++
++            $bytes = intdiv($bits, 8);
++            if ($bytes > 0 && substr($address, 0, $bytes) !== substr($subnet_bin, 0, $bytes)) {
++                continue;
++            }
++
++            $remainder_bits = $bits % 8;
++            if ($remainder_bits > 0) {
++                $mask = (0xFF << (8 - $remainder_bits)) & 0xFF;
++                if ((\ord($address[$bytes]) & $mask) !== (\ord($subnet_bin[$bytes]) & $mask)) {
++                    continue;
++                }
++            }
++
++            return true;
+         }
+
+         return false;
+Index: rc-build/tests/Framework/UtilsTest.php
+===================================================================
+--- rc-build.orig/tests/Framework/UtilsTest.php
++++ rc-build/tests/Framework/UtilsTest.php
+@@ -690,6 +690,86 @@
+     }
+
+     /**
++     * Test inet_pton2()
++     *
++     * @dataProvider provide_inet_pton2_cases
++     */
++    #[DataProvider('provide_inet_pton2_cases')]
++    public function test_inet_pton2($input, $output)
++    {
++        $r = \rcube_utils::inet_pton2($input);
++        if (is_bool($output)) {
++            $this->assertSame($output, $r);
++        } else {
++            $this->assertTrue(is_string($r));
++            $addr = @inet_pton($output);
++            $this->assertSame($r, $addr, bin2hex($r) . " != " . bin2hex($addr));
++        }
++    }
++
++    /**
++     * Test-Cases for inet_pton2() test
++     */
++    public static function provide_inet_pton2_cases(): iterable
++    {
++        return [
++            ['',                false],
++            ['0xx',             false],
++            ['08',              false],
++            ['a',               false],
++            ['0.0.0.0.0',       false],
++            ['0..0',            false],
++            ['0.',              false],
++            ['.0',              false],
++            ['256.0',           false],
++            ['0x100.0',         false],
++            ['0400.0',          false],
++            ['4294967296',      false],
++            ['9999999999',      false],
++            ['18446744073709551616', false],
++            ['040000000000',    false],
++            ['077777777777',    false],
++            ['0x100000000',     false],
++            [' 123',            false],
++            ['123 ',            false],
++            ['-1',              false],
++
++            ['0',               '0.0.0.0'],
++            ['0x0',             '0.0.0.0'],
++            ['0x',              '0.0.0.0'],
++            ['00',              '0.0.0.0'],
++            ['123',             '0.0.0.123'],
++            ['0xF',             '0.0.0.15'],
++            ['0xFA',            '0.0.0.250'],
++            ['061',             '0.0.0.49'],
++            ['12345',           '0.0.48.57'],
++            ['0X89AB',          '0.0.137.171'],
++            ['0x89ABC',         '0.8.154.188'],
++            ['012345',          '0.0.20.229'],
++            ['1234567',         '0.18.214.135'],
++            ['0xabcde',         '0.10.188.222'],
++            ['01234567',        '0.5.57.119'],
++            ['123456789',       '7.91.205.21'],
++            ['0xdeadbeef',      '222.173.190.239'],
++            ['07654321012',     '62.177.162.10'],
++            ['4294967295',      '255.255.255.255'],
++            ['2147483648',      '128.0.0.0'],
++            ['0xfffefdfc',      '255.254.253.252'],
++            ['037777777777',    '255.255.255.255'],
++            ['020000000000',    '128.0.0.0'],
++            ['226.000.000.037', '226.0.0.31'],
++            ['0x7f.1',          '127.0.0.1'],
++            ['0x7f.256',        '127.0.1.0'],
++            ['0x7f.0.256',      '127.0.1.0'],
++            ['0377.0xfedc',     '255.0.254.220'],
++            ['0x7f.0377.12345', '127.255.48.57'],
++            ['1.2.3.4',         '1.2.3.4'],
++            ['0.1.2.3',         '0.1.2.3'],
++            ['7.010.0x.0xa',    '7.8.0.10'],
++        ];
++    }
++
++    /**
+      * Test is_local_url()
+      *
+      * @dataProvider provide_is_local_url_cases
+@@ -708,12 +788,17 @@
+         return [
+             // Local hosts
+             ['https://127.0.0.1', true],
++            ['https://127.00.000.0', true],
+             ['https://10.1.1.1', true],
+             ['https://172.16.0.1', true],
+             ['https://192.168.0.100', true],
+             ['https://169.254.0.200', true],
+             ['http://[fc00::1]', true],
++            ['http://[fc00::1%1]', true],
+             ['ftp://[::1]:8080', true],
++            ['https://[127.0.0.1]', true],
++            ['https://[::127.0.0.1]', true],
++            ['https://[::ffff:192.168.1.2]', true],
+             ['//127.0.0.1', true],
+             ['http://localhost', true],
+             ['http://localhost.localdomain', true],
+Index: rc-build/composer.json
+===================================================================
+--- rc-build.orig/composer.json
++++ rc-build/composer.json
+@@ -9,7 +9,6 @@
+         "guzzlehttp/promises": "^2.0",
+         "league/commonmark": "^2.7",
+         "masterminds/html5": "~2.9.0",
+-        "mlocati/ip-lib": "^1.22.0",
+         "pear/auth_sasl": "~1.2.0",
+         "pear/crypt_gpg": "~1.7.0",
+         "pear/mail_mime": "~1.10.11",

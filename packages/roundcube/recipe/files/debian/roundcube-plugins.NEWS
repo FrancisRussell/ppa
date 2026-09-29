@@ -1,0 +1,30 @@
+roundcube (1.4.6+dfsg.1-3) unstable; urgency=low
+
+  The roundcube-plugins package no longer ships
+
+      /usr/share/roundcube/plugins/enigma/openpgp.min.js
+
+  due to DFSG violation.  Roundcube was only using this file for OpenPGP key
+  generation as part of the enigma plugin; other key operations, including
+  encryption, decryption, signature verification, keyserver handling etc. all
+  still work.  Roundcube users can also create key pairs locally and import
+  them into Roundcube at /?_task=settings&_action=plugin.enigmakeys.
+
+  Site administrators wanting to preserve key generation ability in enigma
+  need to manually copy
+
+      https://raw.githubusercontent.com/openpgpjs/openpgpjs/v4.4.6/dist/openpgp.min.js
+
+  (or a later version) to /usr/share/roundcube/plugins/enigma/openpgp.min.js .
+  Note that while OpenPGP.js isn't in Debian yet, there is an open Request For
+  Packaging (#787774).
+
+  To use OpenPGP with Roundcube, an alternative/complement to the enigma
+  plugin is Mailvelope, a browser extension providing support for client-side
+  signing/decryption which works natively with Roundcube core and doesn't
+  require copying private key material to the server.  See the following blog
+  post for details:
+
+      https://kolabian.wordpress.com/2015/10/10/mailvelope-integration-pgp-encryption/
+
+ -- Guilhem Moulin <guilhem@debian.org>  Sat, 04 Jul 2020 01:07:51 +0200

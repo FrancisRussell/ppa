@@ -1,0 +1,26 @@
+Subject: Drop the SlowTestDetector phpunit extension bootstrap
+
+Ergebnis\PHPUnit\SlowTestDetector\Extension is a require-dev-only
+composer dependency (a slow-test reporter, not something any test
+assertion depends on). This build never runs composer install for
+dev dependencies, so the class is never available, and
+tests/phpunit.xml's failOnWarning="true" turns the resulting
+"Cannot bootstrap extension" warning into a hard test-suite failure.
+Drop the bootstrap entry so the extension is simply not loaded.
+
+Forwarded: not-needed
+---
+Index: rc-build/tests/phpunit.xml
+===================================================================
+--- rc-build.orig/tests/phpunit.xml
++++ rc-build/tests/phpunit.xml
+@@ -14,9 +14,6 @@
+       <directory>../plugins</directory>
+     </include>
+   </source>
+-  <extensions>
+-    <bootstrap class="Ergebnis\PHPUnit\SlowTestDetector\Extension"/>
+-  </extensions>
+   <testsuites>
+     <testsuite name="tests">
+       <directory>.</directory>

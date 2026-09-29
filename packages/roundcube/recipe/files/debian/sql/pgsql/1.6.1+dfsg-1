@@ -1,0 +1,6 @@
+/* SQL/postgres/2022081200.sql */
+DROP INDEX responses_user_id_idx;
+CREATE INDEX responses_user_id_idx ON responses (user_id, del);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2022081200' WHERE "name" = 'roundcube-version';

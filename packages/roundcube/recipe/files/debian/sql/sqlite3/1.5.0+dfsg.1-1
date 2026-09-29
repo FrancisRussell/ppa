@@ -1,0 +1,121 @@
+/* 2020020100 */
+CREATE TABLE tmp_users (
+  user_id integer NOT NULL PRIMARY KEY,
+  username varchar(128) NOT NULL default '',
+  mail_host varchar(128) NOT NULL default '',
+  created datetime NOT NULL default '0000-00-00 00:00:00',
+  last_login datetime DEFAULT NULL,
+  failed_login datetime DEFAULT NULL,
+  failed_login_counter integer DEFAULT NULL,
+  language varchar(16),
+  preferences text NOT NULL default ''
+);
+
+INSERT INTO tmp_users (user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences)
+    SELECT user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences FROM users;
+
+DROP TABLE users;
+
+CREATE TABLE users (
+  user_id integer NOT NULL PRIMARY KEY,
+  username varchar(128) NOT NULL default '',
+  mail_host varchar(128) NOT NULL default '',
+  created datetime NOT NULL default '0000-00-00 00:00:00',
+  last_login datetime DEFAULT NULL,
+  failed_login datetime DEFAULT NULL,
+  failed_login_counter integer DEFAULT NULL,
+  language varchar(16),
+  preferences text NOT NULL default ''
+);
+
+INSERT INTO users (user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences)
+    SELECT user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences FROM tmp_users;
+
+CREATE UNIQUE INDEX ix_users_username ON users(username, mail_host);
+
+DROP TABLE tmp_users;
+
+CREATE TABLE tmp_dictionary (
+    user_id integer DEFAULT NULL,
+   language varchar(16) NOT NULL,
+    data text NOT NULL
+);
+
+INSERT INTO tmp_dictionary (user_id, language, data) SELECT user_id, language, data FROM dictionary;
+
+DROP TABLE dictionary;
+
+CREATE TABLE dictionary (
+    user_id integer DEFAULT NULL,
+   language varchar(16) NOT NULL,
+    data text NOT NULL
+);
+
+INSERT INTO dictionary (user_id, language, data) SELECT user_id, language, data FROM tmp_dictionary;
+
+CREATE UNIQUE INDEX ix_dictionary_user_language ON dictionary (user_id, language);
+
+DROP TABLE tmp_dictionary;
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020020100' WHERE "name" = 'roundcube-version';
+
+/* 2020020101 */
+-- empty
+/* update "system" table */
+UPDATE "system" SET "value" = '2020020101' WHERE "name" = 'roundcube-version';
+
+/* 2020091000 */
+CREATE TABLE collected_addresses (
+  address_id integer NOT NULL PRIMARY KEY,
+  user_id integer NOT NULL,
+  changed datetime NOT NULL default '0000-00-00 00:00:00',
+  name varchar(255) NOT NULL default '',
+  email varchar(255) NOT NULL,
+  "type" integer NOT NULL
+);
+
+CREATE UNIQUE INDEX ix_collected_addresses_user_id ON collected_addresses(user_id, "type", email);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020091000' WHERE "name" = 'roundcube-version';
+
+/* 2020122900 */
+CREATE TABLE tmp_users (
+  user_id integer NOT NULL PRIMARY KEY,
+  username varchar(128) NOT NULL default '',
+  mail_host varchar(128) NOT NULL default '',
+  created datetime NOT NULL default '0000-00-00 00:00:00',
+  last_login datetime DEFAULT NULL,
+  failed_login datetime DEFAULT NULL,
+  failed_login_counter integer DEFAULT NULL,
+  language varchar(16),
+  preferences text DEFAULT NULL
+);
+
+INSERT INTO tmp_users (user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences)
+    SELECT user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences FROM users;
+
+DROP TABLE users;
+
+CREATE TABLE users (
+  user_id integer NOT NULL PRIMARY KEY,
+  username varchar(128) NOT NULL default '',
+  mail_host varchar(128) NOT NULL default '',
+  created datetime NOT NULL default '0000-00-00 00:00:00',
+  last_login datetime DEFAULT NULL,
+  failed_login datetime DEFAULT NULL,
+  failed_login_counter integer DEFAULT NULL,
+  language varchar(16),
+  preferences text DEFAULT NULL
+);
+
+INSERT INTO users (user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences)
+    SELECT user_id, username, mail_host, created, last_login, failed_login, failed_login_counter, language, preferences FROM tmp_users;
+
+CREATE UNIQUE INDEX ix_users_username ON users(username, mail_host);
+
+DROP TABLE tmp_users;
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2020122900' WHERE "name" = 'roundcube-version';

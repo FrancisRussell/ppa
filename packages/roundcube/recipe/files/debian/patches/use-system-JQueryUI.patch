@@ -1,0 +1,43 @@
+From: Guilhem Moulin <guilhem@debian.org>
+Date: Fri, 7 Jun 2019 20:13:37 +0200
+Subject: Use system JQueryUI
+
+We source jquery-ui-accessible-datepicker.min.js after libjs-jquery-ui's
+jquery-ui.min.js to avoid concatening these files (see the former's
+headers).
+
+Also libjs-jquery-ui's datepicker-* files don't have the ‘jquery.ui.’
+prefix.
+
+Forwarded: not-needed
+---
+ plugins/jqueryui/jqueryui.php | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+Index: rc-final/plugins/jqueryui/jqueryui.php
+===================================================================
+--- rc-final.orig/plugins/jqueryui/jqueryui.php
++++ rc-final/plugins/jqueryui/jqueryui.php
+@@ -42,6 +42,7 @@ class jqueryui extends rcube_plugin
+ 
+         // include UI scripts
+         $this->include_script('js/jquery-ui.min.js');
++        $this->include_script('js/jquery-ui-accessible-datepicker.min.js');
+ 
+         // include UI stylesheet
+         $ui_map = $rcmail->config->get('jquery_ui_skin_map', self::$skin_map);
+@@ -66,10 +67,10 @@ class jqueryui extends rcube_plugin
+             $lang_s = substr($_SESSION['language'], 0, 2);
+ 
+             foreach ($jquery_ui_i18n as $package) {
+-                if (self::asset_exists("js/i18n/{$package}-{$lang_l}.js", false)) {
+-                    $this->include_script("js/i18n/{$package}-{$lang_l}.js");
+-                } elseif ($lang_s != 'en' && self::asset_exists("js/i18n/{$package}-{$lang_s}.js", false)) {
+-                    $this->include_script("js/i18n/{$package}-{$lang_s}.js");
++                if (self::asset_exists("js/i18n/{$package}-{$lang_l}.min.js", false)) {
++                    $this->include_script("js/i18n/{$package}-{$lang_l}.min.js");
++                } elseif ($lang_s != 'en' && self::asset_exists("js/i18n/{$package}-{$lang_s}.min.js", false)) {
++                    $this->include_script("js/i18n/{$package}-{$lang_s}.min.js");
+                 }
+             }
+         }

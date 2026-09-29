@@ -1,0 +1,6 @@
+# False positives
+package-contains-documentation-outside-usr-share-doc [usr/share/roundcube/plugins/help/content/license.html]
+package-contains-documentation-outside-usr-share-doc [usr/share/roundcube/plugins/http_authentication/logout.html]
+
+# Intentionally ship pre-compressed JS/CSS files, see #978075
+compressed-duplicate [usr/share/roundcube/plugins/*.min.js.gz]

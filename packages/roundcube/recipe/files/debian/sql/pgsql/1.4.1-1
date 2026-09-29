@@ -1,0 +1,34 @@
+/* 2018021600 */
+CREATE SEQUENCE "filestore_seq"
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+CREATE TABLE "filestore" (
+    file_id integer DEFAULT nextval('filestore_seq'::text) PRIMARY KEY,
+    user_id integer NOT NULL
+        REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    filename varchar(128) NOT NULL,
+    mtime integer NOT NULL,
+    data text NOT NULL,
+    CONSTRAINT filestore_user_id_filename UNIQUE (user_id, filename)
+);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2018021600' WHERE "name" = 'roundcube-version';
+
+/* 2018122300 */
+ALTER TABLE "filestore" ADD COLUMN context varchar(32);
+UPDATE "filestore" SET context = 'enigma';
+ALTER TABLE "filestore" ALTER COLUMN context SET NOT NULL;
+ALTER TABLE "filestore" DROP CONSTRAINT "filestore_user_id_filename";
+ALTER TABLE "filestore" ADD CONSTRAINT "filestore_user_id_context_filename" UNIQUE (user_id, context, filename);
+
+/* update "system" table */
+UPDATE "system" SET "value" = '2018122300' WHERE "name" = 'roundcube-version';
+
+/* 2019092900 */
+-- empty
+/* update "system" table */
+UPDATE "system" SET "value" = '2019092900' WHERE "name" = 'roundcube-version';

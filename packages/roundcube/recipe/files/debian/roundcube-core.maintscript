@@ -1,0 +1,2 @@
+rm_conffile /etc/cron.daily/roundcube-core 1.6~rc+dfsg-2~
+rm_conffile /etc/default/roundcube-core 1.6~rc+dfsg-2~

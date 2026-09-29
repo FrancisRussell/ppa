@@ -1,0 +1,43 @@
+Subject: Lower guzzlehttp/guzzle and pear/crypt_gpg floors to match trixie
+
+Upstream's composer.json requires guzzlehttp/guzzle ^7.10.0 and
+pear/crypt_gpg ~1.7.0. Debian trixie ships php-guzzlehttp-guzzle 7.9.2-0.1
+and php-crypt-gpg 1.6.11-1, both below those floors, so pkg-php-tools
+would otherwise generate an unsatisfiable Depends.
+
+This is judged safe as of the pinned upstream commit: guzzle 7.10.0's
+only changelog entry is "Support for PHP 8.5" (irrelevant on trixie's
+PHP 8.4), and crypt_gpg 1.7.0 only replaces an internal PEAR dependency
+(console_commandline) that Roundcube's enigma plugin never references
+directly (verified by grepping for PinCliParameters/SimpleCliWrapper/
+Console_CommandLine - no hits in plugins/ or program/).
+
+CAUTION for whoever next bumps the pinned Roundcube version: this
+assumption is about the *currently pinned* upstream commit only. If a
+future Roundcube release starts actually calling guzzle or crypt_gpg
+APIs that only exist in the newer floors upstream declares, this patch
+would silently make the package build against a too-old library instead
+of failing loudly. Re-check both projects' changelogs between the old
+and new pinned commit before assuming this patch still applies as-is.
+
+Forwarded: not-needed
+---
+Index: rc-build/composer.json
+===================================================================
+--- rc-build.orig/composer.json
++++ rc-build/composer.json
+@@ -5,12 +5,12 @@
+     "require": {
+         "php": ">=8.1 <8.6",
+         "bacon/bacon-qr-code": "^3.0.0",
+-        "guzzlehttp/guzzle": "^7.10.0",
++        "guzzlehttp/guzzle": "^7.9.2",
+         "guzzlehttp/promises": "^2.0",
+         "league/commonmark": "^2.7",
+         "masterminds/html5": "~2.9.0",
+         "pear/auth_sasl": "~1.2.0",
+-        "pear/crypt_gpg": "~1.7.0",
++        "pear/crypt_gpg": "~1.6.3",
+         "pear/mail_mime": "~1.10.11",
+         "pear/net_sieve": "~1.4.7",
+         "pear/net_smtp": "~1.12.0",

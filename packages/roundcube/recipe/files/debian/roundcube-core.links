@@ -1,0 +1,14 @@
+etc/roundcube var/lib/roundcube/config
+usr/share/javascript/bootstrap4/css/bootstrap.min.css usr/share/roundcube/skins/elastic/deps/bootstrap.min.css
+usr/share/javascript/bootstrap4/js/bootstrap.bundle.min.js usr/share/roundcube/skins/elastic/deps/bootstrap.bundle.min.js
+usr/share/javascript/jquery/jquery.js usr/share/roundcube/program/js/jquery.js
+usr/share/javascript/jquery/jquery.min.js usr/share/roundcube/program/js/jquery.min.js
+usr/share/javascript/jquery/jquery.min.js.gz usr/share/roundcube/program/js/jquery.min.js.gz
+usr/share/javascript/jstimezonedetect/jstz.js usr/share/roundcube/program/js/jstz.js
+usr/share/javascript/jstimezonedetect/jstz.min.js usr/share/roundcube/program/js/jstz.min.js
+usr/share/javascript/less/less.min.js usr/share/roundcube/skins/elastic/deps/less.min.js
+usr/share/roundcube/SQL var/lib/roundcube/SQL
+usr/share/roundcube/config.inc.php.sample usr/share/doc/roundcube-core/config.inc.php.sample
+usr/share/roundcube/index.php var/lib/roundcube/index.php
+usr/share/roundcube/program var/lib/roundcube/program
+var/log/roundcube var/lib/roundcube/logs

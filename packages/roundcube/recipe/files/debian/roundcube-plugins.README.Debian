@@ -1,0 +1,9 @@
+This package ships several plugins.  To use a plugin, you need to edit
+`/etc/roundcube/config.inc.php' add its name to the $rcmail_config['plugins']
+array.
+
+Some plugins have a dedicated configuration file
+`/etc/roundcube/plugins/PLUGIN_NAME/config.inc.php' while others need to be
+configured directly in `/etc/roundcube/config.inc.php'.
+
+ -- Vincent Bernat <bernat@debian.org>, Sun, 13 Feb 2011 15:50:48 +0100

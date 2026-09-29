@@ -1,0 +1,19 @@
+From: Guilhem Moulin <guilhem@debian.org>
+Date: Sun, 10 Jan 2021 04:37:27 +0100
+Subject: Rename `python` to `python3`
+
+Forwarded: not-needed
+---
+ plugins/password/helpers/chpass-wrapper.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/password/helpers/chpass-wrapper.py b/plugins/password/helpers/chpass-wrapper.py
+index b3f81eb..9d5c2fe 100644
+--- a/plugins/password/helpers/chpass-wrapper.py
++++ b/plugins/password/helpers/chpass-wrapper.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ 
+ import sys
+ import pwd

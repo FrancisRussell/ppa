@@ -21,3 +21,8 @@ repos:
     hooks:
       - id: shellcheck
         args: [--severity=warning]
+        # debian/sqlupdate is vendored verbatim from Debian's salsa packaging
+        # (see packages/roundcube/PACKAGING-NOTES.md); it's kept byte-identical
+        # to make future diffs against upstream's tool easy, so lint warnings
+        # in it aren't ours to fix.
+        exclude: ^packages/roundcube/recipe/files/debian/sqlupdate$

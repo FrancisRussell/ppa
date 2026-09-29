@@ -1,0 +1,22 @@
+From: Vincent Bernat <bernat@debian.org>
+Date: Sat, 17 Jul 2010 17:23:30 +0200
+Subject: Switch to UTF-8 as default charset
+
+Forwarded: not-needed
+---
+ config/defaults.inc.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/defaults.inc.php b/config/defaults.inc.php
+index 6e80aa9..36a5731 100644
+--- a/config/defaults.inc.php
++++ b/config/defaults.inc.php
+@@ -1267,7 +1267,7 @@ $config['collected_senders'] = true;
+ // ----------------------------------
+ 
+ // Use this charset as fallback for message decoding
+-$config['default_charset'] = 'ISO-8859-1';
++$config['default_charset'] = 'UTF-8';
+ 
+ // Skin name: folder from skins/
+ $config['skin'] = 'elastic';

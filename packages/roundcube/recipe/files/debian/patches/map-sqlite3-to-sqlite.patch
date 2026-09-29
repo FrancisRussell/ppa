@@ -1,0 +1,22 @@
+From: Vincent Bernat <bernat@luffy.cx>
+Date: Fri, 12 Jul 2013 23:09:34 +0200
+Subject: Map dbconfig-common's "sqlite3" driver to "sqlite"
+
+Bug-Debian: https://bugs.debian.org/714727
+Forwarded: not-needed
+---
+ program/lib/Roundcube/rcube_db.php | 1 +
+ 1 file changed, 1 insertion(+)
+
+Index: rc-build/program/lib/Roundcube/rcube_db.php
+===================================================================
+--- rc-build.orig/program/lib/Roundcube/rcube_db.php
++++ rc-build/program/lib/Roundcube/rcube_db.php
+@@ -77,6 +77,7 @@ class rcube_db
+         $driver = strtolower(substr($db_dsnw, 0, strpos($db_dsnw, ':')));
+         $driver_map = [
+             'sqlite2' => 'sqlite',
++            'sqlite3' => 'sqlite',
+             'mysqli' => 'mysql',
+         ];
+ 

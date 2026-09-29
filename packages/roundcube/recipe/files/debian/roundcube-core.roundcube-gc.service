@@ -1,0 +1,27 @@
+[Unit]
+Description=Purge expired Roundcube sessions, caches and tempfiles
+Documentation=https://github.com/roundcube/roundcubemail/wiki/Installation
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+ExecStart=/usr/share/roundcube/bin/gc.sh
+
+# Hardening -- further hardening can be achieved via unit overrides:
+# - if sqlite is used, set RestrictAddressFamilies=none;
+# - otherwise, set ProtectSystem=strict and set RestrictAddressFamilies
+#   to the address family used for DB connection
+#
+NoNewPrivileges=yes
+PrivateDevices=yes
+ProtectHome=yes
+ProtectSystem=full
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# these ReadWritePaths= directives are useless for ProtectSystem=full
+# but handy when overridden with ProtectSystem=strict
+ReadWritePaths=/var/lib/roundcube/temp
+ReadWritePaths=/var/log/roundcube

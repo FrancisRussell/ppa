@@ -1,0 +1,127 @@
+roundcube (1.6~rc+dfsg-2) experimental; urgency=medium
+
+    systemd.timer(5) unit files are now provided in addition to cronjobs, which
+    are no-op (and thus can be removed) on systems where PID1 is systemd.  If
+    the PHP code is run by a user other than www-data then the associated
+    systemd.service(5) unit files roundcube-{cleandb,gc}.service need to be
+    overridden with the right User= and Group=.  See README.Debian for details.
+
+    Upstream's bin/gc.sh script is now run periodically in the background.  We
+    therefore don't have to rely on probabilistic synchronous garbage collection
+    and `session.gc_probability` is no longer force set to 1.  On Debian systems
+    probability based GC is disabled by default in php.ini, and can remain as
+    such as long as roundcube-{cleandb,gc}.timer (or corresponding cronjobs)
+    remain enabled.
+
+ -- Guilhem Moulin <guilhem@debian.org>  Wed, 29 Jun 2022 20:23:02 +0200
+
+roundcube (1.6~beta+dfsg-1) experimental; urgency=medium
+
+    This release brings unified and simplified services connection options:
+     * IMAP:
+        - renamed `default_host` to `imap_host`
+        - removed `default_port` option (non-standard port can be set via
+          `imap_host`)
+        - set "localhost:143" as a default for `imap_host`
+     * SMTP:
+        - renamed `smtp_server` to `smtp_host`
+        - removed `smtp_port` option (non-standard port can be set via
+          `smtp_host`)
+        - set "localhost:587" as a default for `smtp_host`
+     * LDAP:
+        - removed `port` option from `ldap_public` array (non-standard port can
+          be set via `host`)
+        - removed `use_tls` option from `ldap_public` array (use tls:// prefix
+          in `host`)
+     * Managesieve:
+        - removed `managesieve_port` option (non-standard port can be set via
+          `managesieve_host`)
+        - removed `managesieve_usetls` option (use tls:// prefix in
+          `managesieve_host`)
+
+    Moreover, the "classic" and "Larry" skins are no longer included in
+    'roundcube-core'.  They can be found in separate binary packages:
+    'roundcube-skin-classic' resp. 'roundcube-skin-larry'.
+
+ -- Guilhem Moulin <guilhem@debian.org>  Mon, 14 Mar 2022 00:16:05 +0100
+
+roundcube (1.4.10+dfsg.2-1) unstable; urgency=low
+
+    It is recommended to use /var/lib/roundcube/public_html as document
+    root (or alias target) in the HTTPd configuration.  Doing so will
+    automatically keep sensitive files such as logs and configuration
+    out of reach for HTTP requests.  (The provided .htaccess file
+    protects these already, but since Apache 2.4 .htaccess support is
+    disabled by default and not all HTTPd support these.)
+
+    In addition, Javascript and CSS files are now provided gzipped
+    alongside the non-compressed versions.  Compatible HTTPds can be
+    configured to send these files as is in order to avoid on-the-fly
+    compression overhead.
+
+ -- Guilhem Moulin <guilhem@debian.org>  Fri, 15 Jan 2021 23:55:02 +0100
+
+roundcube (1.4~rc1+dfsg.2-1) experimental; urgency=medium
+
+    Outgoing messages are delivered to localhost:587 by default.
+    Roundcube authenticates to the submission server using IMAP
+    credentials, and delivery fails when SMTP AUTH isn't offered.  The
+    default behavior can be changed by editing smtp_* settings in the
+    configuration file.  In particular, set
+
+        $config['smtp_port'] = 25;
+        $config['smtp_user'] = '';
+        $config['smtp_pass'] = '';
+
+    in order to revert to <=1.3 defaults.
+
+ -- Guilhem Moulin <guilhem@debian.org>  Tue, 11 Jun 2019 02:07:49 +0200
+
+roundcube (1.1.1+dfsg.1-1) experimental; urgency=medium
+
+    Roundcube changes it configuration schema.
+    The old main.inc.php and db.inc.php are merged into config.inc.php by the
+    deb update process. There is a migration script, that should transform the
+    files automatically, also if there are changes made in the files.
+    The old configuration files are left in place, they can removed afterwards.
+
+    If you want to start the migration step on you own:
+    sudo -u www-data DEBIAN_PKG=1 php /usr/share/roundcube/bin/update.sh \
+        --version=0.9.5 --accept=true
+
+ -- Sandro Knauß <bugs@sandroknauss.de>  Thu, 08 May 2014 08:40:00 +0200
+
+roundcube (0.7.2-7) unstable; urgency=low
+
+    Roundcube SQLite support is limited to SQLite 2.x. No support for
+    SQLite 3.x currently exists. Unfortunately, SQLite 2.x is unmaintained
+    for several years and therefore has been dropped from php5
+    package.
+
+    You need to select another database to continue to use
+    Roundcube. Unfortunately, there is currently no migration script
+    available. You have to start from an empty database and migrate
+    data yourself if you want to keep your settings. You can find some
+    directions here:
+     http://wiki.debian.org/Roundcube/DeprecationOfSQLitev2
+
+    Once the migration is done, you can remove roundcube-sqlite
+    package.
+
+ -- Vincent Bernat <bernat@debian.org>  Sat, 02 Mar 2013 22:20:17 +0100
+
+roundcube (0.3.1-2) unstable; urgency=low
+
+    Starting from Roundcube 0.3, an incompatibility with Suhosin session
+    encryption is present. This can be resolved by tuning php.ini for
+    Roundcube with the "suhosin.session.encrypt" set to "Off".
+
+    We ship a .htaccess in /var/lib/roundcube to disable this
+    option. However, this only works with a webserver like Apache with
+    mod_php. If you are using a webserver with PHP configured as a
+    *CGI process, you need to tune the php.ini for this process:
+    either turn of globally Suhosin session encryption in
+    /etc/php5/conf.d/suhosin or you can provide your own php.ini to
+    php5-cgi with "-c" option.
+
+ -- Vincent Bernat <bernat@debian.org>  Mon, 02 Nov 2009 19:48:22 +0100
