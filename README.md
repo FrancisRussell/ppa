@@ -15,6 +15,7 @@ Personal APT repository for Debian and Ubuntu (amd64 and arm64).
 - **lldap** — Lightweight LDAP server with a web UI. (Binary only — source packages not available.)
 - **postfix-ratelimitd** — Postfix SMTP access policy daemon that rate-limits recipients per SASL username. (Binary only — source packages not available.)
 - **pwsafe** — Command-line password safe compatible with PasswordSafe databases.
+- **roundcube** — Webmail client, packaged at upstream version 1.7. Debian Trixie only.
 
 ## Adding this repository
 
