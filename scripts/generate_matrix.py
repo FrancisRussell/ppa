@@ -57,10 +57,29 @@ def inputs_key_hash(build_key: dict) -> str:
     return hashlib.blake2b(rfc8785.dumps(build_key), digest_size=32).hexdigest()
 
 
-def hash_exists_in_ghpages(hash_str: str, codename: str, package: str, arch: str) -> bool:
-    path = f"builds/{codename}/{package}/{arch}/{hash_str}.json"
-    result = subprocess.run(["git", "show", f"FETCH_HEAD:{path}"], capture_output=True)
-    return result.returncode == 0
+def fetch_published_build_paths() -> set[str]:
+    """Returns the paths of all build records on gh-pages.
+
+    Only the tree is fetched: the presence of a record is all that matters, and
+    the branch's history and .deb files are large. If gh-pages can't be read
+    nothing is treated as published.
+    """
+    fetch = subprocess.run(
+        ["git", "fetch", "--depth=1", "--filter=blob:none", "origin", "gh-pages"],
+        capture_output=True,
+    )
+    if fetch.returncode != 0:
+        return set()
+    listing = subprocess.run(
+        ["git", "ls-tree", "-r", "--name-only", "FETCH_HEAD", "builds/"],
+        capture_output=True,
+        text=True,
+    )
+    return set(listing.stdout.splitlines()) if listing.returncode == 0 else set()
+
+
+def hash_exists_in_ghpages(published: set[str], hash_str: str, codename: str, package: str, arch: str) -> bool:
+    return f"builds/{codename}/{package}/{arch}/{hash_str}.json" in published
 
 
 def all_packages() -> list[str]:
@@ -68,7 +87,7 @@ def all_packages() -> list[str]:
     return sorted(d.name for d in packages_dir.iterdir() if d.is_dir() and (d / "source.yml").exists())
 
 
-def build_matrix_for_package(package: str, force: bool, default_targets: list) -> list:
+def build_matrix_for_package(package: str, force: bool, default_targets: list, published: set[str]) -> list:
     source_yml = REPO_ROOT / "packages" / package / "source.yml"
     with open(source_yml) as f:
         source_config = yaml.safe_load(f)
@@ -95,7 +114,7 @@ def build_matrix_for_package(package: str, force: bool, default_targets: list) -
         ref = metadata["ref"]
         hash_str = inputs_key_hash(build_key)
 
-        if not force and hash_exists_in_ghpages(hash_str, codename, package, arch):
+        if not force and hash_exists_in_ghpages(published, hash_str, codename, package, arch):
             continue
 
         entries.append(
@@ -128,11 +147,11 @@ def main():
     with open(targets_file) as f:
         default_targets = yaml.safe_load(f)
 
-    subprocess.run(["git", "fetch", "origin", "gh-pages"], capture_output=True)
+    published = fetch_published_build_paths()
 
     matrix = []
     for package in packages:
-        matrix.extend(build_matrix_for_package(package, force, default_targets))
+        matrix.extend(build_matrix_for_package(package, force, default_targets, published))
 
     print(json.dumps(matrix, indent=2))
 
