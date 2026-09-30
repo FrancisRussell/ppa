@@ -212,8 +212,10 @@ Full parity with Debian's 6 binary packages: `roundcube-core`, `roundcube`,
 
 ### Build targets
 
-`source.yml` declares a single target: trixie amd64 - not noble, and not a
-separate arm64 build, both unlike most other packages in this PPA.
+`source.yml` declares two targets: trixie amd64 and resolute amd64. Noble is
+excluded because its packaged PHP libraries are too old (see below). There is
+no arm64 build because roundcube is `Architecture: all`, so a second
+architecture would produce nothing new.
 
 Every roundcube binary package is `Architecture: all` (pure PHP, no
 compiled code), so there's nothing for a second architecture's build to

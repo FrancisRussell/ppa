@@ -4,3 +4,6 @@ targets:
   - codename: trixie
     arch: amd64
     container: debian:trixie
+  - codename: resolute
+    arch: amd64
+    container: ubuntu:resolute
